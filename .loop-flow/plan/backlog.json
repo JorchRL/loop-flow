@@ -1,8 +1,39 @@
 {
   "project": "Loop-Flow MCP Server",
-  "last_updated": "2026-01-17",
-  "notes": "LF-001.6 complete: Created self-contained LOOP-FLOW-BOOTSTRAP.md for team sharing. Renamed .agents to .loop-flow. Ready for LF-001.",
+  "last_updated": "2026-01-18",
+  "notes": "LF-020 complete: Unified LOOP-FLOW-SETUP.md with versioning and auto-detect. Ready for LF-001.7.",
   "tasks": [
+    {
+      "id": "LF-021",
+      "title": "[IMPL] Rename .loop-flow/AGENTS.md to WORKFLOW.md",
+      "description": "Rename the Loop-Flow workflow rules file from AGENTS.md to WORKFLOW.md to avoid ambiguity with the repo's root AGENTS.md. The root AGENTS.md contains repo-specific agent rules and just points to Loop-Flow; WORKFLOW.md contains the actual Loop-Flow methodology.",
+      "status": "TODO",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Rename .loop-flow/AGENTS.md to .loop-flow/WORKFLOW.md",
+        "Update LOOP-FLOW-SETUP.md template and instructions",
+        "Update root AGENTS.md append instruction to point to WORKFLOW.md",
+        "Update any references in docs (DESIGN.md, etc.)",
+        "Bump to v0.4.0"
+      ],
+      "notes": "Clarity improvement: root AGENTS.md = repo rules + 'read Loop-Flow', WORKFLOW.md = Loop-Flow methodology. Two AGENTS.md files is confusing."
+    },
+    {
+      "id": "LF-020",
+      "title": "[IMPL] Unified Versioned Setup File",
+      "description": "Merge LOOP-FLOW-BOOTSTRAP.md and LOOP-FLOW-UPDATE.md into single LOOP-FLOW-SETUP.md that auto-detects whether to bootstrap or update.",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Single file works for both fresh install and update",
+        "Auto-detect based on .loop-flow/ existence",
+        "Version number at top of file",
+        "Full changelog in VERSION HISTORY section",
+        "Process insights tagged with loop-flow-core for methodology updates",
+        "Delete old LOOP-FLOW-BOOTSTRAP.md and LOOP-FLOW-UPDATE.md"
+      ],
+      "notes": "v0.3.0 - Emerged from discussion about distribution simplicity. See INS-028 (LF-PROC-006)."
+    },
     {
       "id": "LF-001.6",
       "title": "[IMPL] Self-Contained Bootstrap File",
@@ -17,7 +48,7 @@
         "User tutorial section",
         "Agent can scaffold from this file alone"
       ],
-      "notes": "Key insight: terseness in bootstrap files is pre-emptive context rot. Completeness > brevity for one-time-use files. See INS-014."
+      "notes": "Key insight: terseness in bootstrap files is pre-emptive context rot. Completeness > brevity for one-time-use files. See INS-014. SUPERSEDED by LF-020."
     },
     {
       "id": "LF-001.5",
@@ -299,7 +330,7 @@
         "Agent can apply update to any file-based Loop-Flow installation",
         "Document what gets updated vs what stays (project state preserved)"
       ],
-      "notes": "Enables propagating workflow improvements to other projects using file-based Loop-Flow. Versioning is separate task (LF-019)."
+      "notes": "Enables propagating workflow improvements to other projects using file-based Loop-Flow. SUPERSEDED by LF-020 (unified setup file)."
     },
     {
       "id": "LF-019",

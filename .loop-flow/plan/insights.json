@@ -359,6 +359,19 @@
       "tags": ["process", "modes", "learning", "loop-flow-philosophy"],
       "links": ["INS-025", "INS-026", "INS-011", "INS-016"],
       "created": "2026-01-18"
+    },
+    {
+      "id": "INS-028",
+      "content": "Bootstrap/setup files should be unified and versioned. A single file that auto-detects whether to install fresh or update existing reduces confusion and ensures all installations can be brought to the same version. Version at top for quick reference, full changelog for details. Process insights tagged with 'loop-flow-core' carry methodology forward between versions.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-020",
+        "session": "2026-01-18-S4"
+      },
+      "tags": ["loop-flow-core", "distribution", "versioning", "process"],
+      "links": ["INS-014"],
+      "created": "2026-01-18"
     }
   ],
   "link_types": {

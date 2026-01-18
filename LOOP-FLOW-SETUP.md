@@ -1,31 +1,47 @@
-# Loop-Flow Bootstrap
+# Loop-Flow Setup
 
-> Drop this file into any repository and ask your AI agent to scaffold Loop-Flow.
+> The single file for bootstrapping or updating Loop-Flow in any repository.
+
+**Version:** 0.3.0 (2026-01-18)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
-> "Please scaffold Loop-Flow for this project using LOOP-FLOW-BOOTSTRAP.md"
+> "Please set up Loop-Flow using LOOP-FLOW-SETUP.md"
+
+The agent will auto-detect whether to bootstrap fresh or update an existing installation.
 
 ---
 
 ## AGENT INSTRUCTIONS
 
-When a user asks you to scaffold Loop-Flow using this file, perform the following steps:
+When a user asks you to set up Loop-Flow using this file, perform the following steps:
 
-### Step 0: Determine project name
+### Step 0: Detect installation state
+
+Check if `.loop-flow/` exists with these files:
+- `.loop-flow/plan/backlog.json`
+- `.loop-flow/plan/progress.txt`
+- `.loop-flow/AGENTS.md`
+
+**If ALL exist** → Follow the **UPDATE PATH** (Step U1-U6)
+**If ANY are missing** → Follow the **BOOTSTRAP PATH** (Step B1-B9)
+
+---
+
+# BOOTSTRAP PATH (Fresh Install)
+
+### Step B1: Determine project name
 
 Ask the user for the project name, or infer it from the folder name (e.g., `~/projects/my-app` → "My App").
 
 Use this name to replace `PROJECT_NAME` in all templates below.
 
-### Step 1: Create the folder structure
+### Step B2: Create the folder structure
 
 ```bash
 mkdir -p .loop-flow/plan
 ```
 
-### Step 2: Create `.loop-flow/plan/backlog.json`
-
-Use this template, replacing placeholders:
+### Step B3: Create `.loop-flow/plan/backlog.json`
 
 ```json
 {
@@ -36,7 +52,7 @@ Use this template, replacing placeholders:
 }
 ```
 
-### Step 3: Create `.loop-flow/plan/progress.txt`
+### Step B4: Create `.loop-flow/plan/progress.txt`
 
 ```markdown
 # PROJECT_NAME Development Progress
@@ -49,36 +65,24 @@ This file is an append-only log of development sessions **and learnings**.
 ---
 ```
 
-### Step 4: Create `.loop-flow/plan/insights.json`
+### Step B5: Create `.loop-flow/plan/insights.json`
 
-```json
-{
-  "schema_version": "0.1.0",
-  "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
-  "insights": [],
-  "link_types": {
-    "builds_on": "This insight extends or deepens another",
-    "contradicts": "This insight challenges or refines another",
-    "exemplifies": "This is a concrete example of an abstract insight",
-    "synthesizes": "This insight was created by combining others"
-  }
-}
-```
+Use the **TEMPLATE: insights.json** section below.
 
-### Step 5: Create `.loop-flow/AGENTS.md`
+### Step B6: Create `.loop-flow/AGENTS.md`
 
-Use the **Loop-Flow Workflow Rules Template** below (see section "TEMPLATE: .loop-flow/AGENTS.md").
+Use the **TEMPLATE: .loop-flow/AGENTS.md** section below.
 
-### Step 6: Update the root `AGENTS.md`
+### Step B7: Update the root `AGENTS.md`
 
 If the project has a root `AGENTS.md` file:
-- **Append** the Loop-Flow initialization instruction (see "APPEND TO ROOT AGENTS.md" section below)
+- **Append** the Loop-Flow initialization instruction (see "APPEND TO ROOT AGENTS.md" section)
 - Do NOT overwrite existing content
 
 If no root `AGENTS.md` exists:
 - Create one with minimal content plus the initialization instruction
 
-### Step 7: Add to `.gitignore`
+### Step B8: Add to `.gitignore`
 
 Add this line to `.gitignore` (create if needed):
 
@@ -87,15 +91,54 @@ Add this line to `.gitignore` (create if needed):
 .loop-flow/
 ```
 
-### Step 8: Delete this bootstrap file
+### Step B9: Delete this setup file and give tutorial
 
 ```bash
-rm LOOP-FLOW-BOOTSTRAP.md
+rm LOOP-FLOW-SETUP.md
 ```
 
-### Step 9: Give the user a quick tutorial
+After scaffolding, explain the key concepts using the **USER TUTORIAL** section below.
 
-After scaffolding, explain the key concepts using the USER TUTORIAL section below.
+---
+
+# UPDATE PATH (Existing Installation)
+
+### Step U1: Confirm update
+
+Tell the user:
+> "Loop-Flow detected (version X or unknown). I'll update to v0.3.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/AGENTS.md` will be replaced. Proceed?"
+
+Wait for confirmation.
+
+### Step U2: Replace `.loop-flow/AGENTS.md`
+
+Replace contents with the **TEMPLATE: .loop-flow/AGENTS.md** section below.
+
+Do NOT modify:
+- `.loop-flow/plan/backlog.json`
+- `.loop-flow/plan/progress.txt`
+- `.loop-flow/plan/insights.json`
+
+### Step U3: Check insights.json schema
+
+If `.loop-flow/plan/insights.json` exists but doesn't have `link_types`, add them from the **TEMPLATE: insights.json** section.
+
+### Step U4: Offer to import process insights
+
+Ask the user:
+> "This update includes process insights from Loop-Flow development (v0.3.0 additions). Would you like me to add them to your insights.json? They're about how to work better with AI agents."
+
+If yes, append insights from **LOOP-FLOW PROCESS INSIGHTS** section, adjusting IDs to not conflict with existing ones.
+
+### Step U5: Delete this setup file
+
+```bash
+rm LOOP-FLOW-SETUP.md
+```
+
+### Step U6: Summarize what changed
+
+Tell the user what's new (see **VERSION HISTORY** section).
 
 ---
 
@@ -138,12 +181,33 @@ To temporarily disable Loop-Flow, comment out or delete the line above.
 
 ---
 
+## TEMPLATE: insights.json
+
+```json
+{
+  "schema_version": "0.1.0",
+  "loop_flow_version": "0.3.0",
+  "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
+  "insights": [],
+  "link_types": {
+    "builds_on": "This insight extends or deepens another",
+    "contradicts": "This insight challenges or refines another",
+    "exemplifies": "This is a concrete example of an abstract insight",
+    "synthesizes": "This insight was created by combining others"
+  }
+}
+```
+
+---
+
 ## TEMPLATE: .loop-flow/AGENTS.md
 
-Create `.loop-flow/AGENTS.md` with this content:
+Create or replace `.loop-flow/AGENTS.md` with this content:
 
 ````markdown
 # Loop-Flow Workflow Rules
+
+**Loop-Flow Version:** 0.3.0
 
 This file defines how AI agents should work in this repository using the Loop-Flow methodology.
 
@@ -247,13 +311,16 @@ The backlog is a **menu, not a queue** — pick the most valuable task for right
 
 | Prefix | Purpose | When to Use |
 |--------|---------|-------------|
-| `[DESIGN]` | Discussion/decision task | Architecture, data models, API design — think before coding |
 | `[IMPL]` | Implementation work | Writing code, tests, documentation |
-| `[SPIKE]` | Exploratory research | Reduce uncertainty before committing to an approach |
+| `[DESIGN]` | Discussion/decision task | Architecture, data models, API design — think before coding |
+| `[SPIKE]` | Exploratory research | Reduce *our own* uncertainty before committing to an approach |
+| `[LEARN]` | Acquire external knowledge | Understand docs, libraries, domains — external knowledge acquisition |
 | `[REVIEW]` | Audit existing code/docs | Code review, TODO triage, documentation audit |
 | `[BUG]` | Fix a defect | Something is broken and needs fixing |
 | `[DISCUSS]` | Synthesize insights | Deep-dive on unprocessed learnings, link and refine |
 | `[DISCOVERY]` | Extract requirements | Rapid Q&A session to gather preferences and decisions |
+
+**Note**: `[SPIKE]` and `[LEARN]` often blend. A spike may require learning, and learning may surface spikes.
 
 Design tasks come first — make decisions before coding.
 
@@ -316,33 +383,42 @@ Not all learnings are equal. Prioritize higher-leverage insights:
 
 ### Proactive Capture
 
-AI agents should actively propose when something is worth documenting — don't just silently note things. Ask the developer: "Should we capture this insight?"
+AI agents should **proactively probe for emerging insights** during conversation. When an idea starts floating around but isn't yet articulated, steer toward surfacing it. This is active theory extraction, not passive note-taking.
 
 Entry points for capture:
 - **Prefix trigger**: User says "Note: ..." or "Insight: ..." → agent snapshots immediately
 - **Agent notices**: Detects insightful statement → asks "Worth capturing?"
-- **Explicit command**: "Capture insight: ..." → formal capture
+- **Agent probes**: Notices emerging idea → helps articulate it
 
 ---
 
 ## Conversation Modes
 
-Modes describe how conversation flows. They blend fluidly — agent reads the vibe.
+Modes are internal vibes the agent spontaneously adopts based on context — not explicit commands. The agent reads the room and adapts. Modes blend fluidly.
 
-| Mode | Purpose | Style |
-|------|---------|-------|
-| **Work** | Implementing, coding | Focused, efficient, minimal meta-commentary |
-| **Discovery** | Extract requirements | Rapid Q&A with choices, breadth over depth |
-| **Discuss** | Explore one insight | Socratic, deep, builds understanding |
-| **Review** | Audit what exists | Evaluative, critical |
+| Mode | Purpose | Style | Primary Output |
+|------|---------|-------|----------------|
+| **Work** | Implementing, coding | Focused, efficient, minimal meta-commentary | Code, tests |
+| **Discovery** | Extract requirements | Rapid Q&A with choices, breadth over depth | Requirements |
+| **Discuss** | Explore one insight deeply | Socratic, philosophical back-and-forth | Insights |
+| **Learn** | Acquire external knowledge | Teaching, questioning, synthesizing | Understanding + insights + refined requirements |
+| **Review** | Audit what exists | Evaluative, critical | Assessments, improvements |
 
-**Mode transitions are fluid** — no rigid state machine. Agent adapts naturally:
-- "Wait, why are we doing it this way?" → shifts to Discuss
-- "What are the options here?" → shifts to Discovery
-- "Ok let's just do it" → shifts to Work
-- "Show me what's there" → shifts to Review
+### Learn Mode
 
-**Important**: In Work mode, avoid meta-commentary to preserve context budget. In other modes, naming the shift can help orient the conversation.
+Learn mode is distinct: it has a **grounding topic** (docs, library, domain) that the conversation orbits around. Divergences happen when something sparks — agent notices and gently grounds back ("ready to return to X?"). Learn mode produces understanding, insights, AND design refinements. It's where external knowledge meets project context.
+
+### Mode Transitions
+
+- Fluid blending, no explicit switches
+- Agent can name shifts when helpful — EXCEPT in Work mode (preserve context budget)
+- Modes often blend — e.g., Learn can spark Discuss on a specific insight, then return to Learn
+- Examples:
+  - "Wait, why are we doing it this way?" → shifts to Discuss
+  - "What are the options here?" → shifts to Discovery
+  - "Teach me about X" or "Let's research Y" → shifts to Learn
+  - "Ok let's just do it" → shifts to Work
+  - "Show me what's there" → shifts to Review
 
 ---
 
@@ -360,6 +436,7 @@ Modes describe how conversation flows. They blend fluidly — agent reads the vi
 - A non-obvious insight emerges (edge case, domain quirk, useful trick)
 - Something should be added to progress.txt learnings or insights.json
 - A workflow improvement becomes apparent
+- You notice an emerging idea that should be articulated
 
 *Don't just silently note things — ask the developer if they want to capture the insight.*
 
@@ -404,9 +481,82 @@ End a session when:
 
 ---
 
+## LOOP-FLOW PROCESS INSIGHTS
+
+These are high-leverage process insights from Loop-Flow development. They represent core Loop-Flow methodology and should be imported during updates to carry forward the latest thinking.
+
+When importing, assign new IDs that don't conflict with existing insights.
+
+```json
+[
+  {
+    "id": "LF-PROC-001",
+    "content": "Modes are internal vibes the agent spontaneously takes based on context. Tasks are explicit activities requested by the user or proposed by the agent. Modes are fluid and blend; tasks are discrete and trackable. The agent doesn't announce mode switches — it reads the room and adapts.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "modes", "tasks"],
+    "links": [],
+    "created": "2026-01-18",
+    "source": "Loop-Flow v0.2.0"
+  },
+  {
+    "id": "LF-PROC-002",
+    "content": "Learn mode: acquiring external knowledge and grounding it in the project's context. Has a grounding topic (docs, library, domain) that we orbit around. Divergences happen when something sparks — agent notices and gently grounds back. Produces: understanding, insights, AND design refinements. Distinct from Discovery (focused requirements extraction) and Discuss (philosophical back-and-forth on insights).",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "modes", "learning"],
+    "links": ["LF-PROC-001"],
+    "created": "2026-01-18",
+    "source": "Loop-Flow v0.2.0"
+  },
+  {
+    "id": "LF-PROC-003",
+    "content": "When teaching domain concepts, provide probing questions alongside the explanation. Questions guide active reading and help the learner build their own mental model rather than passively absorbing information.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "teaching", "learning", "ai-agent-patterns"],
+    "links": [],
+    "created": "2026-01-18",
+    "source": "Loop-Flow v0.2.0"
+  },
+  {
+    "id": "LF-PROC-004",
+    "content": "AI should proactively probe for emerging insights during conversation. When an idea starts floating around but isn't yet articulated, steer toward surfacing it. Don't wait for the user to explicitly say 'let's capture this' — notice the nascent insight and help bring it into focus. This is active theory extraction, not passive note-taking.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "insight-capture", "proactive", "theory-building"],
+    "links": [],
+    "created": "2026-01-18",
+    "source": "Loop-Flow v0.2.0"
+  },
+  {
+    "id": "LF-PROC-005",
+    "content": "Learning and discovery are not sequential phases — they blend together in a generative loop. The agent's input prompts the human to think deeper about the domain, which surfaces new insights, which the agent helps articulate, which prompts further thinking. This co-creative dialogue is key. The agent isn't just extracting knowledge — it's catalyzing knowledge creation.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "learning", "discovery", "co-creation"],
+    "links": ["LF-PROC-002"],
+    "created": "2026-01-18",
+    "source": "Loop-Flow v0.2.0"
+  },
+  {
+    "id": "LF-PROC-006",
+    "content": "Bootstrap/setup files should be unified and versioned. A single file that auto-detects whether to install fresh or update existing reduces confusion and ensures all installations can be brought to the same version. Version at top for quick reference, full changelog for details.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "distribution", "versioning"],
+    "links": [],
+    "created": "2026-01-18",
+    "source": "Loop-Flow v0.3.0"
+  }
+]
+```
+
+---
+
 ## USER TUTORIAL
 
-After scaffolding, explain this to the user:
+After bootstrapping, explain this to the user:
 
 ### What is Loop-Flow?
 
@@ -465,6 +615,7 @@ Every session should leave you knowing something you didn't know before — abou
 | `[DESIGN]` | Think before coding — architecture, APIs, data models |
 | `[IMPL]` | Actually building stuff |
 | `[SPIKE]` | Research to reduce uncertainty |
+| `[LEARN]` | Acquire external knowledge (docs, libraries, domains) |
 | `[REVIEW]` | Audit existing code or docs |
 | `[BUG]` | Fix something broken |
 | `[DISCUSS]` | Deep-dive on an insight, link it to others |
@@ -487,7 +638,7 @@ To re-enable, restore that line.
 
 ### Your Files
 
-After scaffolding, your project has:
+After setup, your project has:
 
 | File | Purpose |
 |------|---------|
@@ -499,10 +650,72 @@ After scaffolding, your project has:
 
 ---
 
-## After Scaffolding
+## VERSION HISTORY
 
-Delete this file (`LOOP-FLOW-BOOTSTRAP.md`) — it's no longer needed.
+### v0.3.0 (2026-01-18)
 
-**Next step**: Add your first task to the backlog and start a session!
+**Unified Setup File**
+- Merged bootstrap and update into single `LOOP-FLOW-SETUP.md`
+- Auto-detects whether to install fresh or update existing
+- Version number at top for quick reference
+- Full changelog in VERSION HISTORY section
 
-A good first task is often `[DESIGN] Define initial architecture` — think before you code.
+**Process Insights as Feature Carriers**
+- Loop-Flow process insights now tagged with `loop-flow-core`
+- These carry forward methodology updates between versions
+- User's own process insights remain separate (future: better organization)
+
+**New Process Insight**
+- LF-PROC-006: Unified versioned setup files
+
+---
+
+### v0.2.0 (2026-01-18)
+
+**New: Learn Mode**
+- Added Learn mode for acquiring external knowledge (docs, libraries, domains)
+- Learn mode has a "grounding topic" that the conversation orbits around
+- Agent notices divergences and gently grounds back
+- Produces understanding, insights, AND design refinements
+
+**New: [LEARN] Task Type**
+- For acquiring external domain knowledge
+- Distinct from [SPIKE] which explores internal uncertainty
+- They often blend: spikes may require learning, learning may surface spikes
+
+**Refined: Modes vs Tasks**
+- Modes are internal vibes the agent spontaneously adopts
+- Tasks are explicit activities requested or proposed
+- Modes blend fluidly; tasks are discrete and trackable
+
+**Refined: Conversation Modes**
+- All five modes now documented: Work, Discovery, Discuss, Learn, Review
+- Each mode has clear purpose, style, and primary output
+- Mode transitions are fluid — agent reads the room
+
+**New: Proactive Insight Capture**
+- Agent should proactively probe for emerging insights
+- When an idea starts forming, steer toward surfacing it
+- Active theory extraction, not passive note-taking
+
+---
+
+### v0.1.0 (2026-01-17)
+
+**Initial Release**
+- Core workflow: one task, one session, one handoff
+- File-based state: backlog.json, progress.txt, insights.json
+- Four conversation modes: Work, Discovery, Discuss, Review
+- Task types: [IMPL], [DESIGN], [SPIKE], [REVIEW], [BUG], [DISCUSS], [DISCOVERY]
+- Insight capture with leverage hierarchy
+- Theory preservation philosophy (Naur)
+
+---
+
+## After Setup
+
+Delete this file (`LOOP-FLOW-SETUP.md`) — it's no longer needed.
+
+**For fresh installs**: Add your first task to the backlog and start a session! A good first task is often `[DESIGN] Define initial architecture` — think before you code.
+
+**For updates**: Your project state (backlog, progress, insights) is preserved. Only the workflow rules have been updated. Check VERSION HISTORY to see what's new.

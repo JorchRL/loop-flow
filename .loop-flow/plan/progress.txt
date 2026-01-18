@@ -309,30 +309,48 @@ Learning session on MCP protocol that evolved into significant process and archi
 
 ## 2026-01-18 | Session 3b (Update Mechanism)
 Task: LF-018 [IMPL] Loop-Flow Update Mechanism
+Outcome: COMPLETE (superseded by LF-020)
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Created `LOOP-FLOW-UPDATE.md` — a file that lets agents update existing file-based Loop-Flow installations to the latest process knowledge. Later merged into unified setup file (LF-020).
+
+---
+
+## 2026-01-18 | Session 4 (Unified Setup File)
+Task: LF-020 [IMPL] Unified Versioned Setup File
 Outcome: COMPLETE
 Manual QA: NOT_REQUIRED
 
 ### Summary
 
-Created `LOOP-FLOW-UPDATE.md` — a file that lets agents update existing file-based Loop-Flow installations to the latest process knowledge.
+Merged `LOOP-FLOW-BOOTSTRAP.md` and `LOOP-FLOW-UPDATE.md` into single `LOOP-FLOW-SETUP.md` (v0.3.0).
 
-**What it does:**
-- Verifies existing installation before updating
-- Replaces `.loop-flow/AGENTS.md` with updated workflow rules
-- Preserves project state (backlog, progress, insights)
-- Optionally imports process insights from Loop-Flow development
-- Includes changelog documenting what's new
+**Key features:**
+- Auto-detects whether to bootstrap (fresh) or update (existing)
+- Version number at top for quick reference
+- Full changelog in VERSION HISTORY section
+- One canonical AGENTS.md template (no duplication)
+- Process insights tagged with `loop-flow-core` for methodology updates
+- User tutorial section for fresh installs
 
-**What's in v0.2.0:**
-- Learn mode (new conversation mode)
-- [LEARN] task type
-- Refined mode descriptions (modes as vibes, not commands)
-- Proactive insight capture guidance
-- 5 process insights available for import
+**Design decisions:**
+- Single file reduces confusion for distribution
+- Auto-detect means users don't need to know which command to use
+- Process insights carry Loop-Flow methodology forward; user insights stay separate
+- Version history enables tracking what changed between updates
 
-### Files Created
+### Files Created/Updated
 
-- `LOOP-FLOW-UPDATE.md` — The update file (~500 lines)
+- `LOOP-FLOW-SETUP.md` — Unified setup file (~650 lines)
+- Deleted: `LOOP-FLOW-BOOTSTRAP.md`, `LOOP-FLOW-UPDATE.md`
+- `.loop-flow/plan/backlog.json` — Added LF-020, updated notes
+- `.loop-flow/plan/insights.json` — Added INS-028
+
+### Learnings
+
+- **INS-028**: Bootstrap/setup files should be unified and versioned. Reduces confusion, ensures all installations can be brought to same version. Process insights tagged `loop-flow-core` carry methodology forward.
 
 ### Next Session
 
