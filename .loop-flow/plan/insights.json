@@ -372,6 +372,33 @@
       "tags": ["loop-flow-core", "distribution", "versioning", "process"],
       "links": ["INS-014"],
       "created": "2026-01-18"
+    },
+    {
+      "id": "INS-029",
+      "content": "Skills are reusable agent capabilities that encode specific knowledge about how to perform a task. Two types emerge: (1) Loop-Flow Core Skills — ship with Loop-Flow, available in any project (e.g., /version, /session-start, /session-end), and (2) User-Defined Skills — repo-specific, defined per project for its unique needs (e.g., /deploy, /release-notes). Skills bridge the gap between generic agent capability and project-specific knowledge.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-021",
+        "session": "2026-01-18-S5"
+      },
+      "tags": ["skills", "architecture", "extensibility", "loop-flow-core"],
+      "links": ["INS-028", "INS-002"],
+      "created": "2026-01-18",
+      "notes": "Discovered while doing version bump for LF-021. The repetitive multi-file update pattern suggested a skill. Skills are like 'macros with knowledge' — they know what to do AND where things are."
+    },
+    {
+      "id": "INS-030",
+      "content": "Versioning should have a single source of truth (VERSION_MANIFEST) that lists: current version, changelog, and all locations where version appears. The /version skill reads this manifest, updates it with new changelog entry, then propagates to all referenced files, regenerates distribution files if needed, and verifies consistency. Human triggers version bumps at meaningful milestones, not every commit.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-021",
+        "session": "2026-01-18-S5"
+      },
+      "tags": ["versioning", "skills", "process", "loop-flow-core"],
+      "links": ["INS-029", "INS-028"],
+      "created": "2026-01-18"
     }
   ],
   "link_types": {

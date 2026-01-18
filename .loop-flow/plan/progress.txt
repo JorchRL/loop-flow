@@ -394,4 +394,16 @@ Renamed the Loop-Flow workflow rules file from `AGENTS.md` to `WORKFLOW.md` to a
 - Slimmed README.md to lightweight entry point (was duplicating LOOP-FLOW-SETUP.md content)
 - README now: brief intro, links to setup/docs, philosophy, roadmap
 
+**Discovery: Skills System**
+- Meta-insight: version bumping is a repeatable skill with specific knowledge
+- Two skill types emerged: Loop-Flow Core Skills (ship with LF) and User-Defined Skills (repo-specific)
+- Created VERSION_MANIFEST.md as single source of truth for versioning
+- Added LF-022 task to design the skills system architecture
+- Captured as INS-029 (skills concept) and INS-030 (versioning skill)
+
+### Learnings
+
+- **INS-029**: Skills are reusable agent capabilities that encode specific knowledge. Two types: Core Skills (ship with Loop-Flow) and User-Defined Skills (repo-specific). Skills bridge generic agent capability and project-specific knowledge.
+- **INS-030**: Versioning should have a single source of truth (VERSION_MANIFEST) that lists version, changelog, and all file references. The /version skill reads, updates, propagates, and verifies.
+
 ---

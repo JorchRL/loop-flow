@@ -1,7 +1,7 @@
 {
   "project": "Loop-Flow MCP Server",
   "last_updated": "2026-01-18",
-  "notes": "LF-021 complete: Renamed .loop-flow/AGENTS.md to WORKFLOW.md. Bumped to v0.4.0.",
+  "notes": "LF-021 complete. Added VERSION_MANIFEST.md. Captured skills insight (INS-029, INS-030).",
   "tasks": [
     {
       "id": "LF-021",
@@ -336,7 +336,7 @@
       "id": "LF-019",
       "title": "[DESIGN] Loop-Flow Versioning Scheme",
       "description": "Design how to version Loop-Flow's process knowledge. Should enable: knowing what version a project is on, diffing between versions, changelogs, upgrade paths.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "low",
       "depends_on": ["LF-018"],
       "acceptance_criteria": [
@@ -345,7 +345,22 @@
         "How to generate changelog between versions",
         "How update mechanism uses version info"
       ],
-      "notes": "Deferred. Figure out update mechanism first, then add versioning."
+      "notes": "Implemented via VERSION_MANIFEST.md. Semver, human-triggered bumps, propagation to all referenced files. See INS-030."
+    },
+    {
+      "id": "LF-022",
+      "title": "[DESIGN] Skills System Architecture",
+      "description": "Design the skills system: reusable agent capabilities that encode specific knowledge. Two types: (1) Loop-Flow Core Skills (ship with Loop-Flow, e.g., /version, /session-start), (2) User-Defined Skills (repo-specific, e.g., /deploy). Define where skills live, how they're invoked, how they're structured.",
+      "status": "TODO",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Define skill structure (name, description, steps, knowledge)",
+        "Define where Core Skills live (in LOOP-FLOW-SETUP.md? separate?)",
+        "Define where User Skills live (.loop-flow/skills/?)",
+        "Design invocation pattern (slash commands? tool calls?)",
+        "Prototype /version skill as first example"
+      ],
+      "notes": "Emerged from LF-021 session. Doing version bumps revealed the need for skills. See INS-029, INS-030."
     }
   ]
 }
