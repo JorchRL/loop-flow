@@ -1,8 +1,24 @@
 {
   "project": "Loop-Flow MCP Server",
   "last_updated": "2026-01-17",
-  "notes": "LF-001.5 complete: Domain model refined with Learning as first-class zettelkasten entity. Created insights.json. Ready for LF-001.",
+  "notes": "LF-001.6 complete: Created self-contained LOOP-FLOW-BOOTSTRAP.md for team sharing. Renamed .agents to .loop-flow. Ready for LF-001.",
   "tasks": [
+    {
+      "id": "LF-001.6",
+      "title": "[IMPL] Self-Contained Bootstrap File",
+      "description": "Create LOOP-FLOW-BOOTSTRAP.md that teammates can drop into any repo to scaffold Loop-Flow. Should be self-contained with all templates and instructions.",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Rename .agents to .loop-flow across repo",
+        "Update all doc references",
+        "Create LOOP-FLOW-BOOTSTRAP.md with full templates",
+        "Include all task types, modes, insight protocol",
+        "User tutorial section",
+        "Agent can scaffold from this file alone"
+      ],
+      "notes": "Key insight: terseness in bootstrap files is pre-emptive context rot. Completeness > brevity for one-time-use files. See INS-014."
+    },
     {
       "id": "LF-001.5",
       "title": "[DESIGN] Domain Model Analysis",

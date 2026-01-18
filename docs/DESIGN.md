@@ -369,7 +369,7 @@ loop-flow tasks [--status=todo]
 loop-flow export backlog --format=markdown
 
 # Migrate from file-based workflow
-loop-flow migrate --backlog=.agents/plan/backlog.json --progress=.agents/plan/progress.txt
+loop-flow migrate --backlog=.loop-flow/plan/backlog.json --progress=.loop-flow/plan/progress.txt
 
 # Start local dashboard
 loop-flow ui
@@ -427,7 +427,7 @@ template: nextjs
 - Single backup location
 - CLI/UI can show unified dashboard
 
-**Trade-off:** Less portable (can't just copy `.agents/` folder).
+**Trade-off:** Less portable (can't just copy `.loop-flow/` folder).
 
 ### 2. MCP as Primary Interface
 

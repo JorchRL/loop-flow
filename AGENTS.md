@@ -10,13 +10,15 @@
 
 ## Workflow Rules
 
-1. **Developer has the reins**: The developer is in charge. AI agents are tools to help. The developer makes final decisions and MUST design the architecture, data models, and APIs.
+1. **Developer has the reins**: The developer is in charge. AI agents are tools to help. The developer makes final decisions and MUST design the architecture, data models, and APIs. This isn't just about control — it's about preserving and developing the developer's capacity to think deeply about software.
 
-2. **Ask Questions Before Implementing**: If the requirement is ambiguous, the data model is unclear, or there are multiple implementations, ask for clarification immediately. Ask questions to force the user to think deeply about the problem.
+2. **Ask Questions Before Implementing**: If the requirement is ambiguous, the data model is unclear, or there are multiple implementations, ask for clarification immediately. Ask questions to force the user to think deeply about the problem. The goal is insight, not just answers.
 
-3. **Second order reasoning**: Consider second order effects. Ask the user to consider the second order effects of their design decisions.
+3. **Second order reasoning**: Consider second order effects. Ask the user to consider the second order effects of their design decisions. Help them think, don't think for them.
 
-4. **AI Agents**: **Never** commit or push changes to the repository without explicit permission.
+4. **Foster Learning**: AI should help developers become better engineers, not create dependency. Explain *why*, not just *what*. When possible, teach the underlying concept.
+
+5. **AI Agents**: **Never** commit or push changes to the repository without explicit permission.
 
 ---
 
@@ -83,7 +85,7 @@ Loop-Flow is a **theory preservation system** (ref: Naur's "Programming as Theor
 
 ### Insight Capture Protocol
 
-Insights are first-class entities stored in `.agents/plan/insights.json`. They form a knowledge graph.
+Insights are first-class entities stored in `.loop-flow/plan/insights.json`. They form a knowledge graph.
 
 **Two Modes:**
 
@@ -123,8 +125,8 @@ Insights are first-class entities stored in `.agents/plan/insights.json`. They f
 This project uses the file-based workflow we're building Loop-Flow to replace (dogfooding).
 
 ### 1. START
-- Read `.agents/plan/backlog.json` (task pool)
-- Read `.agents/plan/progress.txt` (recent history)
+- Read `.loop-flow/plan/backlog.json` (task pool)
+- Read `.loop-flow/plan/progress.txt` (recent history)
 - Understand current state
 
 ### 2. SELECT
@@ -147,8 +149,8 @@ This project uses the file-based workflow we're building Loop-Flow to replace (d
 - **No commit if tests fail**
 
 ### 5. UPDATE
-- Update task status in `.agents/plan/backlog.json`
-- Append session entry to `.agents/plan/progress.txt`
+- Update task status in `.loop-flow/plan/backlog.json`
+- Append session entry to `.loop-flow/plan/progress.txt`
 - Mark if manual QA is required
 
 ### 6. HANDOFF
@@ -206,11 +208,11 @@ Agent can name mode shifts in Discovery/Discuss/Review, but NOT in Work (preserv
 
 | Purpose | Location |
 |---------|----------|
-| Task pool | `.agents/plan/backlog.json` |
-| Session history | `.agents/plan/progress.txt` |
-| Insights (knowledge graph) | `.agents/plan/insights.json` |
+| Task pool | `.loop-flow/plan/backlog.json` |
+| Session history | `.loop-flow/plan/progress.txt` |
+| Insights (knowledge graph) | `.loop-flow/plan/insights.json` |
 | Design docs | `docs/` |
-| Reference files | `.agents/reference/` (if needed) |
+| Reference files | `.loop-flow/reference/` (if needed) |
 
 ---
 

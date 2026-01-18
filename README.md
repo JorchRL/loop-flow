@@ -2,7 +2,11 @@
 
 > Structured AI-assisted development workflows that actually work.
 
-Loop-Flow helps you collaborate effectively with AI coding assistants (like Claude) by providing:
+Loop-Flow helps you collaborate effectively with AI coding assistants (like Claude) while **becoming a better engineer** — not just shipping faster.
+
+In a world of "vibe coding" where AI does the thinking, Loop-Flow takes a different stance: **AI should amplify your thinking, not replace it.** The goal isn't just to build software; it's to build software *and* build yourself.
+
+Loop-Flow provides:
 
 - **Session structure** — Clear start/end boundaries for focused work
 - **Task management** — Backlog tracking that persists across sessions
@@ -19,8 +23,9 @@ When working with AI assistants on code:
 2. **Work is scattered** — No clear record of what was done or decided
 3. **Learnings disappear** — Insights discovered in one session aren't available in the next
 4. **Sessions bloat** — Loading too much context makes everything slow
+5. **Thinking atrophies** — If AI does all the thinking, you stop growing as an engineer
 
-Loop-Flow solves this with a simple workflow: **one task, one session, one handoff**.
+Loop-Flow solves this with a simple workflow: **one task, one session, one handoff** — with the human firmly in the driver's seat.
 
 ---
 
@@ -32,27 +37,27 @@ No installation needed. Just add a few files to your repo:
 
 ```bash
 # Create the workflow folder (gitignored)
-mkdir -p .agents/plan
+mkdir -p .loop-flow/plan
 
 # Create the backlog
 echo '{
   "project": "My Project",
   "last_updated": "'$(date +%Y-%m-%d)'",
   "tasks": []
-}' > .agents/plan/backlog.json
+}' > .loop-flow/plan/backlog.json
 
 # Create the progress log
 echo "# Development Progress
 
 This is an append-only log of sessions and learnings.
 
----" > .agents/plan/progress.txt
+---" > .loop-flow/plan/progress.txt
 
 # Create the rules file
 # (Copy from the scaffold instructions or use the template)
 ```
 
-Then add `.agents/` to your `.gitignore`.
+Then add `.loop-flow/` to your `.gitignore`.
 
 See [SCAFFOLD.md](./SCAFFOLD.md) for complete setup instructions.
 
@@ -101,23 +106,25 @@ Every work session follows this pattern:
 
 ## For Junior Developers
 
-Welcome! This workflow will help you:
+Welcome! This workflow will help you **become a great engineer**, not just someone who uses AI to write code.
+
+The temptation with AI is to let it do the thinking. Don't. Your brain is a muscle — if you don't use it, it atrophies. Loop-Flow is designed to keep you in the driver's seat, making decisions, learning from mistakes, and building real understanding.
 
 ### Learn Good Engineering Habits
 
-1. **Think before coding** — Define what "done" looks like before starting
-2. **Work in small increments** — One focused task at a time
-3. **Document as you go** — Future you will thank present you
-4. **Test your work** — No commit if tests fail
+1. **Think before coding** — Define what "done" looks like before starting. AI can help explore options, but *you* decide.
+2. **Work in small increments** — One focused task at a time. This forces clear thinking.
+3. **Document as you go** — Future you will thank present you. Writing clarifies thought.
+4. **Test your work** — No commit if tests fail. Testing is thinking about edge cases.
 
 ### Get Better AI Assistance
 
 The AI works better when you:
 
-- Give it clear, specific tasks
-- Let it ask clarifying questions
-- Review its suggestions critically
-- Capture learnings for next time
+- Give it clear, specific tasks (this requires *you* to think through the problem first)
+- Let it ask clarifying questions (and actually think about your answers)
+- Review its suggestions critically (don't just accept — understand)
+- Capture learnings for next time (reflection builds expertise)
 
 ### Avoid Common Pitfalls
 
@@ -127,12 +134,17 @@ The AI works better when you:
 | Skipping the backlog | Always update task status |
 | Losing insights | Write learnings in progress.txt |
 | Marathon sessions | One task, then handoff |
+| Accepting AI code blindly | Read, understand, then accept or modify |
+
+### The Real Goal
+
+Remember: the code is just the artifact. The real product is **the understanding in your head**. Every session should leave you knowing something you didn't know before — about the problem, the technology, or software engineering itself.
 
 ---
 
 ## Workflow Files
 
-### `.agents/plan/backlog.json`
+### `.loop-flow/plan/backlog.json`
 
 Your task pool. Not a linear queue — pick the most valuable task each session.
 
@@ -164,7 +176,7 @@ Your task pool. Not a linear queue — pick the most valuable task each session.
 - `NEEDS_QA` — Needs human verification
 - `BLOCKED` — Waiting on something
 
-### `.agents/plan/progress.txt`
+### `.loop-flow/plan/progress.txt`
 
 Append-only log of sessions AND learnings.
 
@@ -244,8 +256,8 @@ npm install -g loop-flow
 
 # Migrate your existing workflow
 loop-flow migrate \
-  --backlog .agents/plan/backlog.json \
-  --progress .agents/plan/progress.txt
+  --backlog .loop-flow/plan/backlog.json \
+  --progress .loop-flow/plan/progress.txt
 
 # Now use MCP tools instead of file editing
 ```
@@ -270,10 +282,17 @@ Your task history and learnings transfer automatically.
 
 This workflow is built on a few core beliefs:
 
-1. **AI assistants work best with clear scope** — Ambiguity leads to bad output
-2. **Context windows are precious** — Don't waste them on stale data
-3. **Knowledge should compound** — Learnings from today help tomorrow
-4. **Humans design, AI implements** — You make the decisions
+1. **AI should amplify thinking, not replace it** — You make the decisions. AI helps you explore options faster, but the understanding must live in your head.
+
+2. **The goal is growth, not just output** — Shipping code is good. Becoming a better engineer is better. Loop-Flow optimizes for both.
+
+3. **Context windows are precious** — Don't waste them on stale data. But more importantly, don't waste *your* attention on things AI should handle.
+
+4. **Knowledge should compound** — Learnings from today help tomorrow. Write things down. Reflect. Build expertise over time.
+
+5. **Humans design, AI implements** — Architecture, data models, and key decisions are yours. AI can suggest, but you must understand and choose.
+
+6. **Thinking is a fundamental human capacity** — Don't outsource it. AI is powerful, but over-reliance is dangerous. Use it as a tool, not a crutch.
 
 ---
 

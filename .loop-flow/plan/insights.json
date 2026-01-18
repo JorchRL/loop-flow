@@ -171,6 +171,33 @@
       "tags": ["ux", "modes", "context-management"],
       "links": ["INS-010", "INS-007"],
       "created": "2026-01-17"
+    },
+    {
+      "id": "INS-014",
+      "content": "Terseness in bootstrap/scaffolding files is a form of pre-emptive context rot. You're compacting knowledge before it even reaches the new project. Bootstrap files are used once per project — length doesn't matter, completeness does. Optimize for full knowledge transfer, not brevity.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.6",
+        "session": "2026-01-17-S2"
+      },
+      "tags": ["bootstrap", "context-rot", "knowledge-transfer"],
+      "links": ["INS-007", "INS-005"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-015",
+      "content": "Loop-Flow's secondary goal is fostering learning and growth toward becoming a great software engineer. This contrasts with 'vibe coding' where AI does the thinking. AI is powerful but dangerous to our capacity for deep thought — a fundamental pillar of being human. Loop-Flow uses AI to amplify human thinking, not replace it. The 'developer has the reins' principle isn't just about control; it's about preserving and developing the capacity to think deeply about software.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.6",
+        "session": "2026-01-17-S2"
+      },
+      "tags": ["philosophy", "learning", "growth", "cognition", "anti-vibe-coding"],
+      "links": ["INS-002"],
+      "created": "2026-01-17",
+      "notes": "From Jorge's cognitive science background. AI should be a tool that makes us better thinkers, not a crutch that atrophies our thinking."
     }
   ],
   "link_types": {

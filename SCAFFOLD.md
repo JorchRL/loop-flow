@@ -11,7 +11,7 @@ This guide helps you set up the file-based Loop-Flow workflow in any repository.
 cd /path/to/your/project
 
 # Create the workflow folder
-mkdir -p .agents/plan
+mkdir -p .loop-flow/plan
 ```
 
 ## Step 2: Add to .gitignore
@@ -20,16 +20,16 @@ Add this line to your `.gitignore`:
 
 ```
 # Local AI workflow (personal, not shared)
-.agents/
+.loop-flow/
 ```
 
-> **Why gitignore?** The `.agents/` folder is your personal workflow state. It's not shared with the team. Your committed `AGENTS.md` in the repo root contains the shared team rules.
+> **Why gitignore?** The `.loop-flow/` folder is your personal workflow state. It's not shared with the team. Your committed `AGENTS.md` in the repo root contains the shared team rules.
 
 ---
 
 ## Step 3: Create the Backlog File
 
-Create `.agents/plan/backlog.json`:
+Create `.loop-flow/plan/backlog.json`:
 
 ```json
 {
@@ -44,7 +44,7 @@ Create `.agents/plan/backlog.json`:
 
 ## Step 4: Create the Progress File
 
-Create `.agents/plan/progress.txt`:
+Create `.loop-flow/plan/progress.txt`:
 
 ```markdown
 # YOUR_PROJECT_NAME Development Progress
@@ -96,8 +96,8 @@ Brief description of what this project is and its tech stack.
 This project uses the Loop-Flow workflow for AI-assisted sessions.
 
 ### Session Start
-1. Read `.agents/plan/backlog.json`
-2. Read `.agents/plan/progress.txt` (recent entries)
+1. Read `.loop-flow/plan/backlog.json`
+2. Read `.loop-flow/plan/progress.txt` (recent entries)
 3. Understand current state
 
 ### Session Flow
@@ -109,8 +109,8 @@ This project uses the Loop-Flow workflow for AI-assisted sessions.
 
 | Purpose | Location |
 |---------|----------|
-| Task pool | `.agents/plan/backlog.json` |
-| Session history | `.agents/plan/progress.txt` |
+| Task pool | `.loop-flow/plan/backlog.json` |
+| Session history | `.loop-flow/plan/progress.txt` |
 
 ---
 
@@ -137,7 +137,7 @@ Customize this template for your project's specific tech stack and conventions.
 
 ## Step 6: Add Your First Task
 
-Edit `.agents/plan/backlog.json` to add a task:
+Edit `.loop-flow/plan/backlog.json` to add a task:
 
 ```json
 {
@@ -310,8 +310,8 @@ npm install -g loop-flow
 
 # Migrate existing workflow
 loop-flow migrate \
-  --backlog .agents/plan/backlog.json \
-  --progress .agents/plan/progress.txt
+  --backlog .loop-flow/plan/backlog.json \
+  --progress .loop-flow/plan/progress.txt
 
 # The MCP server now manages your workflow
 # AI tools call loop.start / loop.end instead of reading files
@@ -326,8 +326,8 @@ Your history and learnings are preserved.
 ### Day 1: Setup
 
 ```bash
-mkdir -p .agents/plan
-echo '.agents/' >> .gitignore
+mkdir -p .loop-flow/plan
+echo '.loop-flow/' >> .gitignore
 # Create backlog.json and progress.txt as shown above
 # Create AGENTS.md in repo root
 ```

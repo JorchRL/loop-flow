@@ -179,3 +179,68 @@ Key insight: Interactive pickers (TUI questions) are better than prose for choic
 Ready for LF-001 (MCP Protocol Research).
 
 ---
+
+## 2026-01-17 | Session 2 (Bootstrap File)
+Task: LF-001.6 [IMPL] Self-Contained Bootstrap File
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Created `LOOP-FLOW-BOOTSTRAP.md` — a self-contained file teammates can drop into any repo to scaffold Loop-Flow. Also renamed `.agents/` to `.loop-flow/` across the entire repo for consistency.
+
+**Key outcomes:**
+
+1. **Renamed `.agents/` → `.loop-flow/`** — More descriptive, matches the project name. Updated all references in AGENTS.md, SCAFFOLD.md, README.md, DESIGN.md.
+
+2. **Created comprehensive bootstrap file** (~450 lines) including:
+   - Step-by-step agent instructions
+   - Full `.loop-flow/AGENTS.md` template with ALL concepts:
+     - All task types (`[DESIGN]`, `[IMPL]`, `[SPIKE]`, `[REVIEW]`, `[BUG]`, `[DISCUSS]`, `[DISCOVERY]`)
+     - Conversation modes (Work, Discovery, Discuss, Review) with fluid blending
+     - Insight capture protocol (quick vs deep, leverage hierarchy)
+     - Theory preservation framing (Naur)
+     - "Backlog is a menu, not a queue"
+     - Anti-patterns including context compaction
+   - Templates for backlog.json, progress.txt, insights.json
+   - Instructions for updating root AGENTS.md
+   - Complete user tutorial
+
+3. **Design decision**: Bootstrap files should optimize for completeness, not brevity. They're used once per project — length doesn't matter, knowledge transfer does.
+
+### Files Created/Updated
+
+- `LOOP-FLOW-BOOTSTRAP.md` — New self-contained bootstrap file (~450 lines)
+- `.agents/` → `.loop-flow/` — Renamed folder
+- `AGENTS.md` — Updated all `.agents` references to `.loop-flow`
+- `SCAFFOLD.md` — Updated all `.agents` references to `.loop-flow`
+- `README.md` — Updated all `.agents` references to `.loop-flow`
+- `docs/DESIGN.md` — Updated all `.agents` references to `.loop-flow`
+- `.loop-flow/plan/insights.json` — Added INS-014
+- `.loop-flow/plan/backlog.json` — Added LF-001.6, updated notes
+
+### Learnings
+
+- **INS-014**: Terseness in bootstrap/scaffolding files is a form of pre-emptive context rot. You're compacting knowledge before it even reaches the new project. Bootstrap files are used once per project — length doesn't matter, completeness does.
+
+- **INS-015**: Loop-Flow's secondary goal is fostering learning and growth toward becoming a great software engineer. This contrasts with "vibe coding" where AI does the thinking. AI should amplify human thinking, not replace it. The "developer has the reins" principle isn't just about control — it's about preserving the capacity to think deeply.
+
+### Philosophy Updates
+
+Wove the learning/growth philosophy throughout the docs:
+- README.md: New intro emphasizing growth, updated "For Junior Developers" section, expanded Philosophy section
+- AGENTS.md: Added "Foster Learning" workflow rule
+- LOOP-FLOW-BOOTSTRAP.md: Updated Core Principles, User Tutorial with growth messaging
+
+### How Teammates Use It
+
+1. Download/copy `LOOP-FLOW-BOOTSTRAP.md` to their project
+2. Tell AI: "Please scaffold Loop-Flow using LOOP-FLOW-BOOTSTRAP.md"
+3. Agent creates everything, explains usage, deletes bootstrap file
+4. Ready to start sessions
+
+### Next Session
+
+Ready for LF-001 (MCP Protocol Research).
+
+---
