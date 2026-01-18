@@ -2,7 +2,7 @@
 
 > The single file for bootstrapping or updating Loop-Flow in any repository.
 
-**Version:** 0.3.0 (2026-01-18)
+**Version:** 0.4.0 (2026-01-18)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
 > "Please set up Loop-Flow using LOOP-FLOW-SETUP.md"
@@ -20,7 +20,7 @@ When a user asks you to set up Loop-Flow using this file, perform the following 
 Check if `.loop-flow/` exists with these files:
 - `.loop-flow/plan/backlog.json`
 - `.loop-flow/plan/progress.txt`
-- `.loop-flow/AGENTS.md`
+- `.loop-flow/WORKFLOW.md`
 
 **If ALL exist** → Follow the **UPDATE PATH** (Step U1-U6)
 **If ANY are missing** → Follow the **BOOTSTRAP PATH** (Step B1-B9)
@@ -69,9 +69,9 @@ This file is an append-only log of development sessions **and learnings**.
 
 Use the **TEMPLATE: insights.json** section below.
 
-### Step B6: Create `.loop-flow/AGENTS.md`
+### Step B6: Create `.loop-flow/WORKFLOW.md`
 
-Use the **TEMPLATE: .loop-flow/AGENTS.md** section below.
+Use the **TEMPLATE: .loop-flow/WORKFLOW.md** section below.
 
 ### Step B7: Update the root `AGENTS.md`
 
@@ -106,13 +106,15 @@ After scaffolding, explain the key concepts using the **USER TUTORIAL** section 
 ### Step U1: Confirm update
 
 Tell the user:
-> "Loop-Flow detected (version X or unknown). I'll update to v0.3.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/AGENTS.md` will be replaced. Proceed?"
+> "Loop-Flow detected (version X or unknown). I'll update to v0.4.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
 
 Wait for confirmation.
 
-### Step U2: Replace `.loop-flow/AGENTS.md`
+### Step U2: Replace `.loop-flow/WORKFLOW.md`
 
-Replace contents with the **TEMPLATE: .loop-flow/AGENTS.md** section below.
+Replace contents with the **TEMPLATE: .loop-flow/WORKFLOW.md** section below.
+
+If the file is still named `.loop-flow/AGENTS.md` (from v0.3.0 or earlier), rename it to `.loop-flow/WORKFLOW.md`.
 
 Do NOT modify:
 - `.loop-flow/plan/backlog.json`
@@ -154,7 +156,7 @@ Add this block to the **end** of the existing root `AGENTS.md`:
 
 This project uses the Loop-Flow workflow for AI-assisted development sessions.
 
-**At the start of every session**, read `.loop-flow/AGENTS.md` for workflow instructions.
+**At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
 
 To temporarily disable Loop-Flow, comment out or delete the line above.
 ```
@@ -174,7 +176,7 @@ If creating a new root `AGENTS.md`, use this minimal template:
 
 This project uses the Loop-Flow workflow for AI-assisted development sessions.
 
-**At the start of every session**, read `.loop-flow/AGENTS.md` for workflow instructions.
+**At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
 
 To temporarily disable Loop-Flow, comment out or delete the line above.
 ```
@@ -186,7 +188,7 @@ To temporarily disable Loop-Flow, comment out or delete the line above.
 ```json
 {
   "schema_version": "0.1.0",
-  "loop_flow_version": "0.3.0",
+  "loop_flow_version": "0.4.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
   "insights": [],
   "link_types": {
@@ -200,14 +202,14 @@ To temporarily disable Loop-Flow, comment out or delete the line above.
 
 ---
 
-## TEMPLATE: .loop-flow/AGENTS.md
+## TEMPLATE: .loop-flow/WORKFLOW.md
 
-Create or replace `.loop-flow/AGENTS.md` with this content:
+Create or replace `.loop-flow/WORKFLOW.md` with this content:
 
 ````markdown
 # Loop-Flow Workflow Rules
 
-**Loop-Flow Version:** 0.3.0
+**Loop-Flow Version:** 0.4.0
 
 This file defines how AI agents should work in this repository using the Loop-Flow methodology.
 
@@ -287,7 +289,7 @@ The backlog is a **menu, not a queue** — pick the most valuable task for right
 | Task pool | `.loop-flow/plan/backlog.json` |
 | Session history | `.loop-flow/plan/progress.txt` |
 | Knowledge graph | `.loop-flow/plan/insights.json` |
-| Workflow rules | `.loop-flow/AGENTS.md` (this file) |
+| Workflow rules | `.loop-flow/WORKFLOW.md` (this file) |
 
 ---
 
@@ -632,7 +634,7 @@ Every session should leave you knowing something you didn't know before — abou
 
 To temporarily disable:
 1. Open your root `AGENTS.md`
-2. Comment out or delete the line: `**At the start of every session**, read .loop-flow/AGENTS.md...`
+2. Comment out or delete the line: `**At the start of every session**, read .loop-flow/WORKFLOW.md...`
 
 To re-enable, restore that line.
 
@@ -642,7 +644,7 @@ After setup, your project has:
 
 | File | Purpose |
 |------|---------|
-| `.loop-flow/AGENTS.md` | Workflow rules (agent reads at session start) |
+| `.loop-flow/WORKFLOW.md` | Workflow rules (agent reads at session start) |
 | `.loop-flow/plan/backlog.json` | Your task pool |
 | `.loop-flow/plan/progress.txt` | Session history and learnings |
 | `.loop-flow/plan/insights.json` | Structured knowledge graph |
@@ -651,6 +653,17 @@ After setup, your project has:
 ---
 
 ## VERSION HISTORY
+
+### v0.4.0 (2026-01-18)
+
+**Renamed AGENTS.md to WORKFLOW.md**
+- Renamed `.loop-flow/AGENTS.md` to `.loop-flow/WORKFLOW.md`
+- Avoids confusion with root `AGENTS.md` (repo-specific rules)
+- Root `AGENTS.md` = project rules + "read Loop-Flow"
+- `.loop-flow/WORKFLOW.md` = Loop-Flow methodology
+- Update path now handles renaming from old installations
+
+---
 
 ### v0.3.0 (2026-01-18)
 

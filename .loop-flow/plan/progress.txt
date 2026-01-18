@@ -357,3 +357,41 @@ Merged `LOOP-FLOW-BOOTSTRAP.md` and `LOOP-FLOW-UPDATE.md` into single `LOOP-FLOW
 Continue LF-001.7: Claude Code registration and hello-world implementation.
 
 ---
+
+## 2026-01-18 | Session 5 (Rename AGENTS.md to WORKFLOW.md)
+Task: LF-021 [IMPL] Rename .loop-flow/AGENTS.md to WORKFLOW.md
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Renamed the Loop-Flow workflow rules file from `AGENTS.md` to `WORKFLOW.md` to avoid confusion with the repo's root `AGENTS.md`.
+
+**Changes:**
+- Updated LOOP-FLOW-SETUP.md: all references to `.loop-flow/AGENTS.md` → `.loop-flow/WORKFLOW.md`
+- Bumped version to v0.4.0
+- Added version history entry explaining the change
+- Update path now handles renaming from old installations (v0.3.0 or earlier)
+- Updated docs/DESIGN.md version
+
+**Naming clarity:**
+- Root `AGENTS.md` = repo-specific rules + "read Loop-Flow"
+- `.loop-flow/WORKFLOW.md` = Loop-Flow methodology
+
+**Additional change:** Properly dogfooded the structure:
+- Created `.loop-flow/WORKFLOW.md` with full Loop-Flow methodology
+- Slimmed root `AGENTS.md` to project-specific rules + pointer to Loop-Flow
+- This repo now follows the same structure it prescribes to others
+
+**Consistency pass:**
+- Updated docs/DESIGN.md: fixed task type list in data model diagram
+- Updated docs/UX-REQUIREMENTS.md: bumped version to 0.4.0
+- Updated LOOP-FLOW-SETUP.md: fixed insights.json template version to 0.4.0
+- All docs now consistent on: version (0.4.0), task types (8), file structure (WORKFLOW.md)
+
+**Cleanup:**
+- Deleted SCAFFOLD.md (obsolete, superseded by LOOP-FLOW-SETUP.md)
+- Slimmed README.md to lightweight entry point (was duplicating LOOP-FLOW-SETUP.md content)
+- README now: brief intro, links to setup/docs, philosophy, roadmap
+
+---

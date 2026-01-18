@@ -191,6 +191,6 @@ Format: One line of context, then picker. Not walls of explanation.
 
 ---
 
-*Document version: 0.2.0*
+*Document version: 0.4.0*
 *Last updated: 2026-01-18*
 *Source: Discovery session LF-001.5b (2026-01-17), Learn mode refinement LF-001 (2026-01-18)*

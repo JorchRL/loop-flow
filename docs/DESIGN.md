@@ -128,7 +128,7 @@ Every API response is designed for **minimal context consumption**:
 │ id              │──────<│ repo_id         │
 │ path            │       │ id (prefixed)   │
 │ name            │       │ title           │
-│ agents_md_path  │       │ type            │  ← [IMPL|DESIGN|SPIKE|DISCUSS|REVIEW]
+│ agents_md_path  │       │ type            │  ← [IMPL|DESIGN|SPIKE|LEARN|REVIEW|BUG|DISCUSS|DISCOVERY]
 │ created_at      │       │ description     │
 │ last_session    │       │ status          │
 └─────────────────┘       │ priority        │
@@ -621,6 +621,6 @@ Loop-Flow is **local-first**. Local SQLite is the source of truth. Team/cloud fe
 
 ---
 
-*Document version: 0.3.0*
+*Document version: 0.4.0*
 *Last updated: 2026-01-18*
 *Session: LF-001 MCP Protocol Research*

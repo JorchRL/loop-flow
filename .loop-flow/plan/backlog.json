@@ -1,13 +1,13 @@
 {
   "project": "Loop-Flow MCP Server",
   "last_updated": "2026-01-18",
-  "notes": "LF-020 complete: Unified LOOP-FLOW-SETUP.md with versioning and auto-detect. Ready for LF-001.7.",
+  "notes": "LF-021 complete: Renamed .loop-flow/AGENTS.md to WORKFLOW.md. Bumped to v0.4.0.",
   "tasks": [
     {
       "id": "LF-021",
       "title": "[IMPL] Rename .loop-flow/AGENTS.md to WORKFLOW.md",
       "description": "Rename the Loop-Flow workflow rules file from AGENTS.md to WORKFLOW.md to avoid ambiguity with the repo's root AGENTS.md. The root AGENTS.md contains repo-specific agent rules and just points to Loop-Flow; WORKFLOW.md contains the actual Loop-Flow methodology.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "medium",
       "acceptance_criteria": [
         "Rename .loop-flow/AGENTS.md to .loop-flow/WORKFLOW.md",
