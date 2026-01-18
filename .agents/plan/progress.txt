@@ -1,0 +1,91 @@
+# Loop-Flow Development Progress
+
+This file is an append-only log of development sessions **and learnings**.
+
+- **Session log**: What was done, outcomes, blockers
+- **Learning journal**: Edge cases, domain knowledge, tricks, non-obvious behaviors
+
+---
+
+## 2026-01-17 | Session 0 (Project Bootstrap)
+Task: N/A (Design Session)
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Bootstrapped Loop-Flow project from design discussion in PROTOTYPE repo. Created:
+- Project structure at ~/projects/loop-flow
+- AGENTS.md with workflow rules
+- docs/DESIGN.md with comprehensive architecture
+- Initial backlog with 14 tasks across 4 phases
+- Copied PROTOTYPE workflow files as reference
+
+### Key Design Decisions
+
+1. **Single global SQLite database** (~/.loop-flow/loop-flow.db) for all repos
+2. **MCP as primary AI interface** - focused context returns, not file dumps
+3. **"Loop" semantics** - explicit start/end for sessions
+4. **Learnings as first-class entities** - searchable, tagged, cross-repo
+5. **Minimal per-repo footprint** - optional .loopflow marker only
+6. **TypeScript + Node.js** - matches target users, official MCP SDK
+
+### Learnings
+
+- **Context economy is the core insight**: Current file-based workflow grows unbounded. MCP server can return exactly what's needed.
+- **Multi-repo from day one**: Design for it now, easier than retrofitting.
+- **Team sync is valuable but complex**: Pin for future, don't overcomplicate MVP.
+
+### Open Questions (for LF-001)
+
+- How does Claude Code discover/connect to MCP servers?
+- stdio vs HTTP transport?
+- How to register custom tools?
+
+---
+
+## 2026-01-17 | Session 0b (Documentation)
+Task: N/A (Continuation of bootstrap)
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Completed user-facing documentation for Loop-Flow:
+
+1. **README.md** - User manual with:
+   - Quick start for file-based workflow
+   - "For Junior Developers" section with learning tips
+   - Workflow file examples and formats
+   - Task types and communication protocols
+   - Migration path to MCP server
+
+2. **SCAFFOLD.md** - Step-by-step setup guide:
+   - Folder structure creation
+   - Template files (backlog.json, progress.txt, AGENTS.md)
+   - Example workflow walkthrough
+   - Common pitfalls and solutions
+
+3. **AGENTS.md updates** - Consolidated all rules from both PROTOTYPE files:
+   - Philosophy and coding standards (from root AGENTS.md)
+   - Session workflow mechanics (from .agents/AGENTS.md)
+   - Complete backlog/progress schemas
+   - Task prefixes and special types
+
+### Files Created/Updated
+
+- `README.md` (~250 lines) - User manual
+- `SCAFFOLD.md` (~350 lines) - Setup instructions
+- `AGENTS.md` (~200 lines) - Complete agent rules
+
+### Learnings
+
+- **Two-layer documentation**: README for users (why/what), SCAFFOLD for setup (how), AGENTS.md for AI (rules)
+- **Junior-friendly framing**: Explain not just what to do, but why it helps them grow as engineers
+- **Migration path matters**: Users need to know their work won't be lost when upgrading to MCP
+
+### Next Session
+
+Ready to start LF-001 (MCP Protocol Research) in the loop-flow folder.
+
+---

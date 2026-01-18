@@ -1,0 +1,206 @@
+{
+  "project": "Loop-Flow MCP Server",
+  "last_updated": "2026-01-17",
+  "notes": "Session 0 complete: Project bootstrapped with full documentation. Ready to start LF-001 (MCP Research).",
+  "tasks": [
+    {
+      "id": "LF-000",
+      "title": "[DESIGN] Project Bootstrap & Documentation",
+      "description": "Design session to create Loop-Flow project structure, architecture, and user documentation.",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Project structure created",
+        "DESIGN.md with architecture",
+        "AGENTS.md with complete rules",
+        "README.md user manual",
+        "SCAFFOLD.md setup guide",
+        "Initial backlog with tasks"
+      ],
+      "notes": "Completed in PROTOTYPE repo, then transitioned here. See progress.txt for details."
+    },
+    {
+      "id": "LF-001",
+      "title": "[SPIKE] Research MCP Protocol",
+      "description": "Understand how MCP servers work: protocol, transport (stdio vs HTTP), how Claude Code discovers/connects to them, SDK usage.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Understand MCP message format",
+        "Know how to register tools with Claude Code",
+        "Have working hello-world MCP server",
+        "Document findings in docs/MCP-RESEARCH.md"
+      ],
+      "notes": "Start with Anthropic docs and @anthropic-ai/mcp SDK. Check Claude Code docs for server registration."
+    },
+    {
+      "id": "LF-002",
+      "title": "[IMPL] Set up TypeScript project",
+      "description": "Initialize npm package with TypeScript, ESLint, Vitest, proper tsconfig.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-001"],
+      "acceptance_criteria": [
+        "package.json with proper scripts",
+        "tsconfig.json with strict mode",
+        "ESLint configured",
+        "Vitest for testing",
+        "src/ structure matches design"
+      ]
+    },
+    {
+      "id": "LF-003",
+      "title": "[IMPL] SQLite schema and migrations",
+      "description": "Implement database schema for repos, tasks, sessions, learnings. Use better-sqlite3.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-002"],
+      "acceptance_criteria": [
+        "Schema matches DESIGN.md data model",
+        "Migration system (even if simple)",
+        "CRUD functions for each entity",
+        "Tests for database operations"
+      ]
+    },
+    {
+      "id": "LF-004",
+      "title": "[IMPL] Basic CLI (init, status)",
+      "description": "Implement CLI entry point with commander. Start with init and status commands.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-003"],
+      "acceptance_criteria": [
+        "loop-flow init creates ~/.loop-flow/ and registers repo",
+        "loop-flow status shows current repo and active task",
+        "Proper error handling and help text"
+      ]
+    },
+    {
+      "id": "LF-005",
+      "title": "[IMPL] MCP server skeleton",
+      "description": "Implement MCP server that registers with Claude Code. Start with a simple echo tool.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-001", "LF-002"],
+      "acceptance_criteria": [
+        "MCP server starts via CLI",
+        "Registers with Claude Code (or can be manually added)",
+        "Has one working tool (echo or ping)",
+        "Proper error handling"
+      ]
+    },
+    {
+      "id": "LF-006",
+      "title": "[IMPL] loop.start and loop.end tools",
+      "description": "Core MCP tools for session management. Returns focused context, records outcomes.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-003", "LF-005"],
+      "acceptance_criteria": [
+        "loop.start returns repo info, suggested task, recent learnings",
+        "loop.end records session, updates task, saves learnings",
+        "Context is minimal (token-efficient)",
+        "Tests for both tools"
+      ]
+    },
+    {
+      "id": "LF-007",
+      "title": "[IMPL] task.* MCP tools",
+      "description": "Task management tools: add, update, list, get.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-006"],
+      "acceptance_criteria": [
+        "task.add creates new task",
+        "task.update modifies task",
+        "task.list with filters",
+        "task.get with related context"
+      ]
+    },
+    {
+      "id": "LF-008",
+      "title": "[IMPL] learning.* MCP tools",
+      "description": "Learning management tools: add, search, related.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-006"],
+      "acceptance_criteria": [
+        "learning.add records learning with type/tags",
+        "learning.search with full-text search",
+        "learning.related finds relevant learnings"
+      ]
+    },
+    {
+      "id": "LF-009",
+      "title": "[IMPL] Migration from file-based workflow",
+      "description": "CLI command and MCP tool to migrate backlog.json and progress.txt to SQLite.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-003", "LF-004"],
+      "acceptance_criteria": [
+        "Parses backlog.json format",
+        "Parses progress.txt format (including learnings)",
+        "Imports to SQLite preserving relationships",
+        "Reports import stats"
+      ]
+    },
+    {
+      "id": "LF-010",
+      "title": "[IMPL] Export commands",
+      "description": "Export backlog and progress to human-readable formats.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": ["LF-007", "LF-008"],
+      "acceptance_criteria": [
+        "Export to JSON",
+        "Export to Markdown",
+        "CLI commands and MCP tools"
+      ]
+    },
+    {
+      "id": "LF-011",
+      "title": "[IMPL] Multi-repo support",
+      "description": "Support multiple repos from single Loop-Flow instance.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-006"],
+      "acceptance_criteria": [
+        "repo.init registers new repo",
+        "repo.list shows all repos",
+        "repo.switch changes active repo",
+        "Cross-repo learning search"
+      ]
+    },
+    {
+      "id": "LF-012",
+      "title": "[IMPL] Templates system",
+      "description": "Template system for scaffolding AGENTS.md files.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": ["LF-004"],
+      "acceptance_criteria": [
+        "Generic template",
+        "Next.js template",
+        "Python template",
+        "Template selection in init command"
+      ]
+    },
+    {
+      "id": "LF-013",
+      "title": "[DESIGN] Team sync protocol",
+      "description": "Design how learnings and tasks could be shared across team members.",
+      "status": "TODO",
+      "priority": "low",
+      "notes": "Future feature. Pin for consideration."
+    },
+    {
+      "id": "LF-014",
+      "title": "[IMPL] Local dashboard UI",
+      "description": "Web-based dashboard at localhost for viewing tasks, learnings, progress.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": ["LF-007", "LF-008"],
+      "notes": "Future feature. Consider React + Vite or simple HTML."
+    }
+  ]
+}
