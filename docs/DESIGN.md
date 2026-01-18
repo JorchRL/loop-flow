@@ -522,36 +522,105 @@ Example: 10 edge-case insights about API behavior → 1 architectural insight ab
 
 ## Implementation Phases
 
-### Phase 0: Foundation (Current)
-- [ ] Research MCP protocol
+Loop-Flow is **local-first**. Local SQLite is the source of truth. Team/cloud features layer on top via sync, not the other way around. This preserves developer autonomy, enables offline work, and aligns with "developer has the reins."
+
+### Phase 0: File-Based Bootstrap (Current)
+
+**Goal:** Use the file-based workflow to build Loop-Flow itself. True dogfooding.
+
+```
+┌─────────────┐                    ┌─────────────────────────┐
+│ Claude Code │ ───reads/writes──► │ .loop-flow/plan/        │
+│             │                    │ (backlog.json, etc.)    │
+└─────────────┘                    └─────────────────────────┘
+```
+
+- [x] Project bootstrap and documentation
+- [x] Domain model analysis
+- [x] UX requirements discovery
+- [ ] Research MCP protocol (LF-001) ← **Current**
 - [ ] Set up TypeScript project
 - [ ] Implement SQLite schema
 - [ ] Basic CLI (init, status)
+- [ ] Migration tool from file-based workflow
 
-### Phase 1: Core MCP
-- [ ] MCP server skeleton
+**Exit criteria:** Loop-Flow can manage its own development (replace file-based workflow).
+
+### Phase 1: Local MCP + SQLite (MVP)
+
+**Goal:** Working MCP server that Claude Code can use. Local-only.
+
+```
+┌─────────────┐      stdio      ┌─────────────────────────┐
+│ Claude Code │ ◄─────────────► │ Loop-Flow MCP Server    │
+│             │                 │ (local SQLite)          │
+└─────────────┘                 └─────────────────────────┘
+```
+
+- [ ] MCP server skeleton (stdio transport)
 - [ ] loop.start / loop.end
-- [ ] task.add / task.update / task.list
-- [ ] learning.add / learning.search
+- [ ] task.* tools (add, update, list, get)
+- [ ] learning.* tools (add, search, related, capture)
+- [ ] Register with Claude Code
 
-### Phase 2: Developer Experience
-- [ ] Migration from file-based workflow
-- [ ] Export commands
-- [ ] Local dashboard UI
+**Exit criteria:** Can run a full development session using MCP tools instead of file reads.
+
+### Phase 2: Local Web Dashboard
+
+**Goal:** Human-browsable interface at localhost. MCP server grows an HTTP API.
+
+```
+┌─────────────┐      stdio      ┌─────────────────────────┐
+│ Claude Code │ ◄─────────────► │ Loop-Flow MCP Server    │
+│             │                 │ (local SQLite)          │
+└─────────────┘                 └──────────┬──────────────┘
+                                           │ HTTP API
+┌─────────────────────────────┐            │
+│ Local Web Dashboard         │ ◄──────────┘
+│ (localhost:3000)            │
+└─────────────────────────────┘
+```
+
+- [ ] HTTP API layer (REST or tRPC)
+- [ ] Web UI (React + Vite or similar)
+- [ ] Browse tasks, learnings, sessions
+- [ ] Export/import functionality
 - [ ] Templates system
 
-### Phase 3: Multi-Repo
-- [ ] Repo management commands
-- [ ] Cross-repo learning search
-- [ ] Unified dashboard
+**Exit criteria:** Developer can browse and manage Loop-Flow data without CLI.
 
-### Phase 4: Team Features (Future)
+### Phase 3: Team/SaaS (Optional Future)
+
+**Goal:** Cloud sync for teams. Local remains source of truth.
+
+```
+┌─────────────────────────┐      sync       ┌─────────────────────────┐
+│ Local Loop-Flow         │ ◄─────────────► │ Loop-Flow Cloud         │
+│ (SQLite)                │                 │ (Postgres, teams)       │
+└─────────────────────────┘                 └─────────────────────────┘
+```
+
 - [ ] Sync protocol design
-- [ ] Conflict resolution
-- [ ] Shared learnings
+- [ ] Conflict resolution strategy
+- [ ] Team shared learnings
+- [ ] Multi-user authentication
+- [ ] Potentially: SaaS offering
+
+**Exit criteria:** Team members can share learnings and optionally tasks across machines.
 
 ---
 
-*Document version: 0.2.0*
-*Last updated: 2026-01-17*
-*Session: LF-001.5 Domain Model Analysis*
+## Open Questions
+
+1. ~~**MCP Transport:** stdio vs HTTP?~~ → **Answered:** stdio for local (Phase 1), HTTP+SSE possible for remote (Phase 3)
+2. **Auth:** For team sync, how to handle authentication?
+3. **Conflict Resolution:** If two sessions modify same task?
+4. **Learning Relevance:** How to determine which learnings are relevant to surface?
+5. **Template Inheritance:** Can templates extend other templates?
+6. **Claude Code Registration:** Exact config format for adding MCP servers?
+
+---
+
+*Document version: 0.3.0*
+*Last updated: 2026-01-18*
+*Session: LF-001 MCP Protocol Research*

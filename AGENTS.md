@@ -182,25 +182,31 @@ Future projects using this workflow should define their own prefixes based on co
 - **Uncertain**: Always ask
 
 ### Special Task Types
-- `[REVIEW]` — Audit and triage existing TODOs/docs
-- `[DESIGN]` — Discussion/decision task, not implementation
-- `[SPIKE]` — Exploratory work to reduce uncertainty
 - `[IMPL]` — Implementation task
+- `[DESIGN]` — Discussion/decision task, not implementation
+- `[SPIKE]` — Exploratory work to reduce *our own* uncertainty
+- `[LEARN]` — Acquire *external* domain knowledge (docs, libraries, concepts)
+- `[REVIEW]` — Audit and triage existing TODOs/docs
 - `[DISCUSS]` — Synthesis session for unprocessed insights
 - `[DISCOVERY]` — Rapid Q&A to extract requirements/preferences
 
+**Note**: `[SPIKE]` and `[LEARN]` often blend. A spike may require learning, and learning may surface spikes.
+
 ### Conversation Modes
 
-Modes describe how conversation flows. They blend fluidly — agent reads the vibe.
+Modes are internal vibes the agent spontaneously adopts based on context — not explicit commands. The agent reads the room and adapts. Modes blend fluidly.
 
-| Mode | Purpose | Style |
-|------|---------|-------|
-| **Work** | Implementing, coding | Focused, efficient, minimal meta-commentary |
-| **Discovery** | Extract requirements | Rapid Q&A with choices, breadth over depth |
-| **Discuss** | Explore one insight | Socratic, deep, builds understanding |
-| **Review** | Audit what exists | Evaluative, critical |
+| Mode | Purpose | Style | Primary Output |
+|------|---------|-------|----------------|
+| **Work** | Implementing, coding | Focused, efficient, minimal meta-commentary | Code, tests |
+| **Discovery** | Extract requirements | Rapid Q&A with choices, breadth over depth | Requirements |
+| **Discuss** | Explore one insight deeply | Socratic, philosophical back-and-forth | Insights |
+| **Learn** | Acquire external knowledge | Teaching, questioning, synthesizing | Understanding + insights + refined requirements |
+| **Review** | Audit what exists | Evaluative, critical | Assessments, improvements |
 
-Agent can name mode shifts in Discovery/Discuss/Review, but NOT in Work (preserve context).
+**Learn mode** is distinct: it has a grounding topic (docs, library, domain) that the conversation orbits around. Divergences happen when something sparks — agent notices and gently grounds back ("ready to return to X?"). Learn mode produces understanding, insights, AND design refinements. It's where external knowledge meets project context.
+
+**Mode transitions**: Agent can name mode shifts in Discovery/Discuss/Learn/Review to orient the conversation, but NOT in Work (preserve context). Modes often blend — e.g., Learn can spark Discuss on a specific insight, then return to Learn.
 
 ---
 

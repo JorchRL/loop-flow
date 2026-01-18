@@ -198,6 +198,167 @@
       "links": ["INS-002"],
       "created": "2026-01-17",
       "notes": "From Jorge's cognitive science background. AI should be a tool that makes us better thinkers, not a crutch that atrophies our thinking."
+    },
+    {
+      "id": "INS-016",
+      "content": "When teaching domain concepts, provide probing questions alongside the explanation. Questions guide active reading and help the learner build their own mental model rather than passively absorbing information.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["teaching", "learning", "ai-agent-patterns", "loop-flow-domain"],
+      "links": ["INS-015", "INS-011"],
+      "created": "2026-01-18",
+      "notes": "Discovered while teaching MCP concepts. Connects to the broader Loop-Flow philosophy of fostering growth (INS-015) and the Discovery mode pattern of guided exploration (INS-011)."
+    },
+    {
+      "id": "INS-017",
+      "content": "Loop-Flow architecture is local-first. Local SQLite is source of truth. Team/cloud features layer on top via sync, not the other way around. This preserves developer autonomy, enables offline work, and keeps the MVP simple. Remote-first would create service dependency that contradicts 'developer has the reins'.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["architecture", "local-first", "design-decision"],
+      "links": ["INS-015", "INS-002"],
+      "created": "2026-01-18"
+    },
+    {
+      "id": "INS-018",
+      "content": "Loop-Flow evolves in four phases: Phase 0 (file-based bootstrap — current workflow bootstraps the MCP implementation), Phase 1 (local MCP + SQLite — MVP), Phase 2 (local web dashboard via HTTP API), Phase 3 (optional SaaS with cloud sync for teams). Each phase is self-contained and valuable. The MCP server can grow an HTTP API without changing the MCP interface — clean separation of concerns.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["architecture", "roadmap", "phases", "dogfooding"],
+      "links": ["INS-017", "INS-002"],
+      "created": "2026-01-18",
+      "notes": "Phase 0 is key: Loop-Flow uses its own file-based workflow to build itself. True dogfooding."
+    },
+    {
+      "id": "INS-019",
+      "content": "AI should proactively probe for emerging insights during conversation. When an idea starts floating around but isn't yet articulated, steer toward surfacing it. Don't wait for the user to explicitly say 'let's capture this' — notice the nascent insight and help bring it into focus. This is active theory extraction, not passive note-taking.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["ai-agent-patterns", "insight-capture", "proactive", "theory-building"],
+      "links": ["INS-015", "INS-016", "INS-004"],
+      "created": "2026-01-18",
+      "notes": "Meta-insight: this insight itself was surfaced by the user noticing the agent wasn't doing this proactively enough. The agent should have noticed the pattern emerging (INS-016 + INS-015) and proposed this synthesis."
+    },
+    {
+      "id": "INS-020",
+      "content": "Periodic insight review sessions ([REVIEW] tasks) could be valuable: browse accumulated insights, find new connections, synthesize higher-level principles. This is gardening the knowledge graph, not just adding to it.",
+      "type": "process",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["insight-capture", "knowledge-management", "review", "synthesis"],
+      "links": ["INS-003", "INS-005"],
+      "created": "2026-01-18"
+    },
+    {
+      "id": "INS-021",
+      "content": "Loop-Flow could proactively seek llm.txt or similar machine-readable domain knowledge hooks when entering a new domain. These files are designed to give LLMs efficient context about a project/technology. During learning and discovery phases, the agent could look for these to accelerate understanding.",
+      "type": "domain",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["learning", "discovery", "context-efficiency", "llm-txt", "future-feature"],
+      "links": ["INS-016", "INS-019"],
+      "created": "2026-01-18"
+    },
+    {
+      "id": "INS-022",
+      "content": "MCP distinguishes Tools (model-controlled actions) from Resources (application-controlled context). Tools are for doing things (task.add, loop.end). Resources are for providing data (loopflow://learnings/recent). Resources let the host decide WHEN to fetch context, which helps manage context pollution. Loop-Flow should use both: Tools for actions, Resources for context that the host can selectively load.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["mcp", "architecture", "tools", "resources", "context-management"],
+      "links": ["INS-017", "INS-007"],
+      "created": "2026-01-18"
+    },
+    {
+      "id": "INS-023",
+      "content": "Loop-Flow should maintain a domain knowledge index — a database of links to external docs, references, and context sources. Designed like llms.txt: an index with links that agents can 'glance' at without loading everything. The agent sees what's available, then fetches only what's needed. This is 'lazy loading' for context. A subagent could read the index and decide what to expose to the main agent, acting as a context curator.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["architecture", "context-management", "domain-knowledge", "lazy-loading", "subagent"],
+      "links": ["INS-021", "INS-022", "INS-007", "INS-005"],
+      "created": "2026-01-18",
+      "notes": "Inspired by llms.txt pattern. Connects to context scaling (INS-005) and the MCP Resources primitive (INS-022). The subagent-as-curator idea is powerful — separates 'what exists' from 'what's relevant now'."
+    },
+    {
+      "id": "INS-024",
+      "content": "Two-tier context curation: Tier 1 uses embeddings/vector similarity for fast recall (narrow 1000s to 10s). Tier 2 uses LLM judgment for precise selection (narrow 10s to the right 2-3). Embeddings are cheap and fast but lack reasoning. LLMs are expensive but apply judgment. Combine them: vector search surfaces candidates, LLM curator picks winners. Main agent's context stays clean.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["architecture", "context-management", "embeddings", "curation", "two-tier"],
+      "links": ["INS-023", "INS-022", "INS-005"],
+      "created": "2026-01-18"
+    },
+    {
+      "id": "INS-025",
+      "content": "Learning and discovery are not sequential phases — they blend together in a generative loop. The agent's input prompts the human to think deeper about the domain, which surfaces new insights, which the agent helps articulate, which prompts further thinking. This co-creative dialogue is a key aspect of Loop-Flow. The agent isn't just extracting knowledge — it's catalyzing knowledge creation.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["process", "learning", "discovery", "co-creation", "dialogue", "loop-flow-philosophy"],
+      "links": ["INS-019", "INS-016", "INS-015", "INS-011"],
+      "created": "2026-01-18",
+      "notes": "High-leverage process insight. This is what makes Loop-Flow different from a passive note-taking system. The agent is an active thinking partner."
+    },
+    {
+      "id": "INS-026",
+      "content": "Modes are internal vibes the agent spontaneously takes based on context. Tasks are explicit activities requested by the user or proposed by the agent. Modes are fluid and blend; tasks are discrete and trackable. The agent doesn't announce mode switches — it reads the room and adapts.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["process", "modes", "tasks", "loop-flow-philosophy"],
+      "links": ["INS-010", "INS-011", "INS-025"],
+      "created": "2026-01-18"
+    },
+    {
+      "id": "INS-027",
+      "content": "Learn mode: acquiring external knowledge and grounding it in the project's context. Has a grounding topic (docs, library, domain) that we orbit around. Divergences happen when something sparks — agent notices and gently grounds back. Produces: understanding, insights, AND design refinements. Distinct from Discovery (focused requirements extraction) and Discuss (philosophical back-and-forth on insights). Learn mode blends teaching, questioning, and synthesizing.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-18-S3"
+      },
+      "tags": ["process", "modes", "learning", "loop-flow-philosophy"],
+      "links": ["INS-025", "INS-026", "INS-011", "INS-016"],
+      "created": "2026-01-18"
     }
   ],
   "link_types": {

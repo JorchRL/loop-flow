@@ -117,24 +117,38 @@ Scope: Current project by default. Say "search all projects" to expand.
 
 ## Conversation Modes
 
-Modes are descriptive, not prescriptive. Agent reads the vibe and adapts.
+Modes are internal vibes the agent spontaneously adopts — not explicit commands. The agent reads the room and adapts. Modes blend fluidly.
 
 | Mode | What it is | Style | Output |
 |------|-----------|-------|--------|
 | **Work** | Implementing, coding, fixing | Focused, efficient | Code, tests, docs |
 | **Discovery** | Extract requirements | Rapid Q&A, choices | Decisions, preferences |
-| **Discuss** | Deep Socratic exploration | Slow, thoughtful | Refined insights, links |
+| **Discuss** | Deep Socratic exploration | Slow, philosophical | Refined insights, links |
+| **Learn** | Acquire external knowledge | Teaching, questioning, synthesizing | Understanding + insights + refined requirements |
 | **Review** | Auditing, critiquing | Evaluative | Feedback, suggestions |
 
 ### Mode Transitions
 
 - Fluid blending, no explicit switches
 - Agent can name shifts when helpful — EXCEPT in Work mode (preserve context budget)
+- Modes often blend — e.g., Learn can spark Discuss on a specific insight, then return to Learn
 - Examples:
   - "Wait, why are we doing it this way?" → Discuss
   - "What are the options here?" → Discovery
   - "Ok let's just do it" → Work
   - "Show me what's there" → Review
+  - "Teach me about X" or "Let's research Y" → Learn
+
+### Learn Mode Details
+
+Acquiring external knowledge and grounding it in the project's context.
+
+- Has a **grounding topic** (docs, library, domain) that the conversation orbits around
+- Divergences happen when something sparks — agent notices and gently grounds back ("ready to return to X?")
+- Produces understanding, insights, AND design refinements
+- Distinct from Discovery (focused requirements extraction) and Discuss (philosophical back-and-forth on insights)
+- Agent provides probing questions to guide active reading
+- Blends teaching, questioning, and synthesizing
 
 ### Discovery Mode Details
 
@@ -157,9 +171,12 @@ Rapid-fire questions with constrained choices. Agent extracts requirements from 
 | `[IMPL]` | Implementation work |
 | `[DESIGN]` | Design discussion, architecture decisions |
 | `[SPIKE]` | Exploratory research to reduce uncertainty |
+| `[LEARN]` | Acquire external domain knowledge (docs, libraries, concepts) |
 | `[REVIEW]` | Audit existing code, docs, TODOs |
 | `[DISCUSS]` | Synthesize unprocessed insights |
 | `[DISCOVERY]` | Requirement-gathering session |
+
+**Note on [SPIKE] vs [LEARN]**: A spike explores *our own* uncertainty (can we do X? what's the right approach?). Learn acquires *external* knowledge (how does MCP work? what's in this library?). They often blend — a spike may require learning, and learning may surface spikes.
 
 ---
 
@@ -174,5 +191,6 @@ Format: One line of context, then picker. Not walls of explanation.
 
 ---
 
-*Document version: 0.1.0*
-*Source: Discovery session LF-001.5b, 2026-01-17*
+*Document version: 0.2.0*
+*Last updated: 2026-01-18*
+*Source: Discovery session LF-001.5b (2026-01-17), Learn mode refinement LF-001 (2026-01-18)*

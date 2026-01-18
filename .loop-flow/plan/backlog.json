@@ -54,7 +54,7 @@
       "id": "LF-001",
       "title": "[SPIKE] Research MCP Protocol",
       "description": "Understand how MCP servers work: protocol, transport (stdio vs HTTP), how Claude Code discovers/connects to them, SDK usage.",
-      "status": "TODO",
+      "status": "IN_PROGRESS",
       "priority": "high",
       "depends_on": ["LF-001.5"],
       "acceptance_criteria": [
@@ -63,7 +63,21 @@
         "Have working hello-world MCP server",
         "Document findings in docs/MCP-RESEARCH.md"
       ],
-      "notes": "Start with Anthropic docs and @anthropic-ai/mcp SDK. Check Claude Code docs for server registration."
+      "notes": "Start with Anthropic docs and @anthropic-ai/mcp SDK. Check Claude Code docs for server registration. Session 3 progress: understood architecture, primitives, transports. Still need: Claude Code registration, hello-world server, MCP-RESEARCH.md."
+    },
+    {
+      "id": "LF-001.7",
+      "title": "[LEARN] Complete MCP Research",
+      "description": "Continue MCP learning from Session 3. Remaining: figure out Claude Code server registration, build hello-world MCP server, document findings.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-001"],
+      "acceptance_criteria": [
+        "Understand Claude Code MCP server registration config",
+        "Build and test hello-world MCP server",
+        "Document all findings in docs/MCP-RESEARCH.md"
+      ],
+      "notes": "Continuation of LF-001. See Session 3 progress for context. Consider this the 'implementation' half of the research."
     },
     {
       "id": "LF-002",
@@ -255,6 +269,52 @@
         "Marks insight as unprocessed",
         "Returns immediately to minimize context use"
       ]
+    },
+    {
+      "id": "LF-017",
+      "title": "[DESIGN] Context Intelligence Subsystem",
+      "description": "Design the knowledge retrieval architecture: domain knowledge index (llms.txt-style), two-tier curation (embeddings + LLM judgment), lazy loading, MCP Resources for context. This is how Loop-Flow manages what context to surface without polluting the main agent's window.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-001"],
+      "acceptance_criteria": [
+        "Define domain knowledge index schema (links, summaries, embeddings)",
+        "Design two-tier curation flow (vector recall → LLM selection)",
+        "Decide: subagent vs MCP sampling for LLM curation",
+        "Map to MCP primitives (which are Tools vs Resources)",
+        "Document in docs/CONTEXT-INTELLIGENCE.md"
+      ],
+      "notes": "Emerged from LF-001 research session. See INS-022, INS-023, INS-024. Key insight: Loop-Flow isn't just storing knowledge — it's a knowledge retrieval system with real architecture."
+    },
+    {
+      "id": "LF-018",
+      "title": "[IMPL] Loop-Flow Update Mechanism",
+      "description": "Create a document/file that lets an agent update a local file-based Loop-Flow installation to the latest process knowledge. Like LOOP-FLOW-BOOTSTRAP.md but for upgrades. Should include updated AGENTS.md content, new modes/task types, and selected process insights.",
+      "status": "DONE",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Create LOOP-FLOW-UPDATE.md (or similar) with update instructions for agents",
+        "Include latest AGENTS.md template content",
+        "Include selected process insights (filter by type=process, relevant to workflow)",
+        "Agent can apply update to any file-based Loop-Flow installation",
+        "Document what gets updated vs what stays (project state preserved)"
+      ],
+      "notes": "Enables propagating workflow improvements to other projects using file-based Loop-Flow. Versioning is separate task (LF-019)."
+    },
+    {
+      "id": "LF-019",
+      "title": "[DESIGN] Loop-Flow Versioning Scheme",
+      "description": "Design how to version Loop-Flow's process knowledge. Should enable: knowing what version a project is on, diffing between versions, changelogs, upgrade paths.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": ["LF-018"],
+      "acceptance_criteria": [
+        "Version scheme defined (semver? date-based?)",
+        "Where version is stored in file-based installations",
+        "How to generate changelog between versions",
+        "How update mechanism uses version info"
+      ],
+      "notes": "Deferred. Figure out update mechanism first, then add versioning."
     }
   ]
 }

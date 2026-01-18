@@ -244,3 +244,98 @@ Wove the learning/growth philosophy throughout the docs:
 Ready for LF-001 (MCP Protocol Research).
 
 ---
+
+## 2026-01-18 | Session 3 (MCP Research + Process Refinement)
+Task: LF-001 [SPIKE] Research MCP Protocol
+Outcome: IN_PROGRESS (substantial learning, not yet complete)
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Learning session on MCP protocol that evolved into significant process and architecture refinements. True blend of Learn, Discuss, and Discovery modes — which itself became an insight.
+
+**MCP Research Outcomes:**
+- Understood Host/Client/Server architecture (host launches servers, creates client per server)
+- Clarified the three primitives: Tools (model-controlled actions), Resources (app-controlled context), Prompts (user-triggered templates)
+- Understood transports: stdio for local, HTTP+SSE for remote
+- Identified context pollution concern: all tool definitions from all servers loaded into context
+- Fetched and analyzed official MCP docs via llms.txt
+
+**Architecture Decisions:**
+- Local-first architecture confirmed (INS-017)
+- Four-phase roadmap defined: Phase 0 (file-based bootstrap), Phase 1 (local MCP+SQLite), Phase 2 (web dashboard), Phase 3 (team/SaaS) — see INS-018
+- Tools vs Resources distinction for Loop-Flow API design (INS-022)
+- Two-tier context curation: embeddings for recall, LLM for judgment (INS-024)
+- Domain knowledge index concept (llms.txt-style lazy loading) — INS-023
+
+**Process Refinements:**
+- Discovered Learn mode as distinct from Discovery and Discuss (INS-027)
+- Clarified Modes vs Tasks: modes are vibes, tasks are explicit (INS-026)
+- Probing questions during teaching (INS-016)
+- Proactive insight surfacing (INS-019)
+- Learning and discovery blend in generative loop (INS-025)
+
+### Files Created/Updated
+
+- `docs/DESIGN.md` — Rewrote Implementation Phases with four-phase roadmap and diagrams
+- `docs/UX-REQUIREMENTS.md` — Added Learn mode, refined mode descriptions, added [LEARN] task type
+- `AGENTS.md` — Added Learn mode, [LEARN] task type, refined mode descriptions
+- `.loop-flow/plan/insights.json` — Added INS-016 through INS-027 (12 new insights!)
+- `.loop-flow/plan/backlog.json` — Added LF-017 (Context Intelligence), LF-018 (Update Mechanism), LF-019 (Versioning)
+
+### Insights Added
+
+| ID | Type | Summary |
+|----|------|---------|
+| INS-016 | process | Probing questions guide active learning |
+| INS-017 | architecture | Local-first architecture decision |
+| INS-018 | architecture | Four-phase evolution roadmap |
+| INS-019 | process | Proactively surface emerging insights |
+| INS-020 | process | Periodic insight review sessions (unprocessed) |
+| INS-021 | domain | Seek llms.txt-style knowledge hooks |
+| INS-022 | architecture | MCP Tools vs Resources distinction |
+| INS-023 | architecture | Domain knowledge index with lazy loading |
+| INS-024 | architecture | Two-tier curation (embeddings + LLM) |
+| INS-025 | process | Learning and discovery blend together |
+| INS-026 | process | Modes are vibes, tasks are explicit |
+| INS-027 | process | Learn mode definition |
+
+### Still TODO for LF-001
+- How to register MCP server with Claude Code
+- Build hello-world MCP server
+- Document findings in docs/MCP-RESEARCH.md
+
+---
+
+## 2026-01-18 | Session 3b (Update Mechanism)
+Task: LF-018 [IMPL] Loop-Flow Update Mechanism
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Created `LOOP-FLOW-UPDATE.md` — a file that lets agents update existing file-based Loop-Flow installations to the latest process knowledge.
+
+**What it does:**
+- Verifies existing installation before updating
+- Replaces `.loop-flow/AGENTS.md` with updated workflow rules
+- Preserves project state (backlog, progress, insights)
+- Optionally imports process insights from Loop-Flow development
+- Includes changelog documenting what's new
+
+**What's in v0.2.0:**
+- Learn mode (new conversation mode)
+- [LEARN] task type
+- Refined mode descriptions (modes as vibes, not commands)
+- Proactive insight capture guidance
+- 5 process insights available for import
+
+### Files Created
+
+- `LOOP-FLOW-UPDATE.md` — The update file (~500 lines)
+
+### Next Session
+
+Continue LF-001.7: Claude Code registration and hello-world implementation.
+
+---
