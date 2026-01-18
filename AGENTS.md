@@ -73,11 +73,48 @@
 
 ## Learning & Documentation
 
-**Record Your Learnings**: When you discover edge cases, domain quirks, non-obvious behaviors, or useful tricks—write them down. A progress log, comments, or docs. Knowledge that stays in your head (or the AI's context) is knowledge that gets lost.
+Loop-Flow is a **theory preservation system** (ref: Naur's "Programming as Theory Building"). The code is the artifact, but the theory in your head is the real product. Capture it or lose it.
+
+**Record Your Learnings**: When you discover edge cases, domain quirks, non-obvious behaviors, or useful tricks—write them down. Knowledge in the AI's context window gets lost between sessions.
 
 **Proactive Insight Capture**: AI agents should actively propose when something is worth documenting—don't just silently note things. Ask the developer: "Should we capture this insight?"
 
 **Rubber Ducking**: Explain problems in chat to find solutions. Write down what you expected, what happened, and what you've tried.
+
+### Insight Capture Protocol
+
+Insights are first-class entities stored in `.agents/plan/insights.json`. They form a knowledge graph.
+
+**Two Modes:**
+
+1. **Quick Capture** — Don't derail the current task
+   - Snapshot the insight with minimal detail
+   - Mark as `unprocessed`
+   - Optionally schedule a `[DISCUSS]` task
+   - Return to work immediately
+
+2. **Deep Synthesis** — Dedicated discussion time
+   - Socratic exploration: why does this matter? what connects?
+   - Create links to related insights
+   - May synthesize new higher-level insights
+   - Mark as `discussed`
+
+**Leverage Hierarchy** (prioritize higher-leverage insights):
+
+| Type | Leverage | Description |
+|------|----------|-------------|
+| `process` | Highest | How to work better (meta-learning) |
+| `domain` | High | Problem space knowledge |
+| `architecture` | Medium-High | Design decisions and rationale |
+| `edge_case` | Medium | Non-obvious behavior, test insights |
+| `technical` | Lower | Useful tricks, local knowledge |
+
+**When to Capture:**
+- Process improvements (these are GOLD)
+- Domain discoveries that shape design
+- Architectural decisions with rationale
+- Edge cases that inform testing
+- Technical tricks (lower priority, but still useful)
 
 ---
 
@@ -147,6 +184,21 @@ Future projects using this workflow should define their own prefixes based on co
 - `[DESIGN]` — Discussion/decision task, not implementation
 - `[SPIKE]` — Exploratory work to reduce uncertainty
 - `[IMPL]` — Implementation task
+- `[DISCUSS]` — Synthesis session for unprocessed insights
+- `[DISCOVERY]` — Rapid Q&A to extract requirements/preferences
+
+### Conversation Modes
+
+Modes describe how conversation flows. They blend fluidly — agent reads the vibe.
+
+| Mode | Purpose | Style |
+|------|---------|-------|
+| **Work** | Implementing, coding | Focused, efficient, minimal meta-commentary |
+| **Discovery** | Extract requirements | Rapid Q&A with choices, breadth over depth |
+| **Discuss** | Explore one insight | Socratic, deep, builds understanding |
+| **Review** | Audit what exists | Evaluative, critical |
+
+Agent can name mode shifts in Discovery/Discuss/Review, but NOT in Work (preserve context).
 
 ---
 
@@ -156,6 +208,7 @@ Future projects using this workflow should define their own prefixes based on co
 |---------|----------|
 | Task pool | `.agents/plan/backlog.json` |
 | Session history | `.agents/plan/progress.txt` |
+| Insights (knowledge graph) | `.agents/plan/insights.json` |
 | Design docs | `docs/` |
 | Reference files | `.agents/reference/` (if needed) |
 

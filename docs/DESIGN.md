@@ -40,13 +40,44 @@ A **Repository** is a codebase being managed:
 - Can reference a root `AGENTS.md` for team rules
 - Multiple repos managed by one Loop-Flow instance
 
-### 3. Learnings
+### 3. Learnings (Zettelkasten)
 
-**Learnings** are first-class entities, not just log entries:
-- Tagged by topic, task, or domain
-- Searchable across repos
-- Can be surfaced when relevant context is detected
-- Persist across sessions
+**Learnings** are first-class entities forming a **knowledge graph**, not just log entries.
+
+Inspired by Naur's "Programming as Theory Building" — the code is the artifact, but the **theory in your head** is the real product. Loop-Flow is a **theory preservation system**.
+
+Properties:
+- **Linked**: Learnings connect to other learnings (the link itself is often an insight)
+- **Typed**: Categorized by leverage level
+- **Cross-repo**: Searchable across all projects
+- **Stateful**: Can be `unprocessed` (quick capture) or `discussed` (synthesized)
+
+#### Learning Leverage Hierarchy
+
+Not all learnings are equal. Higher-leverage learnings compound more:
+
+| Level | Type | Description | Example |
+|-------|------|-------------|---------|
+| 1 (Highest) | `process` | Meta-learning about how to work | "Smaller tasks work better than big ones" |
+| 2 | `domain` | Problem space knowledge | "Users expect weekly reports on Mondays" |
+| 3 | `architecture` | Design decisions and rationale | "Chose SQLite because single-user, no server" |
+| 4 | `edge_case` | Non-obvious behavior, testing insights | "API returns null for empty arrays" |
+| 5 (Lowest) | `technical` | Useful tricks, local knowledge | "Use `--no-verify` to skip hooks" |
+
+#### Quick Capture vs Deep Synthesis
+
+Learnings have two modes:
+
+1. **Quick capture** — Snapshot insight without derailing current work
+   - Minimal context spent
+   - Marked as `unprocessed`
+   - Auto-schedules `[DISCUSS]` task
+
+2. **Deep synthesis** — Dedicated time to link, enrich, discuss
+   - Socratic exploration of the insight
+   - Create links to related learnings
+   - May synthesize new higher-level insights
+   - Mark as `discussed`
 
 ### 4. Context Economy
 
@@ -97,10 +128,11 @@ Every API response is designed for **minimal context consumption**:
 │ id              │──────<│ repo_id         │
 │ path            │       │ id (prefixed)   │
 │ name            │       │ title           │
-│ agents_md_path  │       │ description     │
-│ created_at      │       │ status          │
-│ last_session    │       │ priority        │
-└─────────────────┘       │ depends_on[]    │
+│ agents_md_path  │       │ type            │  ← [IMPL|DESIGN|SPIKE|DISCUSS|REVIEW]
+│ created_at      │       │ description     │
+│ last_session    │       │ status          │
+└─────────────────┘       │ priority        │
+         │                │ depends_on[]    │
          │                │ acceptance[]    │
          │                │ notes           │
          │                │ created_at      │
@@ -114,22 +146,49 @@ Every API response is designed for **minimal context consumption**:
 │ id              │──────<│ session_id      │
 │ repo_id         │       │ repo_id         │
 │ task_id         │       │ task_id (opt)   │
-│ started_at      │       │ type            │
+│ started_at      │       │ type            │  ← process|domain|architecture|edge_case|technical
 │ ended_at        │       │ content         │
 │ outcome         │       │ tags[]          │
-│ notes           │       │ created_at      │
-└─────────────────┘       └─────────────────┘
+│ notes           │       │ status          │  ← unprocessed|discussed
+└─────────────────┘       │ links[]         │  ← IDs of related learnings
+                          │ created_at      │
+                          └─────────────────┘
+                                   │
+                                   ▼
+                          ┌─────────────────┐
+                          │ learning_links  │  (join table for rich links)
+                          ├─────────────────┤
+                          │ from_id         │
+                          │ to_id           │
+                          │ relation        │  ← builds_on|contradicts|exemplifies|synthesizes
+                          │ note (opt)      │  ← the link itself can be an insight
+                          └─────────────────┘
 ```
 
-### Learning Types
+#### Learning-to-Learning Relationships
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `edge_case` | Non-obvious behavior discovered | "Prisma returns null for empty arrays" |
-| `domain` | Problem space knowledge | "Users expect weekly reports on Mondays" |
-| `pattern` | Useful code pattern | "Use discriminated unions for state" |
-| `decision` | Architectural choice made | "Chose SQLite over Postgres for simplicity" |
-| `gotcha` | Thing that tripped us up | "Remember to await the middleware" |
+Links between learnings are first-class because **the relationship is often an insight itself**.
+
+| Relation | Meaning |
+|----------|---------|
+| `builds_on` | This insight extends or deepens another |
+| `contradicts` | This insight challenges or refines another |
+| `exemplifies` | This is a concrete example of an abstract insight |
+| `synthesizes` | This insight was created by combining others |
+
+### Learning Types (by Leverage)
+
+| Type | Leverage | Description | Example |
+|------|----------|-------------|---------|
+| `process` | Highest | How to work better | "One task per session prevents context rot" |
+| `domain` | High | Problem space knowledge | "Users expect weekly reports on Mondays" |
+| `architecture` | Medium-High | Design decisions and why | "Chose SQLite over Postgres for simplicity" |
+| `edge_case` | Medium | Non-obvious behavior, test insights | "Prisma returns null for empty arrays" |
+| `technical` | Lower | Useful tricks, local knowledge | "Use discriminated unions for state" |
+
+**Note:** `pattern` and `gotcha` from earlier design are subsumed:
+- `pattern` → usually `architecture` or `technical` depending on scope
+- `gotcha` → usually `edge_case`
 
 ---
 
@@ -211,13 +270,31 @@ task.get(id: string) → {
 ### Learning Management
 
 ```typescript
-// Record a learning (also possible via loop.end)
+// Quick capture an insight (minimal context, schedules [DISCUSS] task)
+learning.capture({
+  content: string,
+  type?: LearningType,  // Optional, can be classified later
+  tags?: string[],
+  taskId?: string
+}) → { learning: Learning, discussTask: Task }
+
+// Record a fully-formed learning (also possible via loop.end)
 learning.add({
   type: LearningType,
   content: string,
   tags?: string[],
-  taskId?: string
+  taskId?: string,
+  status?: 'unprocessed' | 'discussed',
+  links?: Array<{ toId: string, relation: LinkRelation, note?: string }>
 }) → Learning
+
+// Link two learnings (the link itself can have a note/insight)
+learning.link({
+  fromId: string,
+  toId: string,
+  relation: 'builds_on' | 'contradicts' | 'exemplifies' | 'synthesizes',
+  note?: string  // The link itself can be an insight
+}) → LearningLink
 
 // Search learnings
 learning.search({
@@ -396,6 +473,17 @@ template: nextjs
 
 ## Future Considerations (Pinned Ideas)
 
+### Knowledge Abstraction & Context Scaling
+
+As learnings accumulate, we can't load everything into context. Solution: **abstraction mirrors how humans learn**.
+
+- Many concrete insights → synthesize into fewer abstract principles
+- Concrete insights "archive" (still searchable, not loaded by default)
+- Abstract principles loaded, concretes fetched on-demand
+- This keeps context bounded while wisdom grows
+
+Example: 10 edge-case insights about API behavior → 1 architectural insight about "defensive API consumption patterns"
+
 ### Team Sharing
 - Sync learnings across team members
 - Shared task backlog (team mode)
@@ -464,5 +552,6 @@ template: nextjs
 
 ---
 
-*Document version: 0.1.0*
+*Document version: 0.2.0*
 *Last updated: 2026-01-17*
+*Session: LF-001.5 Domain Model Analysis*

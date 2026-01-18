@@ -89,3 +89,93 @@ Completed user-facing documentation for Loop-Flow:
 Ready to start LF-001 (MCP Protocol Research) in the loop-flow folder.
 
 ---
+
+## 2026-01-17 | Session 1 (Domain Model Analysis)
+Task: LF-001.5 [DESIGN] Domain Model Analysis
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Socratic design session to analyze and refine Loop-Flow's domain model before implementation. Used the actual file-based workflow experience as input.
+
+**Key outcomes:**
+
+1. **Learning as Zettelkasten** — Learnings are first-class entities forming a knowledge graph, not just log entries. Links between insights are themselves insights.
+
+2. **Leverage Hierarchy** — Not all learnings are equal:
+   - `process` (highest) — how to work better
+   - `domain` — problem space knowledge  
+   - `architecture` — design decisions and rationale
+   - `edge_case` — non-obvious behavior
+   - `technical` (lower) — useful tricks
+
+3. **Quick Capture vs Deep Synthesis** — Two modes for insights:
+   - Quick: snapshot, mark unprocessed, schedule [DISCUSS], return to work
+   - Deep: dedicated time for Socratic exploration and linking
+
+4. **Theory Preservation** — Loop-Flow reframed as a "theory preservation system" (Naur). Code is artifact, theory is product.
+
+5. **Created insights.json** — New file for structured, linkable learnings alongside progress.txt
+
+### Files Created/Updated
+
+- `docs/DESIGN.md` — Refined data model, learning types, link relations, MCP API updates
+- `.agents/plan/insights.json` — New file with schema and 7 initial insights from this session
+- `AGENTS.md` — Added insight capture protocol, [DISCUSS] task type, file locations
+- `.agents/plan/backlog.json` — Marked LF-001.5 done, added LF-015 (scaling), LF-016 (quick capture)
+
+### Learnings
+
+See `.agents/plan/insights.json` for structured captures (INS-001 through INS-007).
+
+Key insight: The workflow itself (Socratic discussion → crystallize → implement) is the highest-leverage process improvement. Loop-Flow's design was discovered this way.
+
+### Next Session
+
+Ready for LF-001 (MCP Protocol Research).
+
+---
+
+## 2026-01-17 | Session 1b (UX Discovery)
+Task: LF-001.5 [DISCOVERY] UX Requirements
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Discovery session to extract UX requirements for Loop-Flow. Used rapid Q&A with interactive pickers to cover breadth fast.
+
+**Key outcomes:**
+
+1. **Cold Start UX** — Agent reminds user (not the other way around). Concise summary + interactive picker for next steps.
+
+2. **Session End UX** — Trust by default. Autosave first, then show brief summary with insights captured. User can tweak after, not before. "See you next loop!"
+
+3. **Mid-Task Flows**:
+   - Subtasks: size-based judgment (small=do it, medium=ask, large=defer)
+   - Insight capture: multiple entry points (prefix, agent notices, explicit command)
+   - Blockers: different types get different responses
+   - Context lookup: natural questions or explicit search, current project by default
+
+4. **Conversation Modes** — Discovered four modes: Work, Discovery, Discuss, Review. They blend fluidly (agent reads the vibe). No meta-commentary in Work mode (preserve context).
+
+5. **Discovery as distinct mode** — Different from Discuss. Discovery = breadth (extract requirements). Discuss = depth (synthesize insights).
+
+### Files Created/Updated
+
+- `docs/UX-REQUIREMENTS.md` — New file with all UX requirements from this session
+- `.agents/plan/insights.json` — Added INS-008 through INS-013
+- `AGENTS.md` — Added [DISCOVERY] task type, conversation modes section
+
+### Learnings
+
+See `.agents/plan/insights.json` for structured captures (INS-008 through INS-013).
+
+Key insight: Interactive pickers (TUI questions) are better than prose for choices. One line of context, then picker. Discovery mode itself is a process improvement worth preserving.
+
+### Next Session
+
+Ready for LF-001 (MCP Protocol Research).
+
+---

@@ -1,0 +1,182 @@
+{
+  "schema_version": "0.1.0",
+  "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
+  "insights": [
+    {
+      "id": "INS-001",
+      "content": "Learnings have a hierarchy of leverage: process > domain > architecture > edge_case > technical. Higher-leverage learnings compound more over time.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1"
+      },
+      "tags": ["meta", "knowledge-management"],
+      "links": [],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-002",
+      "content": "Loop-Flow is not just a workflow tool — it's a theory preservation system (ref: Naur's 'Programming as Theory Building'). The code is the artifact, but the theory in your head is the real product.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1"
+      },
+      "tags": ["vision", "philosophy"],
+      "links": ["INS-001"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-003",
+      "content": "The relationship between two insights is often an insight itself. Links in the knowledge graph are first-class, not just pointers.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1"
+      },
+      "tags": ["knowledge-management", "zettelkasten"],
+      "links": ["INS-001"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-004",
+      "content": "Insights need two modes: quick capture (snapshot without derailing work) and deep synthesis (dedicated discussion time). This mirrors inbox vs focused work.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1"
+      },
+      "tags": ["workflow", "context-management"],
+      "links": ["INS-001", "INS-003"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-005",
+      "content": "Knowledge compounds through abstraction: many concrete insights synthesize into fewer abstract principles. This is how context stays bounded while wisdom grows.",
+      "type": "process",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1"
+      },
+      "tags": ["scaling", "knowledge-management", "future"],
+      "links": ["INS-001", "INS-003"],
+      "created": "2026-01-17",
+      "notes": "Deferred for deeper exploration when we hit the scaling problem."
+    },
+    {
+      "id": "INS-006",
+      "content": "Task selection is collaborative: agent proposes based on priority/dependencies, human decides based on current state, mood, emergent needs. The backlog is a menu, not a queue.",
+      "type": "domain",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1"
+      },
+      "tags": ["workflow", "task-management"],
+      "links": [],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-007",
+      "content": "Context window is a resource you actively manage. Session endings are triggered by: task complete, natural stopping point, or approaching compaction — not just 'done'.",
+      "type": "domain",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1"
+      },
+      "tags": ["workflow", "context-management"],
+      "links": ["INS-004"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-008",
+      "content": "The agent is the user's external memory. User walks in cold, agent reminds THEM. Flip the traditional 'user provides context' model.",
+      "type": "domain",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1b"
+      },
+      "tags": ["ux", "cold-start"],
+      "links": ["INS-002"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-009",
+      "content": "Trust by default, friction on request. Autosave everything, then show summary. User can tweak after, not before. Protects against session death.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1b"
+      },
+      "tags": ["ux", "session-end", "trust"],
+      "links": ["INS-007"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-010",
+      "content": "Conversation has modes: Work, Discovery, Discuss, Review. Modes are descriptive (agent reads the vibe), not prescriptive (no rigid state machine). They blend fluidly.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1b"
+      },
+      "tags": ["ux", "modes", "conversation"],
+      "links": ["INS-004"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-011",
+      "content": "Discovery mode is distinct from Discuss. Discovery = rapid Q&A to extract requirements (breadth). Discuss = Socratic deep-dive on one insight (depth). Both are valuable, different purposes.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1b"
+      },
+      "tags": ["ux", "modes", "discovery"],
+      "links": ["INS-010", "INS-004"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-012",
+      "content": "Interactive pickers (TUI questions) are better than prose for choices. One line of context, then picker. Keeps context tight, makes decisions fast.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1b"
+      },
+      "tags": ["ux", "interaction", "context-efficiency"],
+      "links": ["INS-007", "INS-011"],
+      "created": "2026-01-17"
+    },
+    {
+      "id": "INS-013",
+      "content": "In Work mode, avoid meta-commentary — preserve context budget. In other modes (Discovery, Discuss), naming the mode shift can help orient the conversation.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001.5",
+        "session": "2026-01-17-S1b"
+      },
+      "tags": ["ux", "modes", "context-management"],
+      "links": ["INS-010", "INS-007"],
+      "created": "2026-01-17"
+    }
+  ],
+  "link_types": {
+    "builds_on": "This insight extends or deepens another",
+    "contradicts": "This insight challenges or refines another",
+    "exemplifies": "This is a concrete example of an abstract insight",
+    "synthesizes": "This insight was created by combining others"
+  }
+}

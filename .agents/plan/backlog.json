@@ -1,8 +1,23 @@
 {
   "project": "Loop-Flow MCP Server",
   "last_updated": "2026-01-17",
-  "notes": "Session 0 complete: Project bootstrapped with full documentation. Ready to start LF-001 (MCP Research).",
+  "notes": "LF-001.5 complete: Domain model refined with Learning as first-class zettelkasten entity. Created insights.json. Ready for LF-001.",
   "tasks": [
+    {
+      "id": "LF-001.5",
+      "title": "[DESIGN] Domain Model Analysis",
+      "description": "Analyze and refine Loop-Flow's domain model before implementation. Review current file-based workflow (backlog.json, progress.txt) and identify improvements to entities, relationships, and semantics.",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Review current entities: Task, Session, Learning, Repo",
+        "Identify missing concepts or redundancies",
+        "Define clear entity relationships and lifecycles",
+        "Consider edge cases from real usage",
+        "Update DESIGN.md with refined data model"
+      ],
+      "notes": "Completed via Socratic discussion. Key outcomes: Learning as zettelkasten (linked knowledge graph), leverage hierarchy for insight types, quick capture vs deep synthesis modes, insights.json file created."
+    },
     {
       "id": "LF-000",
       "title": "[DESIGN] Project Bootstrap & Documentation",
@@ -25,6 +40,7 @@
       "description": "Understand how MCP servers work: protocol, transport (stdio vs HTTP), how Claude Code discovers/connects to them, SDK usage.",
       "status": "TODO",
       "priority": "high",
+      "depends_on": ["LF-001.5"],
       "acceptance_criteria": [
         "Understand MCP message format",
         "Know how to register tools with Claude Code",
@@ -201,6 +217,28 @@
       "priority": "low",
       "depends_on": ["LF-007", "LF-008"],
       "notes": "Future feature. Consider React + Vite or simple HTML."
+    },
+    {
+      "id": "LF-015",
+      "title": "[DESIGN] Knowledge Abstraction & Context Scaling",
+      "description": "Design how learnings scale as they accumulate. Explore abstraction: many concrete insights synthesize into fewer abstract principles. Concrete insights archive, abstract ones load by default.",
+      "status": "TODO",
+      "priority": "low",
+      "notes": "Deferred until we hit the scaling problem. Key insight: knowledge compounds through abstraction, mirroring how humans learn. See INS-005."
+    },
+    {
+      "id": "LF-016",
+      "title": "[IMPL] learning.capture quick mode",
+      "description": "Implement quick capture for insights that auto-schedules [DISCUSS] task. Minimal context spent during capture.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-008"],
+      "acceptance_criteria": [
+        "learning.capture takes minimal input",
+        "Auto-creates [DISCUSS] task",
+        "Marks insight as unprocessed",
+        "Returns immediately to minimize context use"
+      ]
     }
   ]
 }
