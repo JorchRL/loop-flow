@@ -399,6 +399,124 @@
       "tags": ["versioning", "skills", "process", "loop-flow-core"],
       "links": ["INS-029", "INS-028"],
       "created": "2026-01-18"
+    },
+    {
+      "id": "INS-031",
+      "content": "Loop-Flow needs cross-project insight flow. When working in Project A, insights about Project B should be capturable and 'exportable'. Tags like 'export-to:loop-flow' could mark insights for cross-pollination. For now, a separate file (insights-to-export-to-loop-flow-main.json) serves as a staging area.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-001"
+      },
+      "tags": ["loop-flow-core", "insight-capture", "cross-project"],
+      "links": [],
+      "created": "2026-01-20"
+    },
+    {
+      "id": "INS-032",
+      "content": "Loop-Flow needs encapsulated commands/skills for common tasks. Example: 'start loop' command that reliably reads .loop-flow/ state (glob often fails to find the folder, requiring manual 'ls' instructions). Skills should be simple invocations that 'just work' without the user having to remember the right incantations.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-002"
+      },
+      "tags": ["loop-flow-core", "skills", "ux", "reliability"],
+      "links": ["INS-029", "INS-030"],
+      "created": "2026-01-20",
+      "notes": "Concrete use case for skills: /start-session skill that 'just works'."
+    },
+    {
+      "id": "INS-033",
+      "content": "Loop-Flow based learning is effective because: (1) Chat with AI is engaging for ADHD brains — immediate feedback loop, (2) Text-based interaction forces writing, which forces thinking (ref: Zinsser's 'Writing to Learn'). Loop-Flow could be a platform for interactive courses, not just development workflow.",
+      "type": "process",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-003"
+      },
+      "tags": ["loop-flow-core", "learning", "courses", "adhd", "writing-to-learn"],
+      "links": ["INS-015", "INS-025"],
+      "created": "2026-01-20"
+    },
+    {
+      "id": "INS-034",
+      "content": "Verification functions as a testing pattern: Write pure functions that take algorithm output and return true/false + diagnostic data. These verification functions (1) encode the rules/constraints, (2) can be unit tested independently, (3) enable 'vibecoding' the algorithm implementation safely, (4) can be reused in production for debugging tools. This separates 'what is correct' from 'how to compute it'.",
+      "type": "domain",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-004"
+      },
+      "tags": ["testing", "verification-functions", "pure-functions", "vibecoding"],
+      "links": [],
+      "created": "2026-01-20",
+      "notes": "Concrete testing pattern that should inform Loop-Flow's testing philosophy. Also a spec-driven-development pattern."
+    },
+    {
+      "id": "INS-035",
+      "content": "Spec-driven development: Tests encode the specification. The spec is the source of truth, not the implementation. AI can 'vibecode' the implementation because the spec (tests + verification functions) catches violations. This inverts the traditional 'code then test' flow and makes AI-assisted development safer.",
+      "type": "process",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-005"
+      },
+      "tags": ["testing", "spec-driven", "tdd", "ai-assisted", "loop-flow-core"],
+      "links": ["INS-034", "INS-015"],
+      "created": "2026-01-20",
+      "notes": "Connects to Loop-Flow's 'developer has the reins' principle. Human writes spec, AI implements. Spec is the control mechanism."
+    },
+    {
+      "id": "INS-036",
+      "content": "The human's job in AI-assisted development is to write specs that capture what actually matters. The implementation is a consequence of the spec. Expertise lies in knowing what to specify — this is the hard part that AI cannot do.",
+      "type": "process",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-006"
+      },
+      "tags": ["testing", "spec-driven", "ai-assisted", "expertise", "philosophy", "loop-flow-core"],
+      "links": ["INS-035", "INS-034", "INS-015"],
+      "created": "2026-01-20",
+      "notes": "Defines the human role in Loop-Flow: spec author, not implementer."
+    },
+    {
+      "id": "INS-037",
+      "content": "When the problem is constraint satisfaction (many valid outputs exist), verification functions + property-based testing is more valuable than example-based unit tests. Example tests prove 'this specific case works', property tests prove 'this always works for any valid input'.",
+      "type": "domain",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-007"
+      },
+      "tags": ["testing", "property-based-testing", "verification-functions", "patterns"],
+      "links": ["INS-034"],
+      "created": "2026-01-20",
+      "notes": "Informs when to use property-based vs example-based testing."
+    },
+    {
+      "id": "INS-038",
+      "content": "Verification functions can serve double duty: (1) test oracles during development, (2) runtime debugging tools in production. The same constraint-checking logic that validates tests can power user-facing diagnostic features. Tests and features share infrastructure.",
+      "type": "domain",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-023",
+        "session": "imported from learn-tdd-go",
+        "original_id": "EXPORT-008"
+      },
+      "tags": ["testing", "verification-functions", "production", "debugging", "reuse"],
+      "links": ["INS-034"],
+      "created": "2026-01-20",
+      "notes": "Testing code isn't throwaway — it can be production code."
     }
   ],
   "link_types": {

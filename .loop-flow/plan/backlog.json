@@ -1,8 +1,23 @@
 {
   "project": "Loop-Flow MCP Server",
-  "last_updated": "2026-01-18",
-  "notes": "LF-021 complete. Added VERSION_MANIFEST.md. Captured skills insight (INS-029, INS-030).",
+  "last_updated": "2026-01-20",
+  "notes": "Imported 8 insights from learn-tdd-go (INS-031 to INS-038). Created LF-023 to discuss and integrate them.",
   "tasks": [
+    {
+      "id": "LF-023",
+      "title": "[DISCUSS] Integrate Imported Insights from learn-tdd-go",
+      "description": "Deep discussion session to fully integrate 8 insights imported from learn-tdd-go into Loop-Flow's core philosophy. Topics: cross-project insight flow, skills reliability, Loop-Flow as learning platform, verification functions pattern, spec-driven development, human's role as spec author, property-based testing, and test-production code reuse.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Review and refine each imported insight (INS-031 to INS-038)",
+        "Establish links to existing insights",
+        "Mark insights as 'discussed' after processing",
+        "Identify new tasks that emerge from the discussion",
+        "Update DESIGN.md or other docs if needed"
+      ],
+      "notes": "Insights were captured in learn-tdd-go bootstrap session. Key themes: spec-driven development as 'developer has the reins' in practice, verification functions as testing pattern, Loop-Flow as learning platform potential."
+    },
     {
       "id": "LF-021",
       "title": "[IMPL] Rename .loop-flow/AGENTS.md to WORKFLOW.md",

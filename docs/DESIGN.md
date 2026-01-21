@@ -87,6 +87,23 @@ Every API response is designed for **minimal context consumption**:
 - `loop.suggestTask()` returns one recommendation, not the entire backlog
 - Export commands generate human-readable files on-demand
 
+### 5. Distributed Discovery
+
+**Domain knowledge lives in people's heads.** Loop-Flow can use AI agents as parallel interviewers to extract this tacit knowledge.
+
+The pattern: embed a special `MINILOOP.md` in a package/folder that "programs" AI assistants to run structured domain discovery sessions. When team members work in that context, their AI conducts an interview, probing for edge cases, mental model mismatches, and "oh but actually..." moments.
+
+Results are saved to unique per-person files that can be committed and later synthesized by a lead.
+
+**Benefits over traditional approaches:**
+- No scheduling overhead (async, at participant's convenience)
+- Lower social pressure (easier to say "I don't know" to AI)
+- Consistent probe depth (AI follows protocol every time)
+- Scales to any team size (run in parallel)
+- Captures verbatim quotes (humans paraphrase)
+
+See [DISTRIBUTED-DISCOVERY.md](./DISTRIBUTED-DISCOVERY.md) for the full pattern, including MINILOOP.md structure, output format, and synthesis process.
+
 ---
 
 ## Architecture
@@ -400,7 +417,7 @@ loop-flow config set default_template nextjs
 
 ```
 my-project/
-├── AGENTS.md         # Team rules (committed)
+├── AGENTS.md           # Team rules (committed)
 ├── .loopflow         # Marker file, minimal config
 └── .gitignore        # Should include .loopflow
 ```

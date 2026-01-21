@@ -44,17 +44,20 @@ npx loop-flow init
 | [LOOP-FLOW-SETUP.md](./LOOP-FLOW-SETUP.md) | Setup/update file (copy to your project) |
 | [docs/DESIGN.md](./docs/DESIGN.md) | Technical architecture and MCP API design |
 | [docs/UX-REQUIREMENTS.md](./docs/UX-REQUIREMENTS.md) | UX decisions and conversation modes |
+| [docs/DISTRIBUTED-DISCOVERY.md](./docs/DISTRIBUTED-DISCOVERY.md) | Team knowledge extraction via AI interviewers |
 
 ---
 
 ## Roadmap
 
 - [x] File-based workflow
+- [x] Distributed discovery pattern (AGENTS.md as interviewer)
 - [ ] MCP server with `loop.start` / `loop.end`
 - [ ] Task and learning management tools
 - [ ] Multi-repo support
 - [ ] Local dashboard UI
 - [ ] Team sync
+- [ ] Automated discovery synthesis
 
 ---
 
