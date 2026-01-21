@@ -31,6 +31,8 @@ Skills that ship with a methodology or tool (like LoopFlow). They provide core w
 |-------|---------|------------|
 | `loop-start` | Begin a session, read state, propose tasks | User-only |
 | `loop-end` | Save state, graceful or emergency handoff | User-only |
+| `loop-commit` | Create git commit with well-formed message | User-only |
+| `loop-push` | Push commits to remote safely | User-only |
 | `capture-insight` | Quick-capture an insight (future) | Agent-invocable |
 | `update-backlog` | Add/update tasks (future) | Agent-invocable |
 
