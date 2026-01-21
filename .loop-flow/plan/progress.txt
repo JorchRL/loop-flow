@@ -718,3 +718,52 @@ Added 12 more [LEARN] tasks (LF-035 to LF-046) to cover ALL topics from Claude 4
 This is a rich menu to pick from over time. Each task is a learning opportunity.
 
 ---
+
+## 2026-01-21 | Session 15 (Working MCP Server!)
+Task: LF-001 [SPIKE] Research MCP Protocol + LF-001.7 Complete MCP Research
+Outcome: COMPLETE (MAJOR MILESTONE)
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Built a working LoopFlow MCP server with 5 cognitive tools. Validated in both Claude Code and OpenCode. This session used "vibecode-then-explore" approach: build first, understand after. The working server became the vehicle for learning MCP concepts.
+
+**What was built:**
+- Full MCP server at `src/mcp/server.ts` using @modelcontextprotocol/sdk
+- 5 cognitive tools: loop_orient, loop_remember, loop_connect, loop_probe, loop_handoff
+- 2 MCP Resources: loopflow://workflow, loopflow://insights/process
+- Registered with Claude Code (user scope) and OpenCode (project scope)
+
+**Key design insight:** Traditional APIs are CRUD. Cognitive APIs are scaffolding for how agents think:
+- `loop_orient` — "Where am I and what matters?" (situational awareness)
+- `loop_remember` — "This feels important" (zero-friction insight capture)
+- `loop_connect` — "What relates to this?" (associative memory)
+- `loop_probe` — "Help me ask the user" (structured questions)
+- `loop_handoff` — "I'm running out of context" (session transitions)
+
+**Simplification discovered:** MCP server reads .loop-flow/ files directly — no SQLite needed for MVP. The import bridge (LF-047) becomes optional enhancement, not prerequisite.
+
+### Files Created/Updated
+
+- `src/mcp/server.ts` — Complete rewrite with cognitive tools (~500 lines)
+- `opencode.json` — OpenCode MCP config for this project
+- `~/.claude.json` — Claude Code MCP registration (user scope)
+- `package.json` — Added @modelcontextprotocol/sdk, zod dependencies
+- `tsconfig.json` — Updated lib to ES2023 for findLast()
+- `.loop-flow/plan/backlog.json` — LF-001 DONE, LF-001.7 DONE, LF-047 priority lowered
+- `.loop-flow/plan/insights.json` — Added INS-045 through INS-048
+
+### Learnings
+
+- **INS-045**: Cognitive tools vs CRUD — design for how agents think
+- **INS-046**: Vibecode-then-explore — build first, understand after
+- **INS-047**: File-based MCP works without SQLite — simpler MVP
+- **INS-048**: Claude Code vs OpenCode MCP config differences
+
+### Next Steps
+
+- Explore the MCP server codebase with guided learning
+- Test all 5 tools in real sessions
+- Consider: loop.simulate, loop.guardrail, loop.celebrate (proposed but not built)
+
+---

@@ -1,8 +1,25 @@
 {
   "project": "LoopFlow MCP Server",
-  "last_updated": "2026-01-20",
-  "notes": "v0.8.0. Session 14: Added comprehensive prompt engineering learning track (LF-024 to LF-046). 23 tasks covering both general techniques and Claude 4.x specifics.",
+  "last_updated": "2026-01-21",
+  "notes": "v0.8.0. Session 15: MAJOR MILESTONE - Built working MCP server with 5 cognitive tools (orient/remember/connect/probe/handoff). Works in both Claude Code and OpenCode. LF-001 DONE, LF-001.7 DONE. Vibecode-first approach validated.",
   "tasks": [
+    {
+      "id": "LF-047",
+      "title": "[IMPL] File-to-MCP Import Bridge",
+      "description": "Build import functionality BEFORE full CRUD tools. This lets file-based LoopFlow continue as source of truth while MCP is developed. Import reads .loop-flow/ files from any repo and populates SQLite. Key milestone: once this works, cross-repo insights can flow through the database.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-003"],
+      "acceptance_criteria": [
+        "loop.import tool reads .loop-flow/plan/backlog.json → tasks table",
+        "loop.import reads .loop-flow/plan/insights.json → learnings table",
+        "loop.import parses .loop-flow/plan/progress.txt → sessions table",
+        "Handles multiple repos (repo_id foreign key)",
+        "Idempotent: re-import updates existing, doesn't duplicate",
+        "Reports import stats (X tasks, Y insights, Z sessions)"
+      ],
+      "notes": "Priority lowered: Session 15 showed MCP server can read files directly without SQLite. Still valuable for cross-repo aggregation later, but not blocking."
+    },
     {
       "id": "LF-024",
       "title": "[LEARN] Anthropic Prompt Engineering Best Practices",
@@ -444,7 +461,7 @@
       "id": "LF-001",
       "title": "[SPIKE] Research MCP Protocol",
       "description": "Understand how MCP servers work: protocol, transport (stdio vs HTTP), how Claude Code discovers/connects to them, SDK usage.",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "priority": "high",
       "depends_on": ["LF-001.5"],
       "acceptance_criteria": [
@@ -453,13 +470,13 @@
         "Have working hello-world MCP server",
         "Document findings in docs/MCP-RESEARCH.md"
       ],
-      "notes": "Start with Anthropic docs and @anthropic-ai/mcp SDK. Check Claude Code docs for server registration. Session 3 progress: understood architecture, primitives, transports. Still need: Claude Code registration, hello-world server, MCP-RESEARCH.md."
+      "notes": "COMPLETED Session 15. Built full MCP server with 5 cognitive tools. Registered with both Claude Code and OpenCode. Exceeded original scope significantly."
     },
     {
       "id": "LF-001.7",
       "title": "[LEARN] Complete MCP Research",
       "description": "Continue MCP learning from Session 3. Remaining: figure out Claude Code server registration, build hello-world MCP server, document findings.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "high",
       "depends_on": ["LF-001"],
       "acceptance_criteria": [
@@ -467,7 +484,7 @@
         "Build and test hello-world MCP server",
         "Document all findings in docs/MCP-RESEARCH.md"
       ],
-      "notes": "Continuation of LF-001. See Session 3 progress for context. Consider this the 'implementation' half of the research."
+      "notes": "COMPLETED Session 15. Merged into LF-001 completion. MCP-RESEARCH.md not created as separate doc — knowledge is embedded in working code + insights."
     },
     {
       "id": "LF-002",
@@ -569,8 +586,8 @@
     {
       "id": "LF-009",
       "title": "[IMPL] Migration from file-based workflow",
-      "description": "CLI command and MCP tool to migrate backlog.json and progress.txt to SQLite.",
-      "status": "TODO",
+      "description": "SUPERSEDED by LF-047. Original scope was one-time migration. LF-047 is ongoing import bridge for parallel development.",
+      "status": "DONE",
       "priority": "medium",
       "depends_on": ["LF-003", "LF-004"],
       "acceptance_criteria": [
@@ -578,7 +595,8 @@
         "Parses progress.txt format (including learnings)",
         "Imports to SQLite preserving relationships",
         "Reports import stats"
-      ]
+      ],
+      "notes": "Merged into LF-047 which has broader scope (ongoing sync, not one-time migration)."
     },
     {
       "id": "LF-010",

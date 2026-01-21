@@ -601,6 +601,62 @@
       "links": ["INS-029", "INS-041", "INS-042"],
       "created": "2026-01-20",
       "notes": "Distinguishes skills that come from frameworks (Loop-Flow, etc.) from project-specific user skills. Enables future tooling to differentiate them."
+    },
+    {
+      "id": "INS-045",
+      "content": "Cognitive tools for AI agents: Instead of CRUD operations, design tools as cognitive scaffolding. loop.orient (situational awareness), loop.remember (zero-friction capture), loop.connect (associative memory), loop.probe (structured questions), loop.handoff (session transitions). These match how agents actually think: needing context, capturing insights mid-flow, finding related knowledge, asking good questions, and preserving state across sessions.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-21-S15"
+      },
+      "tags": ["loop-flow-core", "mcp", "architecture", "cognitive-tools", "api-design"],
+      "links": ["INS-022", "INS-008", "INS-043"],
+      "created": "2026-01-21",
+      "notes": "Core insight from Session 15. Traditional APIs are CRUD (create/read/update/delete). Cognitive APIs are scaffolding for how agents think. This reframes what an MCP server should provide."
+    },
+    {
+      "id": "INS-046",
+      "content": "Vibecode-then-explore: Instead of Learn → Design → Implement, try Vibecode → Explore → Understand. Build something concrete first (even if messy), then use it as a vehicle for learning. Abstract knowledge doesn't stick until you have something tangible to poke at. The working artifact becomes a teaching tool.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-21-S15"
+      },
+      "tags": ["loop-flow-core", "process", "learning", "vibecoding"],
+      "links": ["INS-015", "INS-025", "INS-027"],
+      "created": "2026-01-21",
+      "notes": "Inverts the traditional learning flow. Session 15 validated this: we built a working MCP server first, THEN explored it. Understanding emerged from having something real to examine."
+    },
+    {
+      "id": "INS-047",
+      "content": "MCP servers can read file-based state directly without needing SQLite. The cognitive tools (loop.orient, etc.) read from .loop-flow/ files and provide value immediately. SQLite becomes optional for cross-repo aggregation, not a prerequisite. This simplifies the MVP path significantly.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-21-S15"
+      },
+      "tags": ["loop-flow-core", "mcp", "architecture", "simplification"],
+      "links": ["INS-017", "INS-018"],
+      "created": "2026-01-21",
+      "notes": "Key simplification discovered in Session 15. Original plan required SQLite before MCP tools could work. New approach: MCP reads files directly, SQLite is a future enhancement for multi-repo queries."
+    },
+    {
+      "id": "INS-048",
+      "content": "Claude Code and OpenCode have different MCP config formats but both support stdio transport. Claude Code: ~/.claude.json or 'claude mcp add' command. OpenCode: opencode.json with 'mcp' key containing server definitions. Same MCP server binary works with both — just different registration.",
+      "type": "technical",
+      "status": "discussed",
+      "source": {
+        "task": "LF-001",
+        "session": "2026-01-21-S15"
+      },
+      "tags": ["mcp", "claude-code", "opencode", "compatibility"],
+      "links": ["INS-042"],
+      "created": "2026-01-21",
+      "notes": "Practical finding from Session 15. One MCP server implementation serves both tools. Config locations differ but the server code is shared."
     }
   ],
   "link_types": {

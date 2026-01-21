@@ -91,11 +91,9 @@ program
   .command("mcp")
   .description("Start MCP server")
   .option("--stdio", "Use stdio transport (default)")
-  .action(async (options) => {
-    console.log("Starting MCP server...");
-    console.log("Transport: stdio");
-    // TODO: Implement MCP server start
-    console.log("\n[Not yet implemented - see LF-005]");
+  .action(async () => {
+    // Import and run the MCP server
+    await import("../mcp/server.js");
   });
 
 program.parse();

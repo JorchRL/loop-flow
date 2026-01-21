@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "loopflow": {
+      "type": "local",
+      "command": ["node", "/Users/jorgeromerolagunas/projects/loop-flow/dist/mcp/server.js"],
+      "enabled": true
+    }
+  }
+}
