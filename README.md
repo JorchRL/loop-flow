@@ -21,13 +21,26 @@ The core idea: **one task, one session, one handoff** — with the human firmly 
 
 ## Getting Started
 
-### File-Based Workflow (Available Now)
+### Quick Bootstrap (One-liner)
 
-Copy [LOOP-FLOW-SETUP.md](./LOOP-FLOW-SETUP.md) to your project, then tell your AI agent:
+Run this in your project directory, then tell your AI agent to set up LoopFlow:
 
-> "Please set up LoopFlow using LOOP-FLOW-SETUP.md"
+```bash
+curl -sO https://raw.githubusercontent.com/JorchRL/loop-flow/main/LOOP-FLOW-SETUP.md
+```
 
-The agent handles everything — creating files, explaining the workflow, and cleaning up.
+Then tell your agent:
+> "Set up LoopFlow using LOOP-FLOW-SETUP.md"
+
+The agent handles everything — creating files, installing skills, explaining the workflow, and cleaning up.
+
+### Manual Setup
+
+Alternatively, copy [LOOP-FLOW-SETUP.md](./LOOP-FLOW-SETUP.md) to your project manually.
+
+### Updating
+
+Once installed, run `/loop-update` to fetch the latest version from GitHub.
 
 ### MCP Server (Coming Soon)
 
