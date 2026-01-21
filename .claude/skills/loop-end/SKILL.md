@@ -1,15 +1,15 @@
 ---
 name: loop-end
-description: End a LoopFlow session gracefully. Updates backlog, progress, and insights. Use when wrapping up a session or hitting context limits.
+description: End a LoopFlow session gracefully. Updates backlog, progress, and insights. For emergencies, use /loop-bail instead.
 framework: loop-flow
 disable-model-invocation: true
 ---
 
 # End LoopFlow Session
 
-**CRITICAL: SAVE STATE FIRST.** This may be an emergency handoff. Do the file updates BEFORE anything else.
+**Save state first, then summarize.** If you need to exit FAST, use `/loop-bail` instead.
 
-## Step 1: IMMEDIATELY Save State (Do This First!)
+## Step 1: Save State
 
 You MUST update these files right now, before any summary or discussion:
 
@@ -54,39 +54,7 @@ Manual QA: REQUIRED | NOT_REQUIRED
 
 If you haven't done ALL of these, STOP and do them now.
 
-## Step 3: Handle Context Emergency (if applicable)
-
-If context is running low and task is incomplete, ALSO create `.loop-flow/RESUME.md`:
-
-```markdown
-# Session Resume - [Date]
-
-## Context
-Task: [TASK-ID] [Title]
-Status: IN_PROGRESS (interrupted)
-
-## Where We Left Off
-[Specific description of current state]
-- Files being edited: [list]
-- Current step: [what was being done]
-- Next step: [what to do next]
-
-## Key Decisions Made
-- [Any decisions that shouldn't be re-discussed]
-
-## Open Questions
-- [Anything unresolved]
-
-## To Continue
-1. Read this file first
-2. Then run /loop-start
-3. Continue from "Next step" above
-
----
-*Delete this file after resuming*
-```
-
-## Step 4: Confirm with User
+## Step 3: Confirm with User
 
 Show what was updated:
 ```

@@ -1,12 +1,12 @@
 ---
-description: End a LoopFlow session gracefully
+description: End a LoopFlow session gracefully. For emergencies, use /loop-bail instead.
 ---
 
 # End LoopFlow Session
 
-**CRITICAL: SAVE STATE FIRST.** This may be an emergency handoff. Do the file updates BEFORE anything else.
+**Save state first, then summarize.** If you need to exit FAST, use `/loop-bail` instead.
 
-## Step 1: IMMEDIATELY Save State (Do This First!)
+## Step 1: Save State
 
 You MUST update these files right now, before any summary or discussion:
 
@@ -51,34 +51,7 @@ Manual QA: REQUIRED | NOT_REQUIRED
 
 If you haven't done ALL of these, STOP and do them now.
 
-## Step 3: Handle Context Emergency (if applicable)
-
-If context is running low and task is incomplete, ALSO create `.loop-flow/RESUME.md`:
-
-```markdown
-# Session Resume - [Date]
-
-## Context
-Task: [TASK-ID] [Title]
-Status: IN_PROGRESS (interrupted)
-
-## Where We Left Off
-[Specific description of current state]
-- Files being edited: [list]
-- Current step: [what was being done]
-- Next step: [what to do next]
-
-## Key Decisions Made
-- [Any decisions that shouldn't be re-discussed]
-
-## Open Questions
-- [Anything unresolved]
-
----
-*Delete this file after resuming*
-```
-
-## Step 4: Confirm with User
+## Step 3: Confirm with User
 
 Show what was updated:
 ```

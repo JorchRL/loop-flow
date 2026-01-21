@@ -1,7 +1,7 @@
 {
   "project": "LoopFlow MCP Server",
   "last_updated": "2026-01-20",
-  "notes": "v0.7.0. Session 12: Renamed commands (start-loop → loop-start, end-loop → loop-end) and standardized project name to LoopFlow in prose.",
+  "notes": "v0.7.0. Session 12: Added loop-commit, loop-push, loop-update skills. One-liner bootstrap via curl.",
   "tasks": [
     {
       "id": "LF-023",

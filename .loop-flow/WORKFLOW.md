@@ -1,6 +1,6 @@
 # LoopFlow Workflow Rules
 
-**LoopFlow Version:** 0.7.0
+**LoopFlow Version:** 0.8.0
 
 This file defines how AI agents should work in this repository using the LoopFlow methodology.
 

@@ -9,6 +9,16 @@ compatibility: opencode
 
 You are starting a LoopFlow development session. Follow these steps exactly:
 
+## Step 0: Check for Resume File
+
+First, check if `.loop-flow/RESUME.md` exists. If it does:
+1. Read it — this is context from an emergency bail
+2. Show the user: "Resuming from previous session: [brief context]"
+3. Continue with the task/state described in RESUME.md
+4. Delete RESUME.md after the user confirms they're ready to continue
+
+If no RESUME.md exists, proceed normally:
+
 ## Step 1: Read Core Files (Required)
 
 Use the Read tool to read these files. Do NOT use Glob or search tools — read directly:

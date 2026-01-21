@@ -2,7 +2,7 @@
 
 > The single file for bootstrapping or updating LoopFlow in any repository.
 
-**Version:** 0.7.0 (2026-01-20)
+**Version:** 0.8.0 (2026-01-20)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
 > "Please set up LoopFlow using LOOP-FLOW-SETUP.md"
@@ -97,12 +97,13 @@ Create skills for session management. These work in Claude Code, OpenCode, and t
 
 **For Claude Code** (`.claude/skills/`):
 ```bash
-mkdir -p .claude/skills/loop-start .claude/skills/loop-end
+mkdir -p .claude/skills/loop-start .claude/skills/loop-end .claude/skills/loop-bail
 ```
 
-**For OpenCode** (`.opencode/skills/`):
+**For OpenCode** (`.opencode/skills/` and `.opencode/commands/`):
 ```bash
-mkdir -p .opencode/skills/loop-start .opencode/skills/loop-end
+mkdir -p .opencode/skills/loop-start .opencode/skills/loop-end .opencode/skills/loop-bail
+mkdir -p .opencode/commands
 ```
 
 Create `SKILL.md` files using the **SKILL TEMPLATES** section below.
@@ -122,7 +123,7 @@ After scaffolding, explain the key concepts using the **USER TUTORIAL** section 
 ### Step U1: Confirm update
 
 Tell the user:
-> "Loop-Flow detected (version X or unknown). I'll update to v0.7.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
+> "Loop-Flow detected (version X or unknown). I'll update to v0.8.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
 
 Wait for confirmation.
 
@@ -204,7 +205,7 @@ To temporarily disable LoopFlow, comment out or delete the line above.
 ```json
 {
   "schema_version": "0.1.0",
-  "loop_flow_version": "0.7.0",
+  "loop_flow_version": "0.8.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
   "insights": [],
   "link_types": {
@@ -225,7 +226,7 @@ Create or replace `.loop-flow/WORKFLOW.md` with this content:
 ````markdown
 # LoopFlow Workflow Rules
 
-**LoopFlow Version:** 0.7.0
+**LoopFlow Version:** 0.8.0
 
 This file defines how AI agents should work in this repository using the LoopFlow methodology.
 
@@ -670,6 +671,16 @@ description: Start a LoopFlow session. Reads workflow rules, backlog, progress, 
 
 You are starting a LoopFlow development session. Follow these steps exactly:
 
+## Step 0: Check for Resume File
+
+First, check if `.loop-flow/RESUME.md` exists. If it does:
+1. Read it — this is context from an emergency bail
+2. Show the user: "Resuming from previous session: [brief context]"
+3. Continue with the task/state described in RESUME.md
+4. Delete RESUME.md after the user confirms they're ready to continue
+
+If no RESUME.md exists, proceed normally:
+
 ## Step 1: Read Core Files (Required)
 
 Use the Read tool to read these files. Do NOT use Glob or search tools — read directly:
@@ -717,29 +728,31 @@ Create `<skills-dir>/loop-end/SKILL.md`:
 ````markdown
 ---
 name: loop-end
-description: End a LoopFlow session gracefully. Updates backlog, progress, and insights. Use when wrapping up a session or hitting context limits.
+description: End a LoopFlow session gracefully. Updates backlog, progress, and insights. For emergencies, use /loop-bail instead.
 ---
 
 # End LoopFlow Session
 
-You are ending a LoopFlow session. Determine which type of ending this is:
+**Save state first, then summarize.** If you need to exit FAST, use `/loop-bail` instead.
 
-## Type A: Graceful Handoff (task complete or natural stopping point)
+## Step 1: Save State
 
-Perform ALL of these updates:
+You MUST update these files right now, before any summary or discussion:
 
-### 1. Update `.loop-flow/plan/backlog.json`
+### 1a. Update `.loop-flow/plan/backlog.json`
+- Read the current file first
 - Update task status (DONE, IN_PROGRESS, BLOCKED, etc.)
-- Update `last_updated` date
+- Update `last_updated` date to today
 - Update `notes` field with current state summary
 - Add any new tasks that emerged during the session
 
-### 2. Append to `.loop-flow/plan/progress.txt`
-Use this format:
+### 1b. Append to `.loop-flow/plan/progress.txt`
+- Read the current file to get the next session number
+- Append this format:
 
 ```markdown
 ## YYYY-MM-DD | Session N
-Task: [TASK-ID] [Title]
+Task: [TASK-ID] [Title] (or "Ad-hoc: [description]" if no formal task)
 Outcome: COMPLETE | PARTIAL | BLOCKED (reason)
 Tests: [path if applicable] (N passing)
 Manual QA: REQUIRED | NOT_REQUIRED
@@ -753,65 +766,115 @@ Manual QA: REQUIRED | NOT_REQUIRED
 ---
 ```
 
-### 3. Update `.loop-flow/plan/insights.json` (if new insights emerged)
+### 1c. Update `.loop-flow/plan/insights.json` (if new insights emerged)
 - Add new insights with proper IDs (increment from last INS-XXX)
 - Mark status as `unprocessed` for quick captures
 - Include source task and session info
 
-### 4. Confirm with user
-Show what was updated and remind: **Agent does NOT commit — developer handles git.**
+## Step 2: Verify Saves Completed
+
+**CHECKPOINT — Confirm you actually wrote to these files:**
+- [ ] backlog.json updated
+- [ ] progress.txt appended
+- [ ] insights.json updated (if applicable)
+
+If you haven't done ALL of these, STOP and do them now.
+
+## Step 3: Confirm with User
+
+Show what was updated:
+```
+## Session Saved
+- backlog.json: [what changed]
+- progress.txt: Session N added
+- insights.json: [INS-XXX added / no new insights]
+```
+
+Remind them: **Agent does NOT commit — developer handles git.**
+
+Options:
+- `git add . && git commit -m "..."` — if they want to commit
+- Start new session with `/loop-start`
 
 ---
 
-## Type B: Context Emergency (hitting limits, need to stop mid-task)
+## Skip Condition
 
-When context is running low and task is incomplete:
+If the user calls /loop-end but no meaningful work was done this session (e.g., just started and immediately ending, or calling end-loop twice), acknowledge this and skip the updates:
 
-### 1. Create `.loop-flow/RESUME.md` (temporary file)
+"No session state to save — no work was done since the last save."
+````
+
+### loop-bail Skill
+
+Create `<skills-dir>/loop-bail/SKILL.md`:
+
+````markdown
+---
+name: loop-bail
+description: Emergency exit from a LoopFlow session. Creates RESUME.md for quick pickup. Use when context is running out and you need to exit FAST.
+---
+
+# Emergency Session Bail
+
+**This is an emergency exit. Do ONE thing: create RESUME.md. No file updates, no questions.**
+
+## Step 1: Create `.loop-flow/RESUME.md`
+
+Create this file immediately:
 
 ```markdown
 # Session Resume - [Date]
 
 ## Context
-Task: [TASK-ID] [Title]
-Status: IN_PROGRESS (interrupted)
+Task: [TASK-ID or "Ad-hoc: description"]
+Status: INTERRUPTED (emergency bail)
 
 ## Where We Left Off
-[Specific description of current state]
-- Files being edited: [list]
-- Current step: [what was being done]
-- Next step: [what to do next]
+[Quick capture of current state - what was being worked on]
 
-## Key Decisions Made
-- [Any decisions that shouldn't be re-discussed]
+## Files in Progress
+- [List any files being actively edited]
 
-## Open Questions
-- [Anything unresolved]
+## Next Steps
+1. [Immediate next action when resuming]
+2. [Follow-up actions if known]
 
-## To Continue
-1. Read this file first
-2. Then run /loop-start
-3. Continue from "Next step" above
+## Key Context
+- [Any critical decisions or state that shouldn't be lost]
+- [Anything the next session needs to know]
 
 ---
-*Delete this file after resuming*
+*Created by /loop-bail. Delete after resuming.*
+*For full session save, use /loop-end instead.*
 ```
 
-### 2. Quick update to backlog.json
-- Mark task as IN_PROGRESS
-- Add note: "Interrupted - see .loop-flow/RESUME.md"
+## Step 2: Confirm
 
-### 3. Notify user
-Tell them: "Session saved to RESUME.md. Next session will pick up where we left off."
+Brief confirmation only:
 
----
+```
+RESUME.md created. Session state captured.
 
-## After Ending
+To continue later:
+1. Read .loop-flow/RESUME.md
+2. Run /loop-start
+3. Delete RESUME.md after picking up
 
-Remind the user of their options:
-- `git add . && git commit -m "..."` — if they want to commit
-- `git push` — only if they explicitly want to push
-- Start new session with `/loop-start`
+Note: backlog.json and progress.txt were NOT updated.
+Run /loop-end in your next session for a proper save.
+```
+
+## That's It
+
+Do not:
+- Update backlog.json
+- Append to progress.txt
+- Update insights.json
+- Ask follow-up questions
+- Provide a detailed summary
+
+Speed is the priority. Get out fast.
 ````
 
 ### Skill Locations by Tool
@@ -896,7 +959,8 @@ Every session should leave you knowing something you didn't know before — abou
 
 If you installed the skills (recommended):
 - **Start a session**: `/loop-start`
-- **End a session**: `/loop-end`
+- **End a session (graceful)**: `/loop-end`
+- **End a session (emergency)**: `/loop-bail` — when you need to exit FAST
 
 Without skills:
 - **Start a session**: "Let's start a session" or "Read the backlog and suggest a task"
@@ -929,6 +993,20 @@ After setup, your project has:
 ---
 
 ## VERSION HISTORY
+
+### v0.8.0 (2026-01-20)
+
+**Separate Emergency Bail Command**
+
+- Added `/loop-bail` skill: Emergency exit that only creates RESUME.md (fast, no questions)
+- Separated emergency handling from `/loop-end` for clarity of intent
+- `/loop-end` is now purely for graceful handoffs (updates all files)
+- `/loop-start` now checks for RESUME.md and offers to resume from a bail
+- Three commands: `/loop-start` (begin), `/loop-end` (graceful), `/loop-bail` (emergency)
+
+**Rationale**: Users need an explicit way to signal "I need to exit NOW" vs "let's wrap up properly". Emergency bail should be fast with no questions asked.
+
+---
 
 ### v0.7.0 (2026-01-20)
 

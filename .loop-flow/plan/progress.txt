@@ -608,3 +608,26 @@ Renamed skill commands from `start-loop`/`end-loop` to `loop-start`/`loop-end` f
 - Naming convention established: LoopFlow in prose, loop-flow in paths, /loop-* for commands (groups alphabetically)
 
 ---
+
+## 2026-01-20 | Session 12b (Git Skills & Update Mechanism)
+Task: Ad-hoc: Create loop-commit, loop-push, and loop-update skills
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Extended LoopFlow skills with git operations and self-update capability. Created `/loop-commit` (analyzes changes, drafts conventional commit), `/loop-push` (safe push with confirmation for protected branches), and `/loop-update` (fetches latest from GitHub, compares versions, updates workflow and skills). Added one-liner curl bootstrap to README.
+
+### Changes Made
+
+- `.claude/skills/loop-commit/`, `.claude/skills/loop-push/`, `.claude/skills/loop-update/`
+- `.opencode/skills/` and `.opencode/commands/` equivalents
+- Updated README.md with curl one-liner bootstrap
+- Updated docs/SKILLS-DESIGN.md with new skills
+
+### Learnings
+
+- Self-update pattern: fetch setup file from GitHub raw URL, compare versions, run update path, preserve project state
+- Bootstrap can be a single curl + agent instruction — minimal friction for new users
+
+---

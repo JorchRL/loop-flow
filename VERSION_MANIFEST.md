@@ -2,7 +2,7 @@
 
 > Single source of truth for LoopFlow versioning.
 
-**Current Version:** 0.7.0  
+**Current Version:** 0.8.0  
 **Last Updated:** 2026-01-20
 
 ---
@@ -26,9 +26,10 @@ Files that contain version numbers to update:
 
 | File | Location(s) |
 |------|-------------|
-| `LOOP-FLOW-SETUP.md` | Line ~5 (header), template header (~212), insights.json template (~192) |
-| `docs/DESIGN.md` | Footer (~624) |
+| `LOOP-FLOW-SETUP.md` | Line ~5 (header), template header (~229), insights.json template (~208) |
+| `docs/DESIGN.md` | Footer (~641) |
 | `docs/UX-REQUIREMENTS.md` | Footer (~194) |
+| `docs/SKILLS-DESIGN.md` | Header (~3) |
 | `.loop-flow/WORKFLOW.md` | Header (~3) |
 
 ### Verification Command
@@ -42,6 +43,18 @@ All should show the current version (except `schema_version` which is separate).
 ---
 
 ## Changelog
+
+### 0.8.0 (2026-01-20)
+
+**Separate Emergency Bail Command**
+
+- Added `/loop-bail` skill: Emergency exit that only creates RESUME.md (fast, no questions)
+- Separated emergency handling from `/loop-end` for clarity
+- `/loop-end` is now purely for graceful handoffs
+- `/loop-start` now checks for RESUME.md and offers to resume from a bail
+- Three commands: `/loop-start` (begin), `/loop-end` (graceful), `/loop-bail` (emergency)
+
+---
 
 ### 0.7.0 (2026-01-20)
 
