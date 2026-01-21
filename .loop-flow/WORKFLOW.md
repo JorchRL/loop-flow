@@ -1,10 +1,10 @@
-# Loop-Flow Workflow Rules
+# LoopFlow Workflow Rules
 
-**Loop-Flow Version:** 0.7.0
+**LoopFlow Version:** 0.7.0
 
-This file defines how AI agents should work in this repository using the Loop-Flow methodology.
+This file defines how AI agents should work in this repository using the LoopFlow methodology.
 
-Loop-Flow is a **theory preservation system** (ref: Naur's "Programming as Theory Building"). The code is the artifact, but the theory in your head is the real product. This workflow helps capture that theory before it's lost.
+LoopFlow is a **theory preservation system** (ref: Naur's "Programming as Theory Building"). The code is the artifact, but the theory in your head is the real product. This workflow helps capture that theory before it's lost.
 
 ---
 

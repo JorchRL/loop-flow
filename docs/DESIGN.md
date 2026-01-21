@@ -1,4 +1,4 @@
-# Loop-Flow Design Document
+# LoopFlow Design Document
 
 > An MCP server for structured AI-assisted development workflows.
 
@@ -6,14 +6,14 @@
 
 ## Vision
 
-Loop-Flow solves the problem of **context rot** in AI-assisted development. When working with AI agents across multiple sessions:
+LoopFlow solves the problem of **context rot** in AI-assisted development. When working with AI agents across multiple sessions:
 
 1. **Context is lost** - Each new session starts from scratch
 2. **Workflow files grow unbounded** - Eventually scaffolding alone fills the context window
 3. **Learnings disappear** - Insights discovered in one session aren't available in the next
 4. **Multi-repo work is fragmented** - No unified view across projects
 
-Loop-Flow provides a **database-backed MCP server** that:
+LoopFlow provides a **database-backed MCP server** that:
 - Serves only the context the AI needs (not entire file dumps)
 - Preserves learnings and decisions across sessions
 - Manages tasks with proper dependency tracking
@@ -38,13 +38,13 @@ A **Repository** is a codebase being managed:
 - Has its own task backlog
 - Has its own learnings/progress history
 - Can reference a root `AGENTS.md` for team rules
-- Multiple repos managed by one Loop-Flow instance
+- Multiple repos managed by one LoopFlow instance
 
 ### 3. Learnings (Zettelkasten)
 
 **Learnings** are first-class entities forming a **knowledge graph**, not just log entries.
 
-Inspired by Naur's "Programming as Theory Building" — the code is the artifact, but the **theory in your head** is the real product. Loop-Flow is a **theory preservation system**.
+Inspired by Naur's "Programming as Theory Building" — the code is the artifact, but the **theory in your head** is the real product. LoopFlow is a **theory preservation system**.
 
 Properties:
 - **Linked**: Learnings connect to other learnings (the link itself is often an insight)

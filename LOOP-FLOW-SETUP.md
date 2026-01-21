@@ -1,11 +1,11 @@
-# Loop-Flow Setup
+# LoopFlow Setup
 
-> The single file for bootstrapping or updating Loop-Flow in any repository.
+> The single file for bootstrapping or updating LoopFlow in any repository.
 
 **Version:** 0.7.0 (2026-01-20)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
-> "Please set up Loop-Flow using LOOP-FLOW-SETUP.md"
+> "Please set up LoopFlow using LOOP-FLOW-SETUP.md"
 
 The agent will auto-detect whether to bootstrap fresh or update an existing installation.
 
@@ -13,7 +13,7 @@ The agent will auto-detect whether to bootstrap fresh or update an existing inst
 
 ## AGENT INSTRUCTIONS
 
-When a user asks you to set up Loop-Flow using this file, perform the following steps:
+When a user asks you to set up LoopFlow using this file, perform the following steps:
 
 ### Step 0: Detect installation state
 
@@ -97,12 +97,12 @@ Create skills for session management. These work in Claude Code, OpenCode, and t
 
 **For Claude Code** (`.claude/skills/`):
 ```bash
-mkdir -p .claude/skills/start-loop .claude/skills/end-loop
+mkdir -p .claude/skills/loop-start .claude/skills/loop-end
 ```
 
 **For OpenCode** (`.opencode/skills/`):
 ```bash
-mkdir -p .opencode/skills/start-loop .opencode/skills/end-loop
+mkdir -p .opencode/skills/loop-start .opencode/skills/loop-end
 ```
 
 Create `SKILL.md` files using the **SKILL TEMPLATES** section below.
@@ -168,13 +168,13 @@ Add this block to the **end** of the existing root `AGENTS.md`:
 
 ---
 
-## Loop-Flow Workflow
+## LoopFlow Workflow
 
-This project uses the Loop-Flow workflow for AI-assisted development sessions.
+This project uses the LoopFlow workflow for AI-assisted development sessions.
 
 **At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
 
-To temporarily disable Loop-Flow, comment out or delete the line above.
+To temporarily disable LoopFlow, comment out or delete the line above.
 ```
 
 If creating a new root `AGENTS.md`, use this minimal template:
@@ -188,13 +188,13 @@ If creating a new root `AGENTS.md`, use this minimal template:
 
 ---
 
-## Loop-Flow Workflow
+## LoopFlow Workflow
 
-This project uses the Loop-Flow workflow for AI-assisted development sessions.
+This project uses the LoopFlow workflow for AI-assisted development sessions.
 
 **At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
 
-To temporarily disable Loop-Flow, comment out or delete the line above.
+To temporarily disable LoopFlow, comment out or delete the line above.
 ```
 
 ---
@@ -223,13 +223,13 @@ To temporarily disable Loop-Flow, comment out or delete the line above.
 Create or replace `.loop-flow/WORKFLOW.md` with this content:
 
 ````markdown
-# Loop-Flow Workflow Rules
+# LoopFlow Workflow Rules
 
-**Loop-Flow Version:** 0.7.0
+**LoopFlow Version:** 0.7.0
 
-This file defines how AI agents should work in this repository using the Loop-Flow methodology.
+This file defines how AI agents should work in this repository using the LoopFlow methodology.
 
-Loop-Flow is a **theory preservation system** (ref: Naur's "Programming as Theory Building"). The code is the artifact, but the theory in your head is the real product. This workflow helps capture that theory before it's lost.
+LoopFlow is a **theory preservation system** (ref: Naur's "Programming as Theory Building"). The code is the artifact, but the theory in your head is the real product. This workflow helps capture that theory before it's lost.
 
 ---
 
@@ -501,7 +501,7 @@ End a session when:
 
 ## LOOP-FLOW PROCESS INSIGHTS
 
-These are high-leverage process insights from Loop-Flow development. They represent core Loop-Flow methodology and should be imported during updates to carry forward the latest thinking.
+These are high-leverage process insights from LoopFlow development. They represent core LoopFlow methodology and should be imported during updates to carry forward the latest thinking.
 
 When importing, assign new IDs that don't conflict with existing insights.
 
@@ -599,7 +599,7 @@ When importing, assign new IDs that don't conflict with existing insights.
   },
   {
     "id": "LF-PROC-010",
-    "content": "Skills are reusable agent capabilities that encode specific knowledge about how to perform a task. Two types: Core Skills (ship with Loop-Flow, e.g., /version, /session-start) and User-Defined Skills (repo-specific, e.g., /deploy). Skills bridge generic agent capability and project-specific knowledge.",
+    "content": "Skills are reusable agent capabilities that encode specific knowledge about how to perform a task. Two types: Core Skills (ship with LoopFlow, e.g., /version, /session-start) and User-Defined Skills (repo-specific, e.g., /deploy). Skills bridge generic agent capability and project-specific knowledge.",
     "type": "process",
     "status": "discussed",
     "tags": ["loop-flow-core", "skills", "extensibility"],
@@ -609,7 +609,7 @@ When importing, assign new IDs that don't conflict with existing insights.
   },
   {
     "id": "LF-PROC-011",
-    "content": "Loop-Flow based learning is effective because: (1) Chat with AI is engaging for ADHD brains — immediate feedback loop, (2) Text-based interaction forces writing, which forces thinking (ref: Zinsser's 'Writing to Learn'). Loop-Flow could be a platform for interactive courses, not just development workflow.",
+    "content": "LoopFlow based learning is effective because: (1) Chat with AI is engaging for ADHD brains — immediate feedback loop, (2) Text-based interaction forces writing, which forces thinking (ref: Zinsser's 'Writing to Learn'). LoopFlow could be a platform for interactive courses, not just development workflow.",
     "type": "process",
     "status": "discussed",
     "tags": ["loop-flow-core", "learning", "adhd", "writing-to-learn", "vision"],
@@ -619,7 +619,7 @@ When importing, assign new IDs that don't conflict with existing insights.
   },
   {
     "id": "LF-PROC-012",
-    "content": "Distributed Discovery: Use AI agents as parallel interviewers to extract tacit knowledge from teams. Embed a MINILOOP.md file (a lightweight, single-file Loop-Flow installation) in a feature branch. Team members interact with the AI interviewer asynchronously, commit their session results, and the lead synthesizes findings. Advantages: no scheduling, less social pressure to 'know the answer', consistent protocol, captures verbatim quotes, scales across team.",
+    "content": "Distributed Discovery: Use AI agents as parallel interviewers to extract tacit knowledge from teams. Embed a MINILOOP.md file (a lightweight, single-file LoopFlow installation) in a feature branch. Team members interact with the AI interviewer asynchronously, commit their session results, and the lead synthesizes findings. Advantages: no scheduling, less social pressure to 'know the answer', consistent protocol, captures verbatim quotes, scales across team.",
     "type": "process",
     "status": "discussed",
     "tags": ["loop-flow-core", "distributed-discovery", "miniloop", "team-knowledge", "interviews"],
@@ -639,7 +639,7 @@ When importing, assign new IDs that don't conflict with existing insights.
   },
   {
     "id": "LF-PROC-014",
-    "content": "Skills provide reliable commands for starting and ending sessions. /start-loop reads .loop-flow/ state directly (no glob failures). /end-loop handles both graceful handoffs (updates backlog, progress, insights) and context emergencies (creates RESUME.md for seamless pickup). Skills follow the Agent Skills standard and work in Claude Code and OpenCode.",
+    "content": "Skills provide reliable commands for starting and ending sessions. /loop-start reads .loop-flow/ state directly (no glob failures). /loop-end handles both graceful handoffs (updates backlog, progress, insights) and context emergencies (creates RESUME.md for seamless pickup). Skills follow the Agent Skills standard and work in Claude Code and OpenCode.",
     "type": "process",
     "status": "discussed",
     "tags": ["loop-flow-core", "skills", "session-management", "reliability"],
@@ -656,19 +656,19 @@ When importing, assign new IDs that don't conflict with existing insights.
 
 Skills provide reliable commands for starting and ending sessions. They work with Claude Code, OpenCode, and tools supporting the Agent Skills standard.
 
-### start-loop Skill
+### loop-start Skill
 
-Create `<skills-dir>/start-loop/SKILL.md`:
+Create `<skills-dir>/loop-start/SKILL.md`:
 
 ````markdown
 ---
-name: start-loop
-description: Start a Loop-Flow session. Reads workflow rules, backlog, progress, and insights to understand current state and propose a task.
+name: loop-start
+description: Start a LoopFlow session. Reads workflow rules, backlog, progress, and insights to understand current state and propose a task.
 ---
 
-# Start Loop-Flow Session
+# Start LoopFlow Session
 
-You are starting a Loop-Flow development session. Follow these steps exactly:
+You are starting a LoopFlow development session. Follow these steps exactly:
 
 ## Step 1: Read Core Files (Required)
 
@@ -710,19 +710,19 @@ Remember: The backlog is a **menu, not a queue**. Suggest based on value, depend
 - If a task seems too large, propose breaking it down first
 ````
 
-### end-loop Skill
+### loop-end Skill
 
-Create `<skills-dir>/end-loop/SKILL.md`:
+Create `<skills-dir>/loop-end/SKILL.md`:
 
 ````markdown
 ---
-name: end-loop
-description: End a Loop-Flow session gracefully. Updates backlog, progress, and insights. Use when wrapping up a session or hitting context limits.
+name: loop-end
+description: End a LoopFlow session gracefully. Updates backlog, progress, and insights. Use when wrapping up a session or hitting context limits.
 ---
 
-# End Loop-Flow Session
+# End LoopFlow Session
 
-You are ending a Loop-Flow session. Determine which type of ending this is:
+You are ending a LoopFlow session. Determine which type of ending this is:
 
 ## Type A: Graceful Handoff (task complete or natural stopping point)
 
@@ -790,7 +790,7 @@ Status: IN_PROGRESS (interrupted)
 
 ## To Continue
 1. Read this file first
-2. Then run /start-loop
+2. Then run /loop-start
 3. Continue from "Next step" above
 
 ---
@@ -811,7 +811,7 @@ Tell them: "Session saved to RESUME.md. Next session will pick up where we left 
 Remind the user of their options:
 - `git add . && git commit -m "..."` — if they want to commit
 - `git push` — only if they explicitly want to push
-- Start new session with `/start-loop`
+- Start new session with `/loop-start`
 ````
 
 ### Skill Locations by Tool
@@ -829,13 +829,13 @@ Remind the user of their options:
 
 After bootstrapping, explain this to the user:
 
-### What is Loop-Flow?
+### What is LoopFlow?
 
-Loop-Flow is a structured workflow for AI-assisted development. Brought to you by your friendly dev, Jorge.
+LoopFlow is a structured workflow for AI-assisted development. Brought to you by your friendly dev, Jorge.
 
 It solves the problem of **context rot** — when AI assistants lose track of what they're doing in long sessions, or when knowledge gets lost between sessions.
 
-But there's a deeper goal: **Loop-Flow helps you become a better engineer**, not just ship faster. In a world of "vibe coding" where AI does the thinking, Loop-Flow keeps you in the driver's seat. AI is powerful, but over-reliance is dangerous — it atrophies your ability to think deeply, which is fundamental to being human and being a great engineer.
+But there's a deeper goal: **LoopFlow helps you become a better engineer**, not just ship faster. In a world of "vibe coding" where AI does the thinking, LoopFlow keeps you in the driver's seat. AI is powerful, but over-reliance is dangerous — it atrophies your ability to think deeply, which is fundamental to being human and being a great engineer.
 
 The core idea: **one task, one session, one handoff** — with the human firmly in control.
 
@@ -895,8 +895,8 @@ Every session should leave you knowing something you didn't know before — abou
 ### Quick Commands
 
 If you installed the skills (recommended):
-- **Start a session**: `/start-loop`
-- **End a session**: `/end-loop`
+- **Start a session**: `/loop-start`
+- **End a session**: `/loop-end`
 
 Without skills:
 - **Start a session**: "Let's start a session" or "Read the backlog and suggest a task"
@@ -906,7 +906,7 @@ Other commands:
 - **Add a task**: "Add a new task: [description]"
 - **Capture an insight**: "Note: [insight]" or "Capture insight: [insight]"
 
-### Disabling Loop-Flow
+### Disabling LoopFlow
 
 To temporarily disable:
 1. Open your root `AGENTS.md`
@@ -924,7 +924,7 @@ After setup, your project has:
 | `.loop-flow/plan/backlog.json` | Your task pool |
 | `.loop-flow/plan/progress.txt` | Session history and learnings |
 | `.loop-flow/plan/insights.json` | Structured knowledge graph |
-| Root `AGENTS.md` | Now includes Loop-Flow init instruction |
+| Root `AGENTS.md` | Now includes LoopFlow init instruction |
 
 ---
 
@@ -934,8 +934,8 @@ After setup, your project has:
 
 **Skills System**
 
-- Added `/start-loop` skill: Reliably reads .loop-flow/ state and proposes tasks (no glob failures)
-- Added `/end-loop` skill: Two modes — graceful handoff OR context emergency with RESUME.md
+- Added `/loop-start` skill: Reliably reads .loop-flow/ state and proposes tasks (no glob failures)
+- Added `/loop-end` skill: Two modes — graceful handoff OR context emergency with RESUME.md
 - Skills follow Agent Skills standard (works in Claude Code + OpenCode)
 - Skill templates included in this file (see SKILL TEMPLATES section)
 - Skills live in `.claude/skills/` or `.opencode/skills/` (user's choice)
@@ -949,7 +949,7 @@ After setup, your project has:
 **Distributed Discovery & MINILOOP**
 
 - Added Distributed Discovery pattern: using AI agents as parallel interviewers to extract tacit knowledge from teams
-- Introduced MINILOOP.md concept: a lightweight, single-file Loop-Flow installation for feature branches
+- Introduced MINILOOP.md concept: a lightweight, single-file LoopFlow installation for feature branches
 - MINILOOP enables asynchronous "probing" — team members interact with AI interviewer, commit results, lead synthesizes
 - Ideal for extracting domain knowledge, validating documented models, discovering edge cases
 - Added PR Review Workflow: risk-focused code review pattern (critical/medium/low categorization)
@@ -971,10 +971,10 @@ After setup, your project has:
 
 **Skills System Concept**
 - Introduced skills as reusable agent capabilities encoding specific knowledge
-- Two types: Core Skills (ship with Loop-Flow) and User-Defined Skills (repo-specific)
+- Two types: Core Skills (ship with LoopFlow) and User-Defined Skills (repo-specific)
 - Skills bridge generic agent capability and project-specific knowledge
 
-**Loop-Flow as Learning Platform**
+**LoopFlow as Learning Platform**
 - Chat-based learning is ADHD-friendly (immediate feedback loop)
 - Writing forces thinking (Zinsser's "Writing to Learn")
 - Vision: Loop-Flow could be a platform for interactive courses

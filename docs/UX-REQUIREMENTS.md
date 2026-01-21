@@ -1,4 +1,4 @@
-# Loop-Flow UX Requirements
+# LoopFlow UX Requirements
 
 > Discovered via interview session, 2026-01-17
 

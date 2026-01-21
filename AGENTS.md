@@ -1,20 +1,20 @@
-# Loop-Flow Development Rules
+# LoopFlow Development Rules
 
 ## Project Overview
 
-**Loop-Flow** is an MCP server that provides structured AI-assisted development workflows. It manages tasks, sessions, learnings, and context across multiple repositories.
+**LoopFlow** is an MCP server that provides structured AI-assisted development workflows. It manages tasks, sessions, learnings, and context across multiple repositories.
 
 **Tech Stack**: TypeScript, Node.js, SQLite, MCP Protocol
 
 ---
 
-## Loop-Flow Workflow
+## LoopFlow Workflow
 
-This project uses the Loop-Flow workflow for AI-assisted development sessions.
+This project uses the LoopFlow workflow for AI-assisted development sessions.
 
 **At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
 
-To temporarily disable Loop-Flow, comment out or delete the line above.
+To temporarily disable LoopFlow, comment out or delete the line above.
 
 ---
 

@@ -1,14 +1,14 @@
-# Loop-Flow
+# LoopFlow
 
 > Structured AI-assisted development workflows that actually work.
 
-Loop-Flow helps you collaborate effectively with AI coding assistants while **becoming a better engineer** — not just shipping faster.
+LoopFlow helps you collaborate effectively with AI coding assistants while **becoming a better engineer** — not just shipping faster.
 
 ---
 
 ## What It Is
 
-Loop-Flow solves **context rot** — when AI assistants lose track of what they're doing, or knowledge gets lost between sessions.
+LoopFlow solves **context rot** — when AI assistants lose track of what they're doing, or knowledge gets lost between sessions.
 
 The core idea: **one task, one session, one handoff** — with the human firmly in control.
 
@@ -25,7 +25,7 @@ The core idea: **one task, one session, one handoff** — with the human firmly 
 
 Copy [LOOP-FLOW-SETUP.md](./LOOP-FLOW-SETUP.md) to your project, then tell your AI agent:
 
-> "Please set up Loop-Flow using LOOP-FLOW-SETUP.md"
+> "Please set up LoopFlow using LOOP-FLOW-SETUP.md"
 
 The agent handles everything — creating files, explaining the workflow, and cleaning up.
 

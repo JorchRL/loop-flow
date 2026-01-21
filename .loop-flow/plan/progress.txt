@@ -501,3 +501,110 @@ Implemented Skills system for reliable session management:
 - **INS-041**: Skills provide reliable session commands. Agent Skills standard works across Claude Code and OpenCode.
 
 ---
+
+## 2026-01-20 | Session 9 (OpenCode Commands)
+Task: Ad-hoc skills audit and OpenCode compatibility
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Audited skills implementation against OpenCode and Claude Code docs. Discovered key difference: Claude Code skills double as slash commands, but OpenCode skills are agent-only. Created OpenCode commands (`.opencode/commands/`) so `/start-loop` and `/end-loop` work in both tools.
+
+### Files Created/Updated
+
+- `.opencode/commands/start-loop.md` — New command for OpenCode
+- `.opencode/commands/end-loop.md` — New command for OpenCode
+- `.opencode/skills/start-loop/SKILL.md` — Added `compatibility: opencode`
+- `.opencode/skills/end-loop/SKILL.md` — Added `compatibility: opencode`
+
+### Learnings
+
+- **INS-042**: Claude Code skills = slash commands + agent-invocable. OpenCode separates these: skills are agent-only (via `skill()` tool), commands are user-only (via `/command`). Need both for full compatibility.
+
+---
+
+## 2026-01-20 | Session 10 (End-Loop Reliability)
+Task: Ad-hoc improvement to end-loop skill
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Improved end-loop skill to be more reliable. Added "SAVE STATE FIRST" pattern — file updates now happen BEFORE any summary or discussion. Added explicit checkpoint to verify saves completed. Added skip condition for when no work was done.
+
+### Files Updated
+
+- `.claude/skills/end-loop/SKILL.md` — Rewrote with SAVE-FIRST pattern
+- `.opencode/skills/end-loop/SKILL.md` — Same updates
+- `.opencode/commands/end-loop.md` — Same updates
+
+### Learnings
+
+- **INS-043**: End-loop must save state FIRST because it may be an emergency handoff. User might be hitting context limits. Do file writes before any summary or confirmation.
+
+---
+
+## 2026-01-20 | Session 11 (Skills System Architecture)
+Task: LF-022 [DESIGN] Skills System Architecture
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Designed the skills system architecture. Researched Claude Code and OpenCode docs to understand their skill/command models. Made key design decisions: (1) Framework skills marked with `framework: loop-flow` metadata, (2) Accept duplication for broad compatibility (3 locations), (3) Hybrid invocation — session skills user-only, future operational skills agent-invocable. Created comprehensive design doc at `docs/SKILLS-DESIGN.md`.
+
+### Files Created/Updated
+
+- `docs/SKILLS-DESIGN.md` — New design document (~250 lines)
+- `.claude/skills/start-loop/SKILL.md` — Added `framework: loop-flow` and `disable-model-invocation: true`
+- `.claude/skills/end-loop/SKILL.md` — Added `framework: loop-flow` and `disable-model-invocation: true`
+- `.opencode/skills/start-loop/SKILL.md` — Added `framework: loop-flow`
+- `.opencode/skills/end-loop/SKILL.md` — Added `framework: loop-flow`
+- `.loop-flow/plan/backlog.json` — Marked LF-022 DONE
+- `.loop-flow/plan/insights.json` — Added INS-044
+
+### Key Design Decisions
+
+1. **Template distribution**: Skills ship as templates in LOOP-FLOW-SETUP.md (current approach preserved)
+2. **Framework metadata**: Use `framework: loop-flow` frontmatter to mark framework skills
+3. **Accept duplication**: Three copies (Claude Code skills, OpenCode skills, OpenCode commands) for compatibility
+4. **Hybrid invocation**: Session boundary skills user-only; future operational skills agent-invocable
+
+### Learnings
+
+- **INS-044**: Framework skills are a distinct category from user-defined skills, marked with `framework: <name>` in frontmatter. This enables differentiation while keeping skills in standard locations.
+
+---
+
+## 2026-01-20 | Session 12 (Command Rename & Project Name Standardization)
+Task: Ad-hoc: Rename commands and standardize project name
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Renamed skill commands from `start-loop`/`end-loop` to `loop-start`/`loop-end` for better grouping. Standardized project name from "Loop-Flow" to "LoopFlow" in prose while keeping `loop-flow` for paths/filenames.
+
+### Changes Made
+
+**Command renaming:**
+- Renamed skill directories in `.claude/skills/` and `.opencode/skills/`
+- Renamed command files in `.opencode/commands/`
+- Updated all `name:` frontmatter and internal references
+
+**Project name standardization:**
+- LoopFlow (PascalCase) for prose
+- loop-flow (kebab-case) for paths, filenames, and identifiers
+- Updated README.md, AGENTS.md, WORKFLOW.md, LOOP-FLOW-SETUP.md, VERSION_MANIFEST.md, docs/DESIGN.md, docs/UX-REQUIREMENTS.md, docs/SKILLS-DESIGN.md
+
+**Files preserved as-is:**
+- Historical progress.txt entries
+- Version source references (e.g., `"source": "Loop-Flow v0.5.0"`)
+- `.loop-flow/` directory name
+
+### Learnings
+
+- Naming convention established: LoopFlow in prose, loop-flow in paths, /loop-* for commands (groups alphabetically)
+
+---

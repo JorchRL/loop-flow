@@ -1,7 +1,7 @@
 {
-  "project": "Loop-Flow MCP Server",
+  "project": "LoopFlow MCP Server",
   "last_updated": "2026-01-20",
-  "notes": "v0.7.0 released with Skills system (start-loop, end-loop). Skills follow Agent Skills standard for Claude Code + OpenCode compatibility.",
+  "notes": "v0.7.0. Session 12: Renamed commands (start-loop → loop-start, end-loop → loop-end) and standardized project name to LoopFlow in prose.",
   "tasks": [
     {
       "id": "LF-023",
@@ -366,7 +366,7 @@
       "id": "LF-022",
       "title": "[DESIGN] Skills System Architecture",
       "description": "Design the skills system: reusable agent capabilities that encode specific knowledge. Two types: (1) Loop-Flow Core Skills (ship with Loop-Flow, e.g., /version, /session-start), (2) User-Defined Skills (repo-specific, e.g., /deploy). Define where skills live, how they're invoked, how they're structured.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "medium",
       "acceptance_criteria": [
         "Define skill structure (name, description, steps, knowledge)",
@@ -375,7 +375,7 @@
         "Design invocation pattern (slash commands? tool calls?)",
         "Prototype /version skill as first example"
       ],
-      "notes": "Emerged from LF-021 session. Doing version bumps revealed the need for skills. See INS-029, INS-030."
+      "notes": "Completed in Session 11. Design doc: docs/SKILLS-DESIGN.md. Key decisions: framework metadata marker, accept duplication for compatibility, hybrid invocation control. See INS-044."
     }
   ]
 }

@@ -1,11 +1,10 @@
 ---
-name: start-loop
-description: Start a Loop-Flow session. Reads workflow rules, backlog, progress, and insights to understand current state and propose a task.
+description: Start a LoopFlow session
 ---
 
-# Start Loop-Flow Session
+# Start LoopFlow Session
 
-You are starting a Loop-Flow development session. Follow these steps exactly:
+You are starting a LoopFlow development session. Follow these steps exactly:
 
 ## Step 1: Read Core Files (Required)
 

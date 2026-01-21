@@ -416,7 +416,7 @@
     },
     {
       "id": "INS-032",
-      "content": "Loop-Flow needs encapsulated commands/skills for common tasks. Example: 'start loop' command that reliably reads .loop-flow/ state (glob often fails to find the folder, requiring manual 'ls' instructions). Skills should be simple invocations that 'just work' without the user having to remember the right incantations.",
+      "content": "LoopFlow needs encapsulated commands/skills for common tasks. Example: 'loop start' command that reliably reads .loop-flow/ state (glob often fails to find the folder, requiring manual 'ls' instructions). Skills should be simple invocations that 'just work' without the user having to remember the right incantations.",
       "type": "architecture",
       "status": "unprocessed",
       "source": {
@@ -548,7 +548,7 @@
     },
     {
       "id": "INS-041",
-      "content": "Skills provide reliable commands for starting and ending sessions. /start-loop reads .loop-flow/ state directly (no glob failures). /end-loop handles both graceful handoffs (updates backlog, progress, insights) and context emergencies (creates RESUME.md for seamless pickup). Skills follow the Agent Skills standard and work in Claude Code and OpenCode.",
+      "content": "Skills provide reliable commands for starting and ending sessions. /loop-start reads .loop-flow/ state directly (no glob failures). /loop-end handles both graceful handoffs (updates backlog, progress, insights) and context emergencies (creates RESUME.md for seamless pickup). Skills follow the Agent Skills standard and work in Claude Code and OpenCode.",
       "type": "process",
       "status": "discussed",
       "source": {
@@ -559,6 +559,48 @@
       "links": ["INS-029", "INS-032"],
       "created": "2026-01-20",
       "notes": "Skills created in .claude/skills/ and .opencode/skills/. Templates in LOOP-FLOW-SETUP.md."
+    },
+    {
+      "id": "INS-042",
+      "content": "Claude Code and OpenCode have different skill/command models. In Claude Code, skills double as slash commands — users can type /skill-name directly. In OpenCode, skills are agent-only (invoked via skill() tool); for user slash commands, you need separate files in .opencode/commands/. Full cross-tool compatibility requires both: skills for agent invocation, commands for user invocation in OpenCode.",
+      "type": "technical",
+      "status": "discussed",
+      "source": {
+        "task": "ad-hoc-skills-audit",
+        "session": "2026-01-20-S9"
+      },
+      "tags": ["skills", "commands", "opencode", "claude-code", "compatibility"],
+      "links": ["INS-041", "INS-029"],
+      "created": "2026-01-20",
+      "notes": "Discovered by reading both tools' docs. OpenCode commands use .opencode/commands/*.md with frontmatter (description field). Claude Code commands merged into skills system."
+    },
+    {
+      "id": "INS-043",
+      "content": "End-loop must save state FIRST because it may be an emergency handoff. The user might be hitting context limits and need to bail out quickly. Do file writes (backlog.json, progress.txt, insights.json) before any summary or confirmation dialogue. Include an explicit checkpoint to verify saves actually happened.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "ad-hoc-end-loop-improvement",
+        "session": "2026-01-20-S10"
+      },
+      "tags": ["loop-flow-core", "skills", "reliability", "emergency-handoff"],
+      "links": ["INS-041", "INS-009"],
+      "created": "2026-01-20",
+      "notes": "Triggered by agent forgetting to save in Session 9. The SAVE-FIRST pattern prevents this."
+    },
+    {
+      "id": "INS-044",
+      "content": "Framework skills are a conceptual category distinct from user-defined skills. They ship with a methodology (like Loop-Flow) and are marked with `framework: <name>` in frontmatter. This keeps them in standard locations (.claude/skills/, .opencode/skills/) while clearly indicating origin. Framework skills are distributed via templates (LOOP-FLOW-SETUP.md) and should not be modified by users — fork instead. User-defined skills are project-specific and have no framework marker.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-022",
+        "session": "2026-01-20-S11"
+      },
+      "tags": ["loop-flow-core", "skills", "architecture", "framework-skills"],
+      "links": ["INS-029", "INS-041", "INS-042"],
+      "created": "2026-01-20",
+      "notes": "Distinguishes skills that come from frameworks (Loop-Flow, etc.) from project-specific user skills. Enables future tooling to differentiate them."
     }
   ],
   "link_types": {
