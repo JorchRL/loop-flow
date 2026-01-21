@@ -1,6 +1,6 @@
 # Loop-Flow Workflow Rules
 
-**Loop-Flow Version:** 0.5.0
+**Loop-Flow Version:** 0.6.0
 
 This file defines how AI agents should work in this repository using the Loop-Flow methodology.
 

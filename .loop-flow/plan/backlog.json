@@ -1,7 +1,7 @@
 {
   "project": "Loop-Flow MCP Server",
   "last_updated": "2026-01-20",
-  "notes": "v0.5.0 released with spec-driven development insights. Promoted 5 insights from learn-tdd-go to core process insights (LF-PROC-007 to LF-PROC-011).",
+  "notes": "v0.6.0 released with Distributed Discovery and MINILOOP patterns. Added PR Review Workflow. 2 new process insights (LF-PROC-012, LF-PROC-013).",
   "tasks": [
     {
       "id": "LF-023",

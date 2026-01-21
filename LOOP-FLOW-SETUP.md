@@ -2,7 +2,7 @@
 
 > The single file for bootstrapping or updating Loop-Flow in any repository.
 
-**Version:** 0.5.0 (2026-01-20)
+**Version:** 0.6.0 (2026-01-20)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
 > "Please set up Loop-Flow using LOOP-FLOW-SETUP.md"
@@ -106,7 +106,7 @@ After scaffolding, explain the key concepts using the **USER TUTORIAL** section 
 ### Step U1: Confirm update
 
 Tell the user:
-> "Loop-Flow detected (version X or unknown). I'll update to v0.5.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
+> "Loop-Flow detected (version X or unknown). I'll update to v0.6.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
 
 Wait for confirmation.
 
@@ -188,7 +188,7 @@ To temporarily disable Loop-Flow, comment out or delete the line above.
 ```json
 {
   "schema_version": "0.1.0",
-  "loop_flow_version": "0.5.0",
+  "loop_flow_version": "0.6.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
   "insights": [],
   "link_types": {
@@ -209,7 +209,7 @@ Create or replace `.loop-flow/WORKFLOW.md` with this content:
 ````markdown
 # Loop-Flow Workflow Rules
 
-**Loop-Flow Version:** 0.5.0
+**Loop-Flow Version:** 0.6.0
 
 This file defines how AI agents should work in this repository using the Loop-Flow methodology.
 
@@ -600,6 +600,26 @@ When importing, assign new IDs that don't conflict with existing insights.
     "links": [],
     "created": "2026-01-20",
     "source": "Loop-Flow v0.5.0"
+  },
+  {
+    "id": "LF-PROC-012",
+    "content": "Distributed Discovery: Use AI agents as parallel interviewers to extract tacit knowledge from teams. Embed a MINILOOP.md file (a lightweight, single-file Loop-Flow installation) in a feature branch. Team members interact with the AI interviewer asynchronously, commit their session results, and the lead synthesizes findings. Advantages: no scheduling, less social pressure to 'know the answer', consistent protocol, captures verbatim quotes, scales across team.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "distributed-discovery", "miniloop", "team-knowledge", "interviews"],
+    "links": ["LF-PROC-004", "LF-PROC-005"],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.6.0"
+  },
+  {
+    "id": "LF-PROC-013",
+    "content": "Risk-focused code review: The value of AI-assisted PR review is risk identification, not style nitpicking. Categorize findings by deployment risk: CRITICAL (must fix before merge — breaks production, data loss, security), MEDIUM (suboptimal but functional, fix later OK), LOW (code style, nice-to-haves). Focus on: What could break in production? What's missing? What assumptions might be wrong?",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "code-review", "pr-review", "risk-assessment"],
+    "links": [],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.6.0"
   }
 ]
 ```
@@ -703,6 +723,21 @@ After setup, your project has:
 ---
 
 ## VERSION HISTORY
+
+### v0.6.0 (2026-01-20)
+
+**Distributed Discovery & MINILOOP**
+
+- Added Distributed Discovery pattern: using AI agents as parallel interviewers to extract tacit knowledge from teams
+- Introduced MINILOOP.md concept: a lightweight, single-file Loop-Flow installation for feature branches
+- MINILOOP enables asynchronous "probing" — team members interact with AI interviewer, commit results, lead synthesizes
+- Ideal for extracting domain knowledge, validating documented models, discovering edge cases
+- Added PR Review Workflow: risk-focused code review pattern (critical/medium/low categorization)
+- New docs: `docs/DISTRIBUTED-DISCOVERY.md`, `docs/PR-REVIEW-WORKFLOW.md`
+
+**2 new process insights**: LF-PROC-012, LF-PROC-013
+
+---
 
 ### v0.5.0 (2026-01-20)
 

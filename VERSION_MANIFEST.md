@@ -2,7 +2,7 @@
 
 > Single source of truth for Loop-Flow versioning.
 
-**Current Version:** 0.5.0  
+**Current Version:** 0.6.0  
 **Last Updated:** 2026-01-20
 
 ---
@@ -42,6 +42,18 @@ All should show the current version (except `schema_version` which is separate).
 ---
 
 ## Changelog
+
+### 0.6.0 (2026-01-20)
+
+**Distributed Discovery & MINILOOP**
+
+- Added Distributed Discovery pattern: using AI agents as parallel interviewers to extract tacit knowledge from teams
+- Introduced MINILOOP.md concept: a lightweight, single-file Loop-Flow installation for feature branches
+- MINILOOP enables "probing" team members asynchronously — results committed and synthesized by lead
+- Added PR Review Workflow: risk-focused code review pattern (critical/medium/low categorization)
+- New docs: `docs/DISTRIBUTED-DISCOVERY.md`, `docs/PR-REVIEW-WORKFLOW.md`
+
+---
 
 ### 0.5.0 (2026-01-20)
 

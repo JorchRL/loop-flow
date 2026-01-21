@@ -517,6 +517,34 @@
       "links": ["INS-034"],
       "created": "2026-01-20",
       "notes": "Testing code isn't throwaway — it can be production code."
+    },
+    {
+      "id": "INS-039",
+      "content": "Distributed Discovery: Use AI agents as parallel interviewers to extract tacit knowledge from teams. Embed a MINILOOP.md file (a lightweight, single-file Loop-Flow installation) in a feature branch. Team members interact with the AI interviewer asynchronously, commit their session results, and the lead synthesizes findings. Advantages: no scheduling, less social pressure to 'know the answer', consistent protocol, captures verbatim quotes, scales across team.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "version-bump-0.6.0",
+        "session": "2026-01-20-S7"
+      },
+      "tags": ["loop-flow-core", "distributed-discovery", "miniloop", "team-knowledge", "interviews"],
+      "links": ["INS-019", "INS-025"],
+      "created": "2026-01-20",
+      "notes": "Documented in docs/DISTRIBUTED-DISCOVERY.md. MINILOOP is a 'probe' file — temporary, single-file Loop-Flow for feature branches."
+    },
+    {
+      "id": "INS-040",
+      "content": "Risk-focused code review: The value of AI-assisted PR review is risk identification, not style nitpicking. Categorize findings by deployment risk: CRITICAL (must fix before merge — breaks production, data loss, security), MEDIUM (suboptimal but functional, fix later OK), LOW (code style, nice-to-haves). Focus on: What could break in production? What's missing? What assumptions might be wrong?",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "version-bump-0.6.0",
+        "session": "2026-01-20-S7"
+      },
+      "tags": ["loop-flow-core", "code-review", "pr-review", "risk-assessment"],
+      "links": [],
+      "created": "2026-01-20",
+      "notes": "Documented in docs/PR-REVIEW-WORKFLOW.md. Practical workflow for AI-assisted PR reviews."
     }
   ],
   "link_types": {

@@ -434,3 +434,32 @@ Bumped Loop-Flow from v0.4.0 to v0.5.0. Exported the update by adding 5 new proc
 The LOOP-FLOW-SETUP.md file is now ready for distribution to other projects.
 
 ---
+
+## 2026-01-20 | Session 7 (Version Bump v0.6.0)
+Task: Ad-hoc version bump
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Bumped Loop-Flow from v0.5.0 to v0.6.0 to include two new docs:
+
+1. **docs/DISTRIBUTED-DISCOVERY.md** — Pattern for using AI agents as parallel interviewers to extract tacit knowledge from teams. Introduces MINILOOP.md concept: a lightweight, single-file Loop-Flow installation for feature branches.
+
+2. **docs/PR-REVIEW-WORKFLOW.md** — Risk-focused code review workflow. Categorizes findings by deployment risk (critical/medium/low).
+
+**Files updated:**
+- VERSION_MANIFEST.md
+- LOOP-FLOW-SETUP.md (version, template, new process insights LF-PROC-012/013, VERSION HISTORY)
+- .loop-flow/WORKFLOW.md
+- docs/DESIGN.md
+- docs/UX-REQUIREMENTS.md
+- .loop-flow/plan/insights.json (added INS-039, INS-040)
+- .loop-flow/plan/backlog.json (notes)
+
+### Learnings
+
+- **INS-039**: Distributed Discovery / MINILOOP pattern — AI as parallel interviewer
+- **INS-040**: Risk-focused PR review — categorize by deployment risk, not style
+
+---
