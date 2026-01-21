@@ -142,12 +142,17 @@ Do NOT modify:
 
 If `.loop-flow/plan/insights.json` exists but doesn't have `link_types`, add them from the **TEMPLATE: insights.json** section.
 
-### Step U4: Offer to import process insights
+### Step U4: Import process insights
 
-Ask the user:
-> "This update includes process insights from Loop-Flow development (v0.3.0 additions). Would you like me to add them to your insights.json? They're about how to work better with AI agents."
+Process insights are core to LoopFlow's methodology — they define *how* to work effectively with AI agents. Import them automatically.
 
-If yes, append insights from **LOOP-FLOW PROCESS INSIGHTS** section, adjusting IDs to not conflict with existing ones.
+1. Read the user's current `.loop-flow/plan/insights.json`
+2. Check which LF-PROC insights already exist (by matching content, not ID)
+3. Append any NEW insights from the **LOOP-FLOW PROCESS INSIGHTS** section
+4. Adjust IDs to not conflict with existing ones (e.g., if user has INS-050, new insights start at INS-051)
+
+Tell the user:
+> "Imported N new process insights from LoopFlow v0.8.0. These are methodology updates that help you work more effectively."
 
 ### Step U5: Delete this setup file
 

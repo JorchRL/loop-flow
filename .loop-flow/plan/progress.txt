@@ -631,3 +631,90 @@ Extended LoopFlow skills with git operations and self-update capability. Created
 - Bootstrap can be a single curl + agent instruction — minimal friction for new users
 
 ---
+
+## 2026-01-20 | Session 13 (Mandatory Process Insights)
+Task: Ad-hoc: Make process insight import mandatory during updates
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Changed the update path in LOOP-FLOW-SETUP.md to import process insights automatically instead of asking the user. Process insights are core LoopFlow methodology — they define *how* to work with AI agents — so they shouldn't be optional.
+
+### Changes Made
+
+- Updated Step U4 in LOOP-FLOW-SETUP.md: removed the "ask user" pattern, now imports automatically
+- Agent checks for duplicates (by content) and assigns proper IDs
+- Tells user how many new insights were imported
+
+### Learnings
+
+- Process insights are features, not optional add-ons. Treating them as optional was over-cautious and undermined the update mechanism's purpose.
+
+---
+
+## 2026-01-20 | Session 14 (Prompt Engineering Learning Track)
+Task: Ad-hoc: Plan prompt engineering learning + audit LoopFlow prompts
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Fetched and analyzed Anthropic's full prompt engineering documentation (8 techniques). Performed quick audit of LoopFlow's prompts (skills, WORKFLOW.md) against best practices. Created a learning track: one foundation task + three implementation tasks that teach techniques by applying them.
+
+### Key Findings from Audit
+
+**What's good:**
+- Clear sequential steps (numbered)
+- "SAVE FIRST" pattern in loop-end
+- Format templates for outputs
+- Long context principle applied (read first, then analyze)
+
+**Gaps identified:**
+- No multishot examples in skills
+- No XML tags for structured output
+- No explicit role/persona prompting
+
+### Tasks Created
+
+| ID | Type | Title | Learning Focus |
+|----|------|-------|----------------|
+| LF-024 | [LEARN] | Anthropic Prompt Engineering Best Practices | Foundation — all 8 techniques |
+| LF-025 | [IMPL] | Add multishot examples to skills | Technique #2: Why examples work |
+| LF-026 | [IMPL] | Add XML structure to skill outputs | Technique #4: How XML prevents mixing |
+| LF-027 | [IMPL] | Add role prompting to skills | Technique #5: How roles shape expertise |
+
+### Learnings
+
+- Anthropic's techniques are ordered by impact: clarity > examples > CoT > XML > roles > prefill > chaining > long context
+- "Learning by doing" pattern: each implementation task is a chance to deeply internalize a prompting technique
+- LoopFlow prompts are decent but not optimized — biggest wins from adding examples
+
+### Update (continued session)
+
+Discovered second Anthropic doc: Claude 4.x Best Practices. Key finding: **Claude 4.x follows instructions precisely** — no more "above and beyond" behavior. This has major implications for prompt design.
+
+Added 7 more tasks (LF-028 to LF-034) covering Claude 4.x specific patterns:
+- LF-028: Explicit action language (not soft suggestions)
+- LF-029: Add context/motivation to instructions
+- LF-030: Anti-overengineering guidance
+- LF-031: Code exploration requirements (read before write)
+- LF-032: Parallel tool guidance
+- LF-033: Document LoopFlow's alignment with multi-window patterns
+- LF-034: 'Think' word sensitivity note
+
+**Key insight**: LoopFlow's file-based state design (progress.txt, backlog.json, insights.json, git) is exactly what Anthropic recommends for multi-context-window workflows. We accidentally followed best practices!
+
+### Update 2 (comprehensive coverage)
+
+Added 12 more [LEARN] tasks (LF-035 to LF-046) to cover ALL topics from Claude 4.x best practices doc — even ones that may not directly apply to LoopFlow. Rationale: learning is the goal, applicability is a bonus. Reasoning through "does this apply?" builds deeper understanding and may spark unexpected ideas.
+
+**Full learning track now has 23 tasks:**
+- LF-024: Foundation (both guides)
+- LF-025 to LF-027: General techniques (examples, XML, roles)
+- LF-028 to LF-034: Claude 4.x core (action language, context, overengineering, exploration, parallel, multi-window, think-word)
+- LF-035 to LF-046: Claude 4.x extended (aggressive language, verbosity, format control, research, subagents, interleaved thinking, file cleanup, hard-coding, hallucinations, frontend/AI-slop, vision/crop, document creation)
+
+This is a rich menu to pick from over time. Each task is a learning opportunity.
+
+---
