@@ -463,3 +463,41 @@ Bumped Loop-Flow from v0.5.0 to v0.6.0 to include two new docs:
 - **INS-040**: Risk-focused PR review — categorize by deployment risk, not style
 
 ---
+
+## 2026-01-20 | Session 8 (Skills System v0.7.0)
+Task: Ad-hoc ergonomics improvement
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Implemented Skills system for reliable session management:
+
+1. **Research**: Investigated skill/command support across Claude Code, OpenCode, and Cursor
+   - Claude Code: `.claude/skills/<name>/SKILL.md` with frontmatter
+   - OpenCode: `.opencode/skills/<name>/SKILL.md` (same format - Agent Skills standard)
+   - Cursor: `.cursor/rules/` for rules, commands via config
+
+2. **Created Skills**:
+   - `/start-loop`: Reads .loop-flow/ state directly, proposes tasks (solves glob failures)
+   - `/end-loop`: Two modes — graceful handoff OR context emergency with RESUME.md
+
+3. **Universal Approach**: Single SKILL.md format works in Claude Code + OpenCode
+
+4. **Updated LOOP-FLOW-SETUP.md**: Added SKILL TEMPLATES section with full skill content
+
+### Files Created/Updated
+
+- `.claude/skills/start-loop/SKILL.md` — Start session skill
+- `.claude/skills/end-loop/SKILL.md` — End session skill
+- `.opencode/skills/start-loop/SKILL.md` — OpenCode copy
+- `.opencode/skills/end-loop/SKILL.md` — OpenCode copy
+- `LOOP-FLOW-SETUP.md` — Added skill templates, version bump to 0.7.0
+- `VERSION_MANIFEST.md` — Added 0.7.0 changelog
+- All version references updated to 0.7.0
+
+### Learnings
+
+- **INS-041**: Skills provide reliable session commands. Agent Skills standard works across Claude Code and OpenCode.
+
+---

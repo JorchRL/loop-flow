@@ -2,7 +2,7 @@
 
 > Single source of truth for Loop-Flow versioning.
 
-**Current Version:** 0.6.0  
+**Current Version:** 0.7.0  
 **Last Updated:** 2026-01-20
 
 ---
@@ -42,6 +42,18 @@ All should show the current version (except `schema_version` which is separate).
 ---
 
 ## Changelog
+
+### 0.7.0 (2026-01-20)
+
+**Skills System (start-loop, end-loop)**
+
+- Added `/start-loop` skill: Reliably reads .loop-flow/ state and proposes tasks
+- Added `/end-loop` skill: Graceful handoff OR context emergency with RESUME.md
+- Skills follow Agent Skills standard (works in Claude Code + OpenCode)
+- Skill templates included in LOOP-FLOW-SETUP.md
+- Skills live in `.claude/skills/` or `.opencode/skills/` (user's choice)
+
+---
 
 ### 0.6.0 (2026-01-20)
 

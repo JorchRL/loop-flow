@@ -545,6 +545,20 @@
       "links": [],
       "created": "2026-01-20",
       "notes": "Documented in docs/PR-REVIEW-WORKFLOW.md. Practical workflow for AI-assisted PR reviews."
+    },
+    {
+      "id": "INS-041",
+      "content": "Skills provide reliable commands for starting and ending sessions. /start-loop reads .loop-flow/ state directly (no glob failures). /end-loop handles both graceful handoffs (updates backlog, progress, insights) and context emergencies (creates RESUME.md for seamless pickup). Skills follow the Agent Skills standard and work in Claude Code and OpenCode.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "skills-implementation",
+        "session": "2026-01-20-S7"
+      },
+      "tags": ["loop-flow-core", "skills", "session-management", "reliability"],
+      "links": ["INS-029", "INS-032"],
+      "created": "2026-01-20",
+      "notes": "Skills created in .claude/skills/ and .opencode/skills/. Templates in LOOP-FLOW-SETUP.md."
     }
   ],
   "link_types": {

@@ -1,7 +1,7 @@
 {
   "project": "Loop-Flow MCP Server",
   "last_updated": "2026-01-20",
-  "notes": "v0.6.0 released with Distributed Discovery and MINILOOP patterns. Added PR Review Workflow. 2 new process insights (LF-PROC-012, LF-PROC-013).",
+  "notes": "v0.7.0 released with Skills system (start-loop, end-loop). Skills follow Agent Skills standard for Claude Code + OpenCode compatibility.",
   "tasks": [
     {
       "id": "LF-023",

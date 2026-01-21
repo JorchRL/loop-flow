@@ -2,7 +2,7 @@
 
 > The single file for bootstrapping or updating Loop-Flow in any repository.
 
-**Version:** 0.6.0 (2026-01-20)
+**Version:** 0.7.0 (2026-01-20)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
 > "Please set up Loop-Flow using LOOP-FLOW-SETUP.md"
@@ -91,7 +91,23 @@ Add this line to `.gitignore` (create if needed):
 .loop-flow/
 ```
 
-### Step B9: Delete this setup file and give tutorial
+### Step B9: Install Skills (Optional but Recommended)
+
+Create skills for session management. These work in Claude Code, OpenCode, and tools supporting the Agent Skills standard.
+
+**For Claude Code** (`.claude/skills/`):
+```bash
+mkdir -p .claude/skills/start-loop .claude/skills/end-loop
+```
+
+**For OpenCode** (`.opencode/skills/`):
+```bash
+mkdir -p .opencode/skills/start-loop .opencode/skills/end-loop
+```
+
+Create `SKILL.md` files using the **SKILL TEMPLATES** section below.
+
+### Step B10: Delete this setup file and give tutorial
 
 ```bash
 rm LOOP-FLOW-SETUP.md
@@ -106,7 +122,7 @@ After scaffolding, explain the key concepts using the **USER TUTORIAL** section 
 ### Step U1: Confirm update
 
 Tell the user:
-> "Loop-Flow detected (version X or unknown). I'll update to v0.6.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
+> "Loop-Flow detected (version X or unknown). I'll update to v0.7.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
 
 Wait for confirmation.
 
@@ -188,7 +204,7 @@ To temporarily disable Loop-Flow, comment out or delete the line above.
 ```json
 {
   "schema_version": "0.1.0",
-  "loop_flow_version": "0.6.0",
+  "loop_flow_version": "0.7.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
   "insights": [],
   "link_types": {
@@ -209,7 +225,7 @@ Create or replace `.loop-flow/WORKFLOW.md` with this content:
 ````markdown
 # Loop-Flow Workflow Rules
 
-**Loop-Flow Version:** 0.6.0
+**Loop-Flow Version:** 0.7.0
 
 This file defines how AI agents should work in this repository using the Loop-Flow methodology.
 
@@ -620,9 +636,192 @@ When importing, assign new IDs that don't conflict with existing insights.
     "links": [],
     "created": "2026-01-20",
     "source": "Loop-Flow v0.6.0"
+  },
+  {
+    "id": "LF-PROC-014",
+    "content": "Skills provide reliable commands for starting and ending sessions. /start-loop reads .loop-flow/ state directly (no glob failures). /end-loop handles both graceful handoffs (updates backlog, progress, insights) and context emergencies (creates RESUME.md for seamless pickup). Skills follow the Agent Skills standard and work in Claude Code and OpenCode.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "skills", "session-management", "reliability"],
+    "links": ["LF-PROC-010"],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.7.0"
   }
 ]
 ```
+
+---
+
+## SKILL TEMPLATES
+
+Skills provide reliable commands for starting and ending sessions. They work with Claude Code, OpenCode, and tools supporting the Agent Skills standard.
+
+### start-loop Skill
+
+Create `<skills-dir>/start-loop/SKILL.md`:
+
+````markdown
+---
+name: start-loop
+description: Start a Loop-Flow session. Reads workflow rules, backlog, progress, and insights to understand current state and propose a task.
+---
+
+# Start Loop-Flow Session
+
+You are starting a Loop-Flow development session. Follow these steps exactly:
+
+## Step 1: Read Core Files (Required)
+
+Use the Read tool to read these files. Do NOT use Glob or search tools — read directly:
+
+1. `.loop-flow/WORKFLOW.md` — The workflow rules (read this first)
+2. `.loop-flow/plan/backlog.json` — The task pool
+3. `.loop-flow/plan/progress.txt` — Recent session history
+4. `.loop-flow/plan/insights.json` — Knowledge graph (skim for relevant insights)
+
+## Step 2: Understand Current State
+
+After reading, identify:
+- What was the last session about?
+- What tasks are IN_PROGRESS, TODO, or BLOCKED?
+- Any unprocessed insights that need attention?
+
+## Step 3: Propose Next Steps
+
+Present a concise summary to the user:
+
+```
+## Current State
+- Last session: [brief summary]
+- Active task: [if any IN_PROGRESS]
+
+## Suggested Tasks (pick one)
+1. [Task ID] [Title] - [why now]
+2. [Task ID] [Title] - [why now]
+3. [Or ask for direction]
+```
+
+Remember: The backlog is a **menu, not a queue**. Suggest based on value, dependencies, and context.
+
+## Important
+
+- Do NOT commit or push without explicit permission
+- One task per session
+- If a task seems too large, propose breaking it down first
+````
+
+### end-loop Skill
+
+Create `<skills-dir>/end-loop/SKILL.md`:
+
+````markdown
+---
+name: end-loop
+description: End a Loop-Flow session gracefully. Updates backlog, progress, and insights. Use when wrapping up a session or hitting context limits.
+---
+
+# End Loop-Flow Session
+
+You are ending a Loop-Flow session. Determine which type of ending this is:
+
+## Type A: Graceful Handoff (task complete or natural stopping point)
+
+Perform ALL of these updates:
+
+### 1. Update `.loop-flow/plan/backlog.json`
+- Update task status (DONE, IN_PROGRESS, BLOCKED, etc.)
+- Update `last_updated` date
+- Update `notes` field with current state summary
+- Add any new tasks that emerged during the session
+
+### 2. Append to `.loop-flow/plan/progress.txt`
+Use this format:
+
+```markdown
+## YYYY-MM-DD | Session N
+Task: [TASK-ID] [Title]
+Outcome: COMPLETE | PARTIAL | BLOCKED (reason)
+Tests: [path if applicable] (N passing)
+Manual QA: REQUIRED | NOT_REQUIRED
+
+### Summary
+[2-3 sentences on what was accomplished]
+
+### Learnings (if any)
+- [Edge case, domain knowledge, or pattern discovered]
+
+---
+```
+
+### 3. Update `.loop-flow/plan/insights.json` (if new insights emerged)
+- Add new insights with proper IDs (increment from last INS-XXX)
+- Mark status as `unprocessed` for quick captures
+- Include source task and session info
+
+### 4. Confirm with user
+Show what was updated and remind: **Agent does NOT commit — developer handles git.**
+
+---
+
+## Type B: Context Emergency (hitting limits, need to stop mid-task)
+
+When context is running low and task is incomplete:
+
+### 1. Create `.loop-flow/RESUME.md` (temporary file)
+
+```markdown
+# Session Resume - [Date]
+
+## Context
+Task: [TASK-ID] [Title]
+Status: IN_PROGRESS (interrupted)
+
+## Where We Left Off
+[Specific description of current state]
+- Files being edited: [list]
+- Current step: [what was being done]
+- Next step: [what to do next]
+
+## Key Decisions Made
+- [Any decisions that shouldn't be re-discussed]
+
+## Open Questions
+- [Anything unresolved]
+
+## To Continue
+1. Read this file first
+2. Then run /start-loop
+3. Continue from "Next step" above
+
+---
+*Delete this file after resuming*
+```
+
+### 2. Quick update to backlog.json
+- Mark task as IN_PROGRESS
+- Add note: "Interrupted - see .loop-flow/RESUME.md"
+
+### 3. Notify user
+Tell them: "Session saved to RESUME.md. Next session will pick up where we left off."
+
+---
+
+## After Ending
+
+Remind the user of their options:
+- `git add . && git commit -m "..."` — if they want to commit
+- `git push` — only if they explicitly want to push
+- Start new session with `/start-loop`
+````
+
+### Skill Locations by Tool
+
+| Tool | Location |
+|------|----------|
+| Claude Code | `.claude/skills/<name>/SKILL.md` |
+| OpenCode | `.opencode/skills/<name>/SKILL.md` |
+| Global (Claude Code) | `~/.claude/skills/<name>/SKILL.md` |
+| Global (OpenCode) | `~/.config/opencode/skills/<name>/SKILL.md` |
 
 ---
 
@@ -695,10 +894,17 @@ Every session should leave you knowing something you didn't know before — abou
 
 ### Quick Commands
 
+If you installed the skills (recommended):
+- **Start a session**: `/start-loop`
+- **End a session**: `/end-loop`
+
+Without skills:
 - **Start a session**: "Let's start a session" or "Read the backlog and suggest a task"
+- **End a session**: "Let's wrap up" or "Update the backlog and log this session"
+
+Other commands:
 - **Add a task**: "Add a new task: [description]"
 - **Capture an insight**: "Note: [insight]" or "Capture insight: [insight]"
-- **End a session**: "Let's wrap up" or "Update the backlog and log this session"
 
 ### Disabling Loop-Flow
 
@@ -723,6 +929,20 @@ After setup, your project has:
 ---
 
 ## VERSION HISTORY
+
+### v0.7.0 (2026-01-20)
+
+**Skills System**
+
+- Added `/start-loop` skill: Reliably reads .loop-flow/ state and proposes tasks (no glob failures)
+- Added `/end-loop` skill: Two modes — graceful handoff OR context emergency with RESUME.md
+- Skills follow Agent Skills standard (works in Claude Code + OpenCode)
+- Skill templates included in this file (see SKILL TEMPLATES section)
+- Skills live in `.claude/skills/` or `.opencode/skills/` (user's choice)
+
+**1 new process insight**: LF-PROC-014
+
+---
 
 ### v0.6.0 (2026-01-20)
 
