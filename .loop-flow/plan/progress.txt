@@ -407,3 +407,30 @@ Renamed the Loop-Flow workflow rules file from `AGENTS.md` to `WORKFLOW.md` to a
 - **INS-030**: Versioning should have a single source of truth (VERSION_MANIFEST) that lists version, changelog, and all file references. The /version skill reads, updates, propagates, and verifies.
 
 ---
+
+## 2026-01-20 | Session 6 (Version Bump v0.5.0)
+Task: Ad-hoc version bump
+Outcome: COMPLETE
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Bumped Loop-Flow from v0.4.0 to v0.5.0. Exported the update by adding 5 new process insights from the learn-tdd-go cross-pollination session.
+
+**New process insights added (LF-PROC-007 to LF-PROC-011):**
+- Spec-driven development: human writes specs, AI implements
+- Human expertise is knowing WHAT to specify
+- Verification functions pattern for testing
+- Skills system concept (Core + User-Defined)
+- Loop-Flow as learning platform vision
+
+**Files updated:**
+- VERSION_MANIFEST.md
+- LOOP-FLOW-SETUP.md (version, template, new insights, VERSION HISTORY)
+- .loop-flow/WORKFLOW.md
+- docs/DESIGN.md
+- docs/UX-REQUIREMENTS.md
+
+The LOOP-FLOW-SETUP.md file is now ready for distribution to other projects.
+
+---

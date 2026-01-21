@@ -1,7 +1,7 @@
 {
   "project": "Loop-Flow MCP Server",
   "last_updated": "2026-01-20",
-  "notes": "Imported 8 insights from learn-tdd-go (INS-031 to INS-038). Created LF-023 to discuss and integrate them.",
+  "notes": "v0.5.0 released with spec-driven development insights. Promoted 5 insights from learn-tdd-go to core process insights (LF-PROC-007 to LF-PROC-011).",
   "tasks": [
     {
       "id": "LF-023",

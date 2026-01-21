@@ -2,7 +2,7 @@
 
 > The single file for bootstrapping or updating Loop-Flow in any repository.
 
-**Version:** 0.4.0 (2026-01-18)
+**Version:** 0.5.0 (2026-01-20)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
 > "Please set up Loop-Flow using LOOP-FLOW-SETUP.md"
@@ -106,7 +106,7 @@ After scaffolding, explain the key concepts using the **USER TUTORIAL** section 
 ### Step U1: Confirm update
 
 Tell the user:
-> "Loop-Flow detected (version X or unknown). I'll update to v0.4.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
+> "Loop-Flow detected (version X or unknown). I'll update to v0.5.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
 
 Wait for confirmation.
 
@@ -188,7 +188,7 @@ To temporarily disable Loop-Flow, comment out or delete the line above.
 ```json
 {
   "schema_version": "0.1.0",
-  "loop_flow_version": "0.4.0",
+  "loop_flow_version": "0.5.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
   "insights": [],
   "link_types": {
@@ -209,7 +209,7 @@ Create or replace `.loop-flow/WORKFLOW.md` with this content:
 ````markdown
 # Loop-Flow Workflow Rules
 
-**Loop-Flow Version:** 0.4.0
+**Loop-Flow Version:** 0.5.0
 
 This file defines how AI agents should work in this repository using the Loop-Flow methodology.
 
@@ -550,6 +550,56 @@ When importing, assign new IDs that don't conflict with existing insights.
     "links": [],
     "created": "2026-01-18",
     "source": "Loop-Flow v0.3.0"
+  },
+  {
+    "id": "LF-PROC-007",
+    "content": "Spec-driven development: Tests encode the specification. The spec is the source of truth, not the implementation. AI can implement freely because the spec (tests + verification functions) catches violations. This inverts 'code then test' and makes AI-assisted development safer.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "testing", "spec-driven", "ai-assisted"],
+    "links": ["LF-PROC-008"],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.5.0"
+  },
+  {
+    "id": "LF-PROC-008",
+    "content": "The human's job in AI-assisted development is to write specs that capture what actually matters. The implementation is a consequence of the spec. Expertise lies in knowing what to specify — this is the hard part that AI cannot do.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "testing", "spec-driven", "expertise", "philosophy"],
+    "links": ["LF-PROC-007"],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.5.0"
+  },
+  {
+    "id": "LF-PROC-009",
+    "content": "Verification functions as a testing pattern: Pure functions that take algorithm output and return true/false + diagnostics. They encode rules/constraints, can be unit tested independently, enable safe AI implementation, and can be reused in production for debugging. Separates 'what is correct' from 'how to compute it'.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "testing", "verification-functions", "patterns"],
+    "links": ["LF-PROC-007"],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.5.0"
+  },
+  {
+    "id": "LF-PROC-010",
+    "content": "Skills are reusable agent capabilities that encode specific knowledge about how to perform a task. Two types: Core Skills (ship with Loop-Flow, e.g., /version, /session-start) and User-Defined Skills (repo-specific, e.g., /deploy). Skills bridge generic agent capability and project-specific knowledge.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "skills", "extensibility"],
+    "links": [],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.5.0"
+  },
+  {
+    "id": "LF-PROC-011",
+    "content": "Loop-Flow based learning is effective because: (1) Chat with AI is engaging for ADHD brains — immediate feedback loop, (2) Text-based interaction forces writing, which forces thinking (ref: Zinsser's 'Writing to Learn'). Loop-Flow could be a platform for interactive courses, not just development workflow.",
+    "type": "process",
+    "status": "discussed",
+    "tags": ["loop-flow-core", "learning", "adhd", "writing-to-learn", "vision"],
+    "links": [],
+    "created": "2026-01-20",
+    "source": "Loop-Flow v0.5.0"
   }
 ]
 ```
@@ -653,6 +703,30 @@ After setup, your project has:
 ---
 
 ## VERSION HISTORY
+
+### v0.5.0 (2026-01-20)
+
+**Spec-Driven Development & Testing Philosophy**
+
+- Added spec-driven development insights: human writes specs (tests), AI implements
+- Human expertise is knowing WHAT to specify — the hard part AI can't do
+- Added verification functions pattern: pure functions that validate algorithm output
+- Works well with property-based testing for constraint satisfaction problems
+- Verification functions serve double duty: test oracles AND production debugging tools
+
+**Skills System Concept**
+- Introduced skills as reusable agent capabilities encoding specific knowledge
+- Two types: Core Skills (ship with Loop-Flow) and User-Defined Skills (repo-specific)
+- Skills bridge generic agent capability and project-specific knowledge
+
+**Loop-Flow as Learning Platform**
+- Chat-based learning is ADHD-friendly (immediate feedback loop)
+- Writing forces thinking (Zinsser's "Writing to Learn")
+- Vision: Loop-Flow could be a platform for interactive courses
+
+**5 new process insights**: LF-PROC-007 to LF-PROC-011
+
+---
 
 ### v0.4.0 (2026-01-18)
 

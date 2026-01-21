@@ -2,8 +2,8 @@
 
 > Single source of truth for Loop-Flow versioning.
 
-**Current Version:** 0.4.0  
-**Last Updated:** 2026-01-18
+**Current Version:** 0.5.0  
+**Last Updated:** 2026-01-20
 
 ---
 
@@ -42,6 +42,18 @@ All should show the current version (except `schema_version` which is separate).
 ---
 
 ## Changelog
+
+### 0.5.0 (2026-01-20)
+
+**Spec-Driven Development & Testing Philosophy**
+
+- Added spec-driven development insights (human writes specs, AI implements)
+- Added verification functions pattern for testing constraint satisfaction
+- Added skills system concept (encapsulated commands for reliable operations)
+- Added Loop-Flow as learning platform vision (ADHD-friendly, writing-to-learn)
+- 4 new process insights imported from learn-tdd-go cross-pollination
+
+---
 
 ### 0.4.0 (2026-01-18)
 
