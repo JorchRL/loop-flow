@@ -5,42 +5,46 @@
 
 ---
 
-## Current State (v0.9.0 → v1.0 in progress)
+## Current State (v1.0.0 - First Shareable Release)
 
 - [x] SQLite source of truth with FTS5 search
 - [x] MCP tools: orient, remember, scan, expand, connect, probe, handoff, export, import, update_summary
-- [x] CRUD tools: task_create, task_update, task_list, insight_update (v0.7.0)
+- [x] CRUD tools: task_create, task_update, task_list, insight_update
 - [x] Session persistence and handoff
 - [x] Progressive disclosure pattern
-- [x] Works in Claude Code
-- [x] `loopflow init` CLI command (LF-082, S24)
+- [x] Works in Claude Code, Cursor, OpenCode
+- [x] `loopflow init` CLI command
+- [x] Web UI dashboard (`loopflow ui`, `loop_ui` MCP tool)
+- [x] README.md with quickstart
+- [x] Cursor MCP configuration docs
+- [x] MCP server integration tests
 
 ---
 
-## Milestone: v1.0 — "Shareable MVP"
+## Milestone: v1.0 — "Shareable MVP" ✅ COMPLETE
 
 **Goal**: Jr devs on Cursor can use LoopFlow  
-**Priority**: HIGH (blocks team adoption)  
-**Effort**: ~3-4 sessions
+**Completed**: 2026-01-22 (Sessions 24-26)
 
 | ID | Task | Priority | Status |
 |----|------|----------|--------|
-| LF-082 | `loopflow init` CLI command | HIGH | DONE (S24) |
-| LF-104 | CRUD MCP tools (task/insight management) | HIGH | DONE (S24) |
-| LF-083 | Cursor MCP configuration docs | HIGH | TODO |
-| LF-084 | README.md (quickstart, what/why/how) | HIGH | TODO |
-| LF-085 | Fresh repo handling (no existing .loop-flow/) | HIGH | TODO |
-| LF-086 | Error messages for common issues | MEDIUM | TODO |
-| LF-081 | MCP server integration tests | MEDIUM | TODO |
-| LF-079 | Fix loop_handoff suggested_actions | HIGH | DONE (S23) |
-| LF-080 | loop_handoff creates session record | HIGH | DONE (S22) |
+| LF-082 | `loopflow init` CLI command | HIGH | DONE |
+| LF-104 | CRUD MCP tools (task/insight management) | HIGH | DONE |
+| LF-083 | Cursor MCP configuration docs | HIGH | DONE |
+| LF-084 | README.md (quickstart, what/why/how) | HIGH | DONE |
+| LF-085 | Fresh repo handling (no existing .loop-flow/) | HIGH | DONE |
+| LF-086 | Error messages for common issues | MEDIUM | DONE |
+| LF-081 | MCP server integration tests | MEDIUM | DONE |
+| LF-079 | Fix loop_handoff suggested_actions | HIGH | DONE |
+| LF-080 | loop_handoff creates session record | HIGH | DONE |
+| LF-108 | Web UI dashboard | MEDIUM | DONE |
 
-**v1.0 Definition of Done:**
-- [ ] `npm install -g loopflow && loopflow init` works
-- [ ] Works in Claude Code, OpenCode, Cursor
-- [ ] README exists with 5-min quickstart
-- [ ] Fresh repo gets bootstrapped correctly
-- [ ] Jr dev can follow README and be productive
+**v1.0 Definition of Done:** ✅
+- [x] `npm install -g loopflow && loopflow init` works
+- [x] Works in Claude Code, OpenCode, Cursor
+- [x] README exists with 5-min quickstart
+- [x] Fresh repo gets bootstrapped correctly
+- [x] Jr dev can follow README and be productive
 
 ---
 
@@ -111,7 +115,7 @@
 ## Architecture Evolution
 
 ```
-Current (v0.9 - v1.0):
+Current (v1.0.0):
   repo/.loop-flow/loopflow.db  ← One DB per repo, inside repo
 
 v1.1 (External DB):
@@ -134,22 +138,18 @@ v2.0 (Team/Cloud):
 
 ---
 
-## Backlog Cleanup Notes
+## Version History
 
-**Tasks to mark DONE** (already completed):
-- LF-059, LF-060, LF-061, LF-063, LF-067, LF-068 — Done in S19
-- LF-079, LF-080 — Done in S22/S23
-
-**Tasks to mark OBSOLETE/CANCELLED**:
-- LF-002, LF-003, LF-005, LF-006 — Superseded (project already set up)
-- LF-007, LF-008 — Old tool names, superseded by current tools
-- LF-016, LF-025-029, LF-030-046 — Skill-related or outdated learn tasks
-- LF-065, LF-066 — Merged into completed work
-- LF-070-073 — Business rules merged into impl
-
-**Tasks to defer** (v2.0+):
-- LF-076, LF-077 — Persona architecture
-- LF-048, LF-051, LF-056, LF-057 — Discovery tasks
+- **v1.0.0** (2026-01-22): First shareable release - npm package, CLI, Web UI, full MCP tools
+- **v0.9.0** (2026-01-22): MCP tools replace skills
+- **v0.8.0** (2026-01-20): Emergency bail command
+- **v0.7.0** (2026-01-20): Skills system (now obsolete)
+- **v0.6.0** (2026-01-20): Distributed Discovery & MINILOOP
+- **v0.5.0** (2026-01-20): Spec-driven development
+- **v0.4.0** (2026-01-18): Renamed AGENTS.md to WORKFLOW.md
+- **v0.3.0** (2026-01-18): Unified setup file
+- **v0.2.0** (2026-01-18): Learn mode
+- **v0.1.0** (2026-01-17): Initial release
 
 ---
 

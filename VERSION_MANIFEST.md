@@ -2,7 +2,7 @@
 
 > Single source of truth for LoopFlow versioning.
 
-**Current Version:** 0.9.0  
+**Current Version:** 1.0.0  
 **Last Updated:** 2026-01-22
 
 ---
@@ -26,10 +26,7 @@ Files that contain version numbers to update:
 
 | File | Location(s) |
 |------|-------------|
-| `LOOP-FLOW-SETUP.md` | Line ~5 (header), template header (~229), insights.json template (~208) |
-| `docs/DESIGN.md` | Footer (~641) |
-| `docs/UX-REQUIREMENTS.md` | Footer (~194) |
-| `docs/SKILLS-DESIGN.md` | Header (~3) |
+| `package.json` | `"version"` field |
 | `.loop-flow/WORKFLOW.md` | Header (~3) |
 
 ### Verification Command
@@ -43,6 +40,22 @@ All should show the current version (except `schema_version` which is separate).
 ---
 
 ## Changelog
+
+### 1.0.0 (2026-01-22)
+
+**First Shareable Release**
+
+- **npm package**: `npm install -g loopflow` works
+- **CLI commands**: `loopflow init`, `loopflow ui`
+- **MCP server**: Full tool suite for AI-assisted development
+- **Web UI**: React dashboard with tasks, insights, sessions views
+- **Complete MCP tools**: orient, remember, scan, expand, connect, probe, handoff, export, import, update_summary, task_create, task_update, task_list, insight_update, ui
+- **SQLite source of truth**: All data persisted locally
+- **Works in**: Claude Code, Cursor, OpenCode
+- **Documentation**: README quickstart, Cursor setup guide
+- **Removed**: LOOP-FLOW-SETUP.md bootstrap file (replaced by `loopflow init`)
+
+---
 
 ### 0.9.0 (2026-01-22)
 
@@ -149,10 +162,8 @@ All should show the current version (except `schema_version` which is separate).
 
 ## Template Sync Note
 
-The WORKFLOW.md template inside `LOOP-FLOW-SETUP.md` should match `.loop-flow/WORKFLOW.md` (this repo dogfoods itself). When updating the workflow methodology:
+The WORKFLOW.md template used by `loopflow init` should match `.loop-flow/WORKFLOW.md` (this repo dogfoods itself). When updating the workflow methodology:
 
 1. Edit `.loop-flow/WORKFLOW.md` (the live version)
-2. Copy changes to the template in `LOOP-FLOW-SETUP.md`
+2. Update `src/cli/init.ts` template if needed
 3. Bump version in both places
-
-Future: Automate this with template generation.
