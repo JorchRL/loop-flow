@@ -21,12 +21,11 @@ describe("initLoopFlow", () => {
     fs.rmSync(testDir, { recursive: true, force: true });
   });
 
-  it("creates .loop-flow directory structure", async () => {
+  it("creates .loop-flow directory", async () => {
     const result = await initLoopFlow({ path: testDir });
 
     expect(result.success).toBe(true);
     expect(fs.existsSync(path.join(testDir, ".loop-flow"))).toBe(true);
-    expect(fs.existsSync(path.join(testDir, ".loop-flow", "plan"))).toBe(true);
   });
 
   it("creates SQLite database with schema", async () => {
@@ -118,21 +117,16 @@ describe("initLoopFlow", () => {
     expect(result.success).toBe(true);
   });
 
-  it("creates empty JSON files for backward compatibility", async () => {
+  it("does not create JSON files (SQLite is source of truth)", async () => {
     const result = await initLoopFlow({ path: testDir });
 
     expect(result.success).toBe(true);
     
-    const insightsPath = path.join(testDir, ".loop-flow", "plan", "insights.json");
-    const backlogPath = path.join(testDir, ".loop-flow", "plan", "backlog.json");
+    // JSON files are NOT created on init - only on export
+    const insightsPath = path.join(testDir, ".loop-flow", "insights.json");
+    const backlogPath = path.join(testDir, ".loop-flow", "backlog.json");
     
-    expect(fs.existsSync(insightsPath)).toBe(true);
-    expect(fs.existsSync(backlogPath)).toBe(true);
-    
-    const insights = JSON.parse(fs.readFileSync(insightsPath, "utf-8"));
-    expect(insights.insights).toEqual([]);
-    
-    const backlog = JSON.parse(fs.readFileSync(backlogPath, "utf-8"));
-    expect(backlog.tasks).toEqual([]);
+    expect(fs.existsSync(insightsPath)).toBe(false);
+    expect(fs.existsSync(backlogPath)).toBe(false);
   });
 });

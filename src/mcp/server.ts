@@ -861,16 +861,13 @@ server.tool(
     // Export files (default: true for graceful, false for emergency)
     const shouldExport = export_files ?? (mode === "graceful");
     if (shouldExport) {
-      const planDir = path.join(currentSession.repoPath, ".loop-flow", "plan");
-      if (!fs.existsSync(planDir)) {
-        fs.mkdirSync(planDir, { recursive: true });
-      }
+      const loopFlowDir = path.join(currentSession.repoPath, ".loop-flow");
 
       // Export insights
       const allInsights = currentSession.database.insights.findAll({}, { limit: 10000 });
       const insightsJson = generateInsightsJson(allInsights);
       fs.writeFileSync(
-        path.join(planDir, "insights.json"),
+        path.join(loopFlowDir, "insights.json"),
         JSON.stringify(insightsJson, null, 2)
       );
       handoff.exported_files.push("insights.json");
@@ -879,7 +876,7 @@ server.tool(
       const allTasks = currentSession.database.tasks.findAll({}, { limit: 10000 });
       const backlogJson = generateBacklogJson(allTasks, currentSession.repoName);
       fs.writeFileSync(
-        path.join(planDir, "backlog.json"),
+        path.join(loopFlowDir, "backlog.json"),
         JSON.stringify(backlogJson, null, 2)
       );
       handoff.exported_files.push("backlog.json");
@@ -966,18 +963,13 @@ server.tool(
       paths: {},
     };
 
-    const planDir = path.join(currentSession.repoPath, ".loop-flow", "plan");
-    
-    // Ensure plan directory exists
-    if (!fs.existsSync(planDir)) {
-      fs.mkdirSync(planDir, { recursive: true });
-    }
+    const loopFlowDir = path.join(currentSession.repoPath, ".loop-flow");
 
     // Export insights
     if (include_insights) {
       const allInsights = currentSession.database.insights.findAll({}, { limit: 10000 });
       const insightsJson = generateInsightsJson(allInsights);
-      const insightsPath = path.join(planDir, "insights.json");
+      const insightsPath = path.join(loopFlowDir, "insights.json");
       
       fs.writeFileSync(insightsPath, JSON.stringify(insightsJson, null, 2));
       
@@ -994,7 +986,7 @@ server.tool(
         project_name || currentSession.repoName,
         project_notes || ""
       );
-      const backlogPath = path.join(planDir, "backlog.json");
+      const backlogPath = path.join(loopFlowDir, "backlog.json");
       
       fs.writeFileSync(backlogPath, JSON.stringify(backlogJson, null, 2));
       
@@ -1448,7 +1440,7 @@ server.resource(
     }
 
     // Fallback to file
-    const insightsPath = path.join(repoPath, ".loop-flow", "plan", "insights.json");
+    const insightsPath = path.join(repoPath, ".loop-flow", "insights.json");
     if (!fs.existsSync(insightsPath)) {
       return {
         contents: [{

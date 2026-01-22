@@ -53,9 +53,14 @@ function getDatabasePath(repoPath: string): string {
  * Check if JSON files exist (pre-migration state)
  */
 function hasJsonFiles(repoPath: string): boolean {
-  const insightsPath = path.join(repoPath, ".loop-flow", "plan", "insights.json");
-  const backlogPath = path.join(repoPath, ".loop-flow", "plan", "backlog.json");
-  return fs.existsSync(insightsPath) || fs.existsSync(backlogPath);
+  const loopFlowDir = path.join(repoPath, ".loop-flow");
+  // Check both old (plan/) and new locations
+  const oldInsights = path.join(loopFlowDir, "plan", "insights.json");
+  const oldBacklog = path.join(loopFlowDir, "plan", "backlog.json");
+  const newInsights = path.join(loopFlowDir, "insights.json");
+  const newBacklog = path.join(loopFlowDir, "backlog.json");
+  return fs.existsSync(oldInsights) || fs.existsSync(oldBacklog) || 
+         fs.existsSync(newInsights) || fs.existsSync(newBacklog);
 }
 
 /**
@@ -83,8 +88,11 @@ function migrateFromJson(
 ): MigrationStats {
   const stats: MigrationStats = { insightsImported: 0, tasksImported: 0, skipped: 0 };
 
-  // Import insights
-  const insightsPath = path.join(repoPath, ".loop-flow", "plan", "insights.json");
+  // Import insights (check both old and new locations)
+  const loopFlowDir = path.join(repoPath, ".loop-flow");
+  const insightsPath = fs.existsSync(path.join(loopFlowDir, "insights.json"))
+    ? path.join(loopFlowDir, "insights.json")
+    : path.join(loopFlowDir, "plan", "insights.json");
   if (fs.existsSync(insightsPath)) {
     try {
       const content = fs.readFileSync(insightsPath, "utf-8");
@@ -105,8 +113,10 @@ function migrateFromJson(
     }
   }
 
-  // Import tasks
-  const backlogPath = path.join(repoPath, ".loop-flow", "plan", "backlog.json");
+  // Import tasks (check both old and new locations)
+  const backlogPath = fs.existsSync(path.join(loopFlowDir, "backlog.json"))
+    ? path.join(loopFlowDir, "backlog.json")
+    : path.join(loopFlowDir, "plan", "backlog.json");
   if (fs.existsSync(backlogPath)) {
     try {
       const content = fs.readFileSync(backlogPath, "utf-8");
@@ -162,8 +172,11 @@ export function initializeDatabase(repoPath: string): LoopFlowDatabase {
     );
   }
 
-  // Auto-import progress.txt if sessions table is empty
-  const progressPath = path.join(repoPath, ".loop-flow", "plan", "progress.txt");
+  // Auto-import progress.txt if sessions table is empty (check both locations)
+  const loopFlowDirForProgress = path.join(repoPath, ".loop-flow");
+  const progressPath = fs.existsSync(path.join(loopFlowDirForProgress, "progress.txt"))
+    ? path.join(loopFlowDirForProgress, "progress.txt")
+    : path.join(loopFlowDirForProgress, "plan", "progress.txt");
   if (sessions.count() === 0 && fs.existsSync(progressPath)) {
     const progressStats = importProgressFromFile(progressPath, sessions);
     if (progressStats.imported > 0) {
@@ -236,7 +249,10 @@ function importProgressFromFile(
  * Force re-import progress.txt (exposed for loop_import tool)
  */
 export function importProgress(database: LoopFlowDatabase, repoPath: string): ProgressImportStats {
-  const progressPath = path.join(repoPath, ".loop-flow", "plan", "progress.txt");
+  const loopFlowDir = path.join(repoPath, ".loop-flow");
+  const progressPath = fs.existsSync(path.join(loopFlowDir, "progress.txt"))
+    ? path.join(loopFlowDir, "progress.txt")
+    : path.join(loopFlowDir, "plan", "progress.txt");
   if (!fs.existsSync(progressPath)) {
     return { imported: 0, skipped: 0 };
   }

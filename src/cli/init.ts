@@ -134,7 +134,6 @@ See \`.loop-flow/WORKFLOW.md\` for methodology details.
 export async function initLoopFlow(options: InitOptions = {}): Promise<InitResult> {
   const targetPath = options.path || process.cwd();
   const loopFlowDir = path.join(targetPath, ".loop-flow");
-  const planDir = path.join(loopFlowDir, "plan");
   
   const result: InitResult = {
     success: false,
@@ -153,15 +152,10 @@ export async function initLoopFlow(options: InitOptions = {}): Promise<InitResul
       }
     }
 
-    // Create directories
+    // Create directory
     if (!fs.existsSync(loopFlowDir)) {
       fs.mkdirSync(loopFlowDir, { recursive: true });
       result.created.push(".loop-flow/");
-    }
-    
-    if (!fs.existsSync(planDir)) {
-      fs.mkdirSync(planDir, { recursive: true });
-      result.created.push(".loop-flow/plan/");
     }
 
     // Create SQLite database
@@ -171,18 +165,18 @@ export async function initLoopFlow(options: InitOptions = {}): Promise<InitResul
     db.close();
     
     if (!dbExisted) {
-      result.created.push("loopflow.db");
+      result.created.push(".loop-flow/loopflow.db");
     } else {
-      result.skipped.push("loopflow.db (already exists)");
+      result.skipped.push(".loop-flow/loopflow.db (already exists)");
     }
 
     // Create WORKFLOW.md
     const workflowPath = path.join(loopFlowDir, "WORKFLOW.md");
     if (!fs.existsSync(workflowPath)) {
       fs.writeFileSync(workflowPath, DEFAULT_WORKFLOW);
-      result.created.push("WORKFLOW.md");
+      result.created.push(".loop-flow/WORKFLOW.md");
     } else {
-      result.skipped.push("WORKFLOW.md (already exists)");
+      result.skipped.push(".loop-flow/WORKFLOW.md (already exists)");
     }
 
     // Handle AGENTS.md
@@ -205,24 +199,6 @@ export async function initLoopFlow(options: InitOptions = {}): Promise<InitResul
         fs.writeFileSync(agentsMdPath, newAgentsMd);
         result.created.push("AGENTS.md");
       }
-    }
-
-    // Create empty JSON files for backward compatibility
-    const insightsPath = path.join(planDir, "insights.json");
-    if (!fs.existsSync(insightsPath)) {
-      fs.writeFileSync(insightsPath, JSON.stringify({ insights: [] }, null, 2));
-      result.created.push("plan/insights.json");
-    }
-
-    const backlogPath = path.join(planDir, "backlog.json");
-    if (!fs.existsSync(backlogPath)) {
-      const emptyBacklog = {
-        project: path.basename(targetPath),
-        last_updated: new Date().toISOString().split("T")[0],
-        tasks: []
-      };
-      fs.writeFileSync(backlogPath, JSON.stringify(emptyBacklog, null, 2));
-      result.created.push("plan/backlog.json");
     }
 
     result.success = true;

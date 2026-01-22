@@ -24,9 +24,8 @@ import { initializeDatabase, type LoopFlowDatabase } from "../../db/database.js"
 function createTestRepo(): string {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "loopflow-mcp-test-"));
   const loopFlowDir = path.join(tempDir, ".loop-flow");
-  const planDir = path.join(loopFlowDir, "plan");
   
-  fs.mkdirSync(planDir, { recursive: true });
+  fs.mkdirSync(loopFlowDir, { recursive: true });
   
   // Create minimal WORKFLOW.md
   fs.writeFileSync(
