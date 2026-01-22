@@ -11,23 +11,33 @@ import * as path from "path";
 import { openDatabase } from "./schema.js";
 import { createInsightsRepository, type InsightsRepository } from "./repositories/insights.js";
 import { createTasksRepository, type TasksRepository } from "./repositories/tasks.js";
+import { createSessionsRepository, type SessionsRepository } from "./repositories/sessions.js";
+import { createRepoContextRepository, type RepoContextRepository } from "./repositories/repo-context.js";
 import { 
   transformInsightsFile, 
   transformBacklogFile,
   type JsonInsightsFile,
   type JsonBacklog 
 } from "../rules/migration.js";
+import { parseProgressFile } from "../rules/progress-parser.js";
 
 export interface LoopFlowDatabase {
   db: Database.Database;
   insights: InsightsRepository;
   tasks: TasksRepository;
+  sessions: SessionsRepository;
+  repoContext: RepoContextRepository;
   close: () => void;
 }
 
 export interface MigrationStats {
   insightsImported: number;
   tasksImported: number;
+  skipped: number;
+}
+
+export interface ProgressImportStats {
+  imported: number;
   skipped: number;
 }
 
@@ -141,6 +151,8 @@ export function initializeDatabase(repoPath: string): LoopFlowDatabase {
   // Create repositories
   const insights = createInsightsRepository(db);
   const tasks = createTasksRepository(db);
+  const sessions = createSessionsRepository(db);
+  const repoContext = createRepoContextRepository(db);
 
   // Auto-migrate from JSON if database is empty and JSON files exist
   if (!hasDatabaseData(db) && hasJsonFiles(repoPath)) {
@@ -150,10 +162,23 @@ export function initializeDatabase(repoPath: string): LoopFlowDatabase {
     );
   }
 
+  // Auto-import progress.txt if sessions table is empty
+  const progressPath = path.join(repoPath, ".loop-flow", "plan", "progress.txt");
+  if (sessions.count() === 0 && fs.existsSync(progressPath)) {
+    const progressStats = importProgressFromFile(progressPath, sessions);
+    if (progressStats.imported > 0) {
+      console.error(
+        `[LoopFlow] Imported progress.txt: ${progressStats.imported} sessions`
+      );
+    }
+  }
+
   return {
     db,
     insights,
     tasks,
+    sessions,
+    repoContext,
     close: () => db.close(),
   };
 }
@@ -163,4 +188,57 @@ export function initializeDatabase(repoPath: string): LoopFlowDatabase {
  */
 export function importFromJson(database: LoopFlowDatabase, repoPath: string): MigrationStats {
   return migrateFromJson(database.db, repoPath, database.insights, database.tasks);
+}
+
+/**
+ * Import progress.txt into sessions table
+ */
+function importProgressFromFile(
+  progressPath: string,
+  sessions: SessionsRepository
+): ProgressImportStats {
+  const stats: ProgressImportStats = { imported: 0, skipped: 0 };
+  
+  try {
+    const content = fs.readFileSync(progressPath, "utf-8");
+    const parsed = parseProgressFile(content);
+    
+    for (const session of parsed) {
+      // Check if already exists
+      if (sessions.findById(session.id)) {
+        stats.skipped++;
+        continue;
+      }
+      
+      sessions.insert({
+        id: session.id,
+        date: session.date,
+        session_number: session.sessionNumber,
+        task_id: session.taskId,
+        task_type: session.taskType,
+        task_title: session.taskTitle,
+        outcome: session.outcome,
+        summary: session.summary,
+        learnings: session.learnings,
+        files_changed: session.filesChanged ? JSON.stringify(session.filesChanged) : null,
+        insights_added: session.insightsAdded ? JSON.stringify(session.insightsAdded) : null,
+      });
+      stats.imported++;
+    }
+  } catch (e) {
+    console.error("Error importing progress.txt:", e);
+  }
+  
+  return stats;
+}
+
+/**
+ * Force re-import progress.txt (exposed for loop_import tool)
+ */
+export function importProgress(database: LoopFlowDatabase, repoPath: string): ProgressImportStats {
+  const progressPath = path.join(repoPath, ".loop-flow", "plan", "progress.txt");
+  if (!fs.existsSync(progressPath)) {
+    return { imported: 0, skipped: 0 };
+  }
+  return importProgressFromFile(progressPath, database.sessions);
 }

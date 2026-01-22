@@ -1069,3 +1069,71 @@ Continue cleanup and transition to complete MCP version. Potential tasks:
 - Consider what other file-based workflows should migrate to MCP tools
 
 ---
+
+## 2026-01-22 | Session 22 (Enhanced Orient + Sessions/Context)
+Task: Ad-hoc: Improve loop_orient with sessions, repo context, and suggested_actions
+Outcome: COMPLETE (with bugs discovered)
+Tests: 27 passing
+Manual QA: REQUIRED (verify MCP server restart picks up changes)
+
+### Summary
+
+Implemented LoopFlow MCP Server v0.5.0 with enhanced `loop_orient`:
+
+1. **Sessions Table** - Parses progress.txt into structured records. Auto-migrates on DB init. Stores: date, task info, outcome, summary, learnings.
+
+2. **Repo Context Table** - Key-value store for agent-maintained state: `repo_summary`, `folder_structure`, `suggested_actions`. Agent controls these via `loop_update_summary`.
+
+3. **Restructured loop_orient Response**:
+   - Full workflow (WORKFLOW.md)
+   - repo_summary (agent's description + folder structure)
+   - suggested_actions (from previous session's handoff)
+   - recent_sessions (last 5)
+   - insights (paginated at 50, with is_complete flag)
+   - backlog summary (in_progress, high_priority, recently_completed)
+
+4. **New Tool: loop_update_summary** - Agent can update repo context anytime.
+
+5. **Enhanced loop_handoff** - Saves next_session_should to suggested_actions.
+
+6. **Enhanced loop_import** - Now imports progress.txt → sessions table.
+
+### Files Created
+
+- `src/rules/progress-parser.ts` - Pure functions to parse progress.txt
+- `src/db/repositories/sessions.ts` - Sessions CRUD
+- `src/db/repositories/repo-context.ts` - Key-value context store  
+- `src/rules/__tests__/progress-parser.test.ts` - Parser tests
+
+### Files Modified
+
+- `src/db/schema.ts` - V2 schema with sessions + repo_context tables
+- `src/db/database.ts` - Added new repos, progress import
+- `src/mcp/server.ts` - Restructured loop_orient, new tools, v0.5.0
+
+### Bugs Discovered
+
+1. **loop_handoff didn't save suggested_actions** - Code was updated but MCP server was running old compiled version. Root cause: MCP servers run from dist/, require rebuild + restart. (LF-079)
+
+2. **loop_handoff doesn't create session record** - Sessions table only populated from progress.txt import, not from active session endings. (LF-080)
+
+3. **No integration tests for MCP tools** - Need tests that call tools and verify DB state. (LF-081)
+
+### Learnings
+
+- **INS-065**: MCP server changes require rebuild + restart
+- **INS-066**: loop_orient can be called multiple times (not just at start)
+- **INS-067**: loop_handoff doesn't create session records (gap)
+- **INS-068**: Self-debugging pattern for MCP development
+
+### Next Session
+
+CRITICAL: Fix the bugs before continuing:
+1. Rebuild (`npm run build`) and restart Claude Code to pick up v0.5.0 changes
+2. Verify loop_handoff saves suggested_actions (LF-079)
+3. Consider adding session record creation to loop_handoff (LF-080)
+4. Add integration tests (LF-081)
+
+Then test the full loop_orient → work → loop_handoff → loop_orient flow.
+
+---

@@ -7,7 +7,7 @@
 
 import Database from "better-sqlite3";
 
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 /**
  * SQL statements to create the database schema
@@ -115,6 +115,39 @@ CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 CREATE INDEX IF NOT EXISTS idx_tasks_priority ON tasks(priority);
 `;
 
+/**
+ * Schema V2 - Add sessions and repo_context tables
+ */
+const SCHEMA_V2 = `
+-- Sessions table: stores progress.txt entries as structured data
+CREATE TABLE IF NOT EXISTS sessions (
+  id TEXT PRIMARY KEY,              -- "2026-01-22-S21" format
+  date TEXT NOT NULL,               -- "2026-01-22"
+  session_number INTEGER NOT NULL,  -- 21
+  task_id TEXT,                     -- LF-XXX if applicable
+  task_type TEXT,                   -- [IMPL], [SPIKE], etc.
+  task_title TEXT,
+  outcome TEXT,                     -- COMPLETE, IN_PROGRESS, BLOCKED, etc.
+  summary TEXT NOT NULL,            -- Main summary content
+  learnings TEXT,                   -- Optional learnings section
+  files_changed TEXT,               -- JSON array of files
+  insights_added TEXT,              -- JSON array of insight IDs
+  created_at TEXT NOT NULL
+);
+
+-- Repo context: agent-maintained state for session continuity
+CREATE TABLE IF NOT EXISTS repo_context (
+  key TEXT PRIMARY KEY,             -- 'repo_summary', 'suggested_actions', 'folder_structure'
+  value TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  updated_by_session TEXT           -- Which session last touched it
+);
+
+-- Index for session queries
+CREATE INDEX IF NOT EXISTS idx_sessions_date ON sessions(date);
+CREATE INDEX IF NOT EXISTS idx_sessions_task ON sessions(task_id);
+`;
+
 export interface MigrationResult {
   fromVersion: number;
   toVersion: number;
@@ -148,12 +181,20 @@ export function migrateToLatest(db: Database.Database): MigrationResult {
   }
 
   try {
-    db.exec(SCHEMA_V1);
-    
-    // Record migration
-    db.prepare(
-      "INSERT OR REPLACE INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)"
-    ).run(CURRENT_SCHEMA_VERSION, new Date().toISOString(), "Initial schema with FTS5");
+    // Apply migrations incrementally
+    if (fromVersion < 1) {
+      db.exec(SCHEMA_V1);
+      db.prepare(
+        "INSERT OR REPLACE INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)"
+      ).run(1, new Date().toISOString(), "Initial schema with FTS5");
+    }
+
+    if (fromVersion < 2) {
+      db.exec(SCHEMA_V2);
+      db.prepare(
+        "INSERT OR REPLACE INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)"
+      ).run(2, new Date().toISOString(), "Add sessions and repo_context tables");
+    }
 
     return {
       fromVersion,

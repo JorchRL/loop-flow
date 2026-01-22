@@ -1,31 +1,58 @@
 {
-  "project": "LoopFlow MCP Server",
+  "project": "loop-flow",
   "last_updated": "2026-01-22",
-  "notes": "v0.9.0! Session 21: Skills cleanup complete. MCP tools are now the only interface. Next: continue cleanup and transition to complete MCP version.",
+  "notes": "",
+  "exported_at": "2026-01-22T08:49:35.303Z",
+  "source": "loopflow-sqlite",
   "tasks": [
     {
-      "id": "LF-078",
-      "title": "[IMPL] Remove obsolete skills and update AGENTS.md",
-      "description": "Skills (.claude/skills/, .opencode/skills/, .opencode/commands/) are now obsolete because MCP tools handle everything. Remove skill files and update AGENTS.md to instruct agents to use loop_orient instead of reading files manually. Also update LOOP-FLOW-SETUP.md to remove skill templates.",
+      "id": "LF-081",
+      "title": "[IMPL] MCP server integration tests",
+      "description": "Create integration tests that call MCP tools and verify database state. Self-debugging pattern: delete DB, call tools, verify expectations. Should catch issues like 'old server running' or 'code path not exercised'.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Test: loop_orient creates DB and migrates from JSON/progress",
+        "Test: loop_remember inserts insight into DB",
+        "Test: loop_handoff saves suggested_actions to repo_context",
+        "Test: loop_update_summary updates repo_context",
+        "Tests can run against the MCP server programmatically"
+      ],
+      "notes": "Self-debugging pattern for MCP development. See INS-068."
+    },
+    {
+      "id": "LF-080",
+      "title": "[BUG] loop_handoff should create session record",
+      "description": "loop_handoff receives 'completed' list but doesn't write a session record to the sessions table. Sessions table only gets populated from progress.txt import. Should auto-create a session entry with: date, task, outcome, completed items as summary.",
       "status": "DONE",
       "priority": "high",
       "acceptance_criteria": [
-        "Delete .claude/skills/loop-* directories",
-        "Delete .opencode/skills/loop-* directories", 
-        "Delete .opencode/commands/loop-* files",
-        "Update AGENTS.md: remove 'read .loop-flow/WORKFLOW.md' instruction",
-        "Update AGENTS.md: add 'call loop_orient at session start' instruction",
-        "Update LOOP-FLOW-SETUP.md: remove SKILL TEMPLATES section",
-        "Verify MCP server still works after cleanup"
+        "loop_handoff creates session record in sessions table",
+        "Session record includes: id (date-S#), date, task_id, outcome, summary from completed array",
+        "Verify with: sqlite3 query after handoff shows new session",
+        "Consider: should it also append to progress.txt for backward compatibility?"
       ],
-      "notes": "DONE Session 21. Deleted all skill files, updated AGENTS.md to use loop_orient, removed skill templates from LOOP-FLOW-SETUP.md, bumped version to 0.9.0."
+      "notes": "Gap discovered in Session 22. See INS-067."
+    },
+    {
+      "id": "LF-079",
+      "title": "[BUG] Fix loop_handoff not saving suggested_actions",
+      "description": "loop_handoff should save next_session_should to repo_context table as suggested_actions, but the code change wasn't picked up because the MCP server was running old compiled code. Need to: (1) rebuild, (2) restart MCP server, (3) verify suggested_actions appears in next loop_orient.",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "After loop_handoff with next_session_should, repo_context table has suggested_actions entry",
+        "Next loop_orient returns suggested_actions in response",
+        "Add integration test that verifies this flow"
+      ],
+      "notes": "Root cause: MCP server runs compiled dist/ code. Code changes require rebuild + server restart. See INS-065."
     },
     {
       "id": "LF-076",
       "title": "[DESIGN] Persona-Based Fluid API Architecture",
       "description": "Design the persona-based architecture integrating Digital Clockwork Muse paradigm. Key insight: API becomes semantic (consult personas) not procedural (call functions). The main agent's creative reasoning becomes the extensibility mechanism. Use cases defined ad-hoc in markdown can crystallize into process insights that enhance persona behavior. This closes the loop: using LoopFlow → discovering use cases → capturing insights → improving LoopFlow.",
       "status": "TODO",
-      "priority": "high",
+      "priority": "low",
       "acceptance_criteria": [
         "Deep read of Digital Clockwork Muse paper, map concepts to LoopFlow",
         "Define persona roster: Curator, TaskMaster, Scholar, Contrarian, Council, others?",
@@ -37,15 +64,17 @@
         "Document in docs/PERSONA-ARCHITECTURE.md with use case examples",
         "Review use cases to validate the design"
       ],
-      "notes": "PARADIGM SHIFT. See INS-059 through INS-064. Key insights: (1) Fluid API - agent reasons creatively about persona consultation, (2) Use-case driven - ad-hoc descriptions become insights, (3) Self-improving - system learns from its own use, (4) Creative extensibility - capability bounded by agent creativity not code."
+      "notes": "Deferred to v2.0+ - persona architecture"
     },
     {
       "id": "LF-077",
       "title": "[DESIGN] Use Case Examples for Persona API",
       "description": "Create concrete use case examples demonstrating the persona-based fluid API. Each example shows: (1) User need in plain English, (2) How main agent reasons about which personas to consult, (3) The consultation dialogue, (4) How the pattern could become a process insight. Examples should cover diverse scenarios to validate API expressiveness.",
       "status": "TODO",
-      "priority": "high",
-      "depends_on": ["LF-076"],
+      "priority": "low",
+      "depends_on": [
+        "LF-076"
+      ],
       "acceptance_criteria": [
         "5-10 diverse use case examples",
         "Examples cover: insight retrieval, design review, research, conflict resolution, learning",
@@ -55,22 +84,7 @@
         "Examples validate that fluid API can handle ad-hoc needs",
         "Document in docs/USE-CASE-EXAMPLES.md"
       ],
-      "notes": "Validation task for LF-076. Use cases drive development — we build what the examples need. See INS-062."
-    },
-    {
-      "id": "LF-059",
-      "title": "[IMPL] SQLite Schema & Migrations",
-      "description": "Implement SQLite database schema for insights, tasks, sessions, observations. Include FTS5 full-text search indexes. Create migration system for schema versioning.",
-      "status": "DONE",
-      "priority": "high",
-      "acceptance_criteria": [
-        "Schema matches PROGRESSIVE-DISCLOSURE-SPEC.md data model",
-        "FTS5 virtual tables for insights and tasks",
-        "schema_migrations table for version tracking",
-        "migrateToLatest() is idempotent",
-        "Tests: fresh install, idempotent migrate, FTS triggers"
-      ],
-      "notes": "DONE Session 19. src/db/schema.ts with FTS5, auto-sync triggers, migration system."
+      "notes": "Deferred to v2.0+ - persona architecture"
     },
     {
       "id": "LF-060",
@@ -78,7 +92,9 @@
       "description": "Implement data access repositories for insights, tasks, sessions, observations. Abstract SQLite queries behind clean interfaces.",
       "status": "DONE",
       "priority": "high",
-      "depends_on": ["LF-059"],
+      "depends_on": [
+        "LF-059"
+      ],
       "acceptance_criteria": [
         "InsightsRepository with CRUD + search + count",
         "TasksRepository with CRUD + search + count",
@@ -87,7 +103,7 @@
         "All repos handle missing IDs gracefully",
         "Tests: insert, findById, findByIds, search, pagination"
       ],
-      "notes": "DONE Session 19. src/db/repositories/insights.ts and tasks.ts. Sessions/Observations deferred."
+      "notes": "Sprint 2 of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 2."
     },
     {
       "id": "LF-061",
@@ -103,7 +119,7 @@
         "All functions are pure (no I/O)",
         "Tests: short content, sentence extraction, truncation, unicode"
       ],
-      "notes": "DONE Session 19. src/rules/summarization.ts with 20 passing tests."
+      "notes": "Sprint 3a of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 3."
     },
     {
       "id": "LF-062",
@@ -122,6 +138,21 @@
       "notes": "Sprint 3b of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Modules 4 & 6."
     },
     {
+      "id": "LF-059",
+      "title": "[IMPL] SQLite Schema & Migrations",
+      "description": "Implement SQLite database schema for insights, tasks, sessions, observations. Include FTS5 full-text search indexes. Create migration system for schema versioning.",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Schema matches PROGRESSIVE-DISCLOSURE-SPEC.md data model",
+        "FTS5 virtual tables for insights and tasks",
+        "schema_migrations table for version tracking",
+        "migrateToLatest() is idempotent",
+        "Tests: fresh install, idempotent migrate, FTS triggers"
+      ],
+      "notes": "Sprint 1 of Progressive Disclosure. Foundation for all other work. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 1."
+    },
+    {
       "id": "LF-063",
       "title": "[IMPL] Business Rules - Migration Transforms",
       "description": "Pure functions for transforming between JSON file formats and DB records. Bidirectional for import/export.",
@@ -136,7 +167,7 @@
         "Validation functions catch invalid data",
         "Tests: mapping, round-trip, progress parsing, validation"
       ],
-      "notes": "DONE Session 19. src/rules/migration.ts. Progress parsing deferred."
+      "notes": "Sprint 3c of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 5."
     },
     {
       "id": "LF-064",
@@ -144,7 +175,9 @@
       "description": "Service that orchestrates summary generation. Uses heuristics by default, optional Ollama integration for AI enhancement.",
       "status": "TODO",
       "priority": "medium",
-      "depends_on": ["LF-061"],
+      "depends_on": [
+        "LF-061"
+      ],
       "acceptance_criteria": [
         "summarize() uses heuristics for short content",
         "summarize() attempts AI for long content if Ollama available",
@@ -159,9 +192,13 @@
       "id": "LF-065",
       "title": "[IMPL] Migration Service",
       "description": "Service that orchestrates JSON to SQLite migration and export. Idempotent import, generates summaries on migration.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "high",
-      "depends_on": ["LF-060", "LF-063", "LF-064"],
+      "depends_on": [
+        "LF-060",
+        "LF-063",
+        "LF-064"
+      ],
       "acceptance_criteria": [
         "importFromFiles() creates records from JSON",
         "importFromFiles() generates summaries for insights",
@@ -176,9 +213,12 @@
       "id": "LF-066",
       "title": "[IMPL] Search Service",
       "description": "Service that orchestrates search with progressive disclosure. Implements scan (Layer 1), expand (Layer 3), and timeline.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "high",
-      "depends_on": ["LF-060", "LF-062"],
+      "depends_on": [
+        "LF-060",
+        "LF-062"
+      ],
       "acceptance_criteria": [
         "scan() returns summaries sorted by relevance",
         "scan() respects limit and sets truncated flag",
@@ -196,7 +236,9 @@
       "description": "New MCP tools for progressive disclosure. loop_scan for Layer 1 index search, loop_expand for Layer 3 full retrieval.",
       "status": "DONE",
       "priority": "high",
-      "depends_on": ["LF-066"],
+      "depends_on": [
+        "LF-066"
+      ],
       "acceptance_criteria": [
         "loop_scan tool with query, scope, filters, limit params",
         "loop_expand tool with ids, includeLinks, includeTimeline params",
@@ -204,7 +246,7 @@
         "Both return well-formed MCP responses",
         "Integration tests with real search service"
       ],
-      "notes": "DONE Session 19. Added to src/mcp/server.ts. Includes summaries and FTS5 search."
+      "notes": "Sprint 5a of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 10."
     },
     {
       "id": "LF-068",
@@ -212,8 +254,10 @@
       "description": "New loop_timeline tool. Retrofit loop_orient and loop_connect to use progressive disclosure (return summaries by default).",
       "status": "DONE",
       "priority": "high",
-      "depends_on": ["LF-066", "LF-067"],
-      "notes": "PARTIAL Session 19. loop_orient and loop_connect retrofitted. loop_timeline deferred.",
+      "depends_on": [
+        "LF-066",
+        "LF-067"
+      ],
       "acceptance_criteria": [
         "loop_timeline tool with anchor, depth, scope params",
         "loop_orient returns summaries instead of full content",
@@ -225,29 +269,14 @@
       "notes": "Sprint 5b of Progressive Disclosure. Completes the MCP tool layer."
     },
     {
-      "id": "LF-070",
-      "title": "[IMPL] Business Rules - Global ID Generation",
-      "description": "Pure functions for generating globally unique IDs that prevent conflicts in cross-repo sharing. Format: INS-{YYYYMMDD}-{random6}",
-      "status": "TODO",
-      "priority": "high",
-      "acceptance_criteria": [
-        "generateId() produces valid INS-{date}-{random} format",
-        "parseId() extracts components correctly",
-        "isGlobalId() vs isLegacyId() detection works",
-        "migrateLegacyId() is deterministic (same input = same output)",
-        "repoHash() produces consistent short hash",
-        "All functions are pure (no I/O)",
-        "Tests: format, uniqueness, parsing, legacy detection, migration"
-      ],
-      "notes": "Sprint 1 addition. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 11."
-    },
-    {
       "id": "LF-071",
       "title": "[IMPL] Business Rules - Format Version Detection",
       "description": "Pure functions for detecting LoopFlow data format versions (v0.x sequential IDs, v1.0 global IDs, v2.0 SQLite). Enables multi-step upgrades.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "high",
-      "depends_on": ["LF-070"],
+      "depends_on": [
+        "LF-070"
+      ],
       "acceptance_criteria": [
         "detectInsightsVersion() identifies v0.x by sequential IDs",
         "detectInsightsVersion() identifies v1.0 by global IDs + summaries",
@@ -256,15 +285,19 @@
         "All functions are pure (no I/O)",
         "Tests: version detection, upgrade path calculation"
       ],
-      "notes": "Sprint 3 addition. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 12."
+      "notes": "Merged into completed work"
     },
     {
       "id": "LF-072",
       "title": "[IMPL] Upgrade Service",
       "description": "Service that orchestrates multi-step upgrades between LoopFlow format versions. Supports v0.x → v1.0 → v2.0 with backup and rollback.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "high",
-      "depends_on": ["LF-065", "LF-070", "LF-071"],
+      "depends_on": [
+        "LF-065",
+        "LF-070",
+        "LF-071"
+      ],
       "acceptance_criteria": [
         "detectFormat() identifies current version",
         "planUpgrade() returns steps for target version",
@@ -274,15 +307,17 @@
         "Progress callback for UI feedback",
         "Tests: all upgrade paths, backup/rollback, idempotency"
       ],
-      "notes": "Sprint 6 of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 15."
+      "notes": "Merged into completed work"
     },
     {
       "id": "LF-073",
       "title": "[IMPL] Business Rules - Export/Import Transforms",
       "description": "Pure functions for creating shareable insight bundles and merging them. Content hashing for deduplication, link remapping for imports.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "medium",
-      "depends_on": ["LF-070"],
+      "depends_on": [
+        "LF-070"
+      ],
       "acceptance_criteria": [
         "createExportBundle() creates valid bundle with metadata",
         "hashInsightContent() deduplicates by content",
@@ -292,40 +327,7 @@
         "All functions are pure (no I/O)",
         "Tests: export, hashing, preview, import planning, validation"
       ],
-      "notes": "Sprint 7a of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 13."
-    },
-    {
-      "id": "LF-074",
-      "title": "[IMPL] Sharing Service",
-      "description": "Service that orchestrates export and import of insight bundles. Enables cross-repo knowledge sharing with preview before import.",
-      "status": "TODO",
-      "priority": "medium",
-      "depends_on": ["LF-060", "LF-064", "LF-073"],
-      "acceptance_criteria": [
-        "exportToFile() creates bundle JSON file",
-        "previewImportFromFile() parses and analyzes bundle",
-        "executeImport() creates insights with new IDs",
-        "Selective import with selectedIds parameter",
-        "Summary generation for imported insights",
-        "Tests: export, preview, import, selective import"
-      ],
-      "notes": "Sprint 7b of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 14."
-    },
-    {
-      "id": "LF-075",
-      "title": "[IMPL] MCP Tools - Sharing (loop_export, loop_import)",
-      "description": "MCP tools for exporting and importing insight bundles. Includes preview step before import for user confirmation.",
-      "status": "TODO",
-      "priority": "medium",
-      "depends_on": ["LF-074"],
-      "acceptance_criteria": [
-        "loop_export tool with filters and output path",
-        "loop_import_preview tool shows what would happen",
-        "loop_import tool with selective import support",
-        "All tools validate parameters",
-        "Integration tests with real sharing service"
-      ],
-      "notes": "Sprint 7c of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 16."
+      "notes": "Merged into completed work"
     },
     {
       "id": "LF-069",
@@ -347,7 +349,7 @@
       "title": "[DISCOVERY] Automatic Observation Capture via Lifecycle Hooks",
       "description": "Explore automatic capture of tool usage, file edits, shell commands via Claude Code lifecycle hooks. claude-mem hooks into PostToolUse, afterFileEdit, afterShellExecution to capture EVERYTHING automatically. Question: Should LoopFlow capture automatically (like claude-mem) or stay intentional? Hypothesis: Both - auto-capture as raw material, manual insights as refined knowledge.",
       "status": "TODO",
-      "priority": "high",
+      "priority": "low",
       "acceptance_criteria": [
         "Understand Claude Code's hook system (SessionStart, PostToolUse, Stop, etc.)",
         "Map what data is available at each hook point",
@@ -356,7 +358,142 @@
         "Consider storage implications (could be high volume)",
         "Document decision and rationale"
       ],
-      "notes": "claude-mem captures: MCP tool executions, shell commands, file edits, user prompts. They store observations → generate summaries → inject context. Key question: Does auto-capture conflict with LoopFlow's 'intentional insight' philosophy, or complement it?"
+      "notes": "Deferred - discovery/research"
+    },
+    {
+      "id": "LF-070",
+      "title": "[IMPL] Business Rules - Global ID Generation",
+      "description": "Pure functions for generating globally unique IDs that prevent conflicts in cross-repo sharing. Format: INS-{YYYYMMDD}-{random6}",
+      "status": "CANCELLED",
+      "priority": "high",
+      "acceptance_criteria": [
+        "generateId() produces valid INS-{date}-{random} format",
+        "parseId() extracts components correctly",
+        "isGlobalId() vs isLegacyId() detection works",
+        "migrateLegacyId() is deterministic (same input = same output)",
+        "repoHash() produces consistent short hash",
+        "All functions are pure (no I/O)",
+        "Tests: format, uniqueness, parsing, legacy detection, migration"
+      ],
+      "notes": "Merged into completed work"
+    },
+    {
+      "id": "LF-074",
+      "title": "[IMPL] Sharing Service",
+      "description": "Service that orchestrates export and import of insight bundles. Enables cross-repo knowledge sharing with preview before import.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [
+        "LF-060",
+        "LF-064",
+        "LF-073"
+      ],
+      "acceptance_criteria": [
+        "exportToFile() creates bundle JSON file",
+        "previewImportFromFile() parses and analyzes bundle",
+        "executeImport() creates insights with new IDs",
+        "Selective import with selectedIds parameter",
+        "Summary generation for imported insights",
+        "Tests: export, preview, import, selective import"
+      ],
+      "notes": "Sprint 7b of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 14."
+    },
+    {
+      "id": "LF-075",
+      "title": "[IMPL] MCP Tools - Sharing (loop_export, loop_import)",
+      "description": "MCP tools for exporting and importing insight bundles. Includes preview step before import for user confirmation.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [
+        "LF-074"
+      ],
+      "acceptance_criteria": [
+        "loop_export tool with filters and output path",
+        "loop_import_preview tool shows what would happen",
+        "loop_import tool with selective import support",
+        "All tools validate parameters",
+        "Integration tests with real sharing service"
+      ],
+      "notes": "Sprint 7c of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 16."
+    },
+    {
+      "id": "LF-050",
+      "title": "[DISCOVERY] Worker Service Architecture (MCP + HTTP Worker)",
+      "description": "Explore claude-mem's split architecture: lightweight MCP server for agent interface + persistent HTTP worker (port 37777) for async processing, web UI, queue management. Question: Should LoopFlow split into MCP server + worker service?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand benefits of split architecture (async processing, web UI, persistence)",
+        "Analyze current LoopFlow MCP server limitations",
+        "Identify what would benefit from async processing",
+        "Design worker service scope (what belongs in worker vs MCP)",
+        "Consider: Is this premature optimization for LoopFlow?",
+        "Document decision"
+      ],
+      "notes": "Deferred - discovery/research"
+    },
+    {
+      "id": "LF-051",
+      "title": "[DISCOVERY] AI-Powered Session Summarization",
+      "description": "Explore claude-mem's automatic session summarization: at session end, generates AI-powered semantic summary of what happened. Summaries are searchable and injected into future sessions. Question: Should LoopFlow generate automatic summaries, or rely on human-written progress entries?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand claude-mem's summarization flow (Stop hook → worker → AI → store)",
+        "Analyze what makes a good session summary",
+        "Compare: AI summary vs human-written progress.txt entry",
+        "Consider hybrid: AI draft + human refinement?",
+        "Design summarization prompt if we adopt this",
+        "Document decision and rationale"
+      ],
+      "notes": "Deferred - discovery/research"
+    },
+    {
+      "id": "LF-052",
+      "title": "[DISCOVERY] Timeline Context Tool",
+      "description": "Explore claude-mem's timeline tool: shows chronological context around a specific observation. 'What was happening when I made this decision?' Question: Should LoopFlow add temporal context to loop_connect?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand claude-mem's timeline implementation",
+        "Analyze use cases for temporal context in LoopFlow",
+        "Design loop_timeline tool or enhance loop_connect",
+        "Consider: depth_before/depth_after parameters",
+        "How does timeline interact with insights vs observations?",
+        "Document design"
+      ],
+      "notes": "Deferred - discovery/research"
+    },
+    {
+      "id": "LF-054",
+      "title": "[DISCOVERY] Vector Search / Semantic Retrieval (ChromaDB)",
+      "description": "Explore claude-mem's hybrid search: SQLite for structured data + ChromaDB for vector embeddings. Enables semantic search ('find observations about authentication') not just keyword matching. Question: Should LoopFlow add vector search?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand ChromaDB integration in claude-mem",
+        "Analyze current LoopFlow search capabilities (file-based, keyword)",
+        "Evaluate semantic search value for insights/tasks",
+        "Consider embedding generation (when? what model?)",
+        "Assess complexity vs benefit trade-off",
+        "Document decision"
+      ],
+      "notes": "Deferred - discovery/research"
+    },
+    {
+      "id": "LF-055",
+      "title": "[DISCOVERY] Privacy Controls (<private> tags)",
+      "description": "Explore claude-mem's privacy system: <private>content</private> tags prevent storage of sensitive content. Tag stripping happens at hook layer before data reaches worker/database. Question: Does LoopFlow need privacy controls?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand claude-mem's privacy tag implementation",
+        "Identify LoopFlow scenarios where privacy matters",
+        "Consider: secrets, credentials, personal info in insights",
+        "Design privacy mechanism if needed",
+        "Document decision"
+      ],
+      "notes": "Deferred - discovery/research"
     },
     {
       "id": "LF-049",
@@ -375,54 +512,6 @@
       "notes": "COMPLETED Session 18. Created comprehensive spec: docs/PROGRESSIVE-DISCLOSURE-SPEC.md. Key decisions: SQLite migration, 3-layer retrieval (scan/expand/timeline), heuristic+Ollama summarization, modular architecture with testable pure business rules. Implementation tasks: LF-059 through LF-069."
     },
     {
-      "id": "LF-050",
-      "title": "[DISCOVERY] Worker Service Architecture (MCP + HTTP Worker)",
-      "description": "Explore claude-mem's split architecture: lightweight MCP server for agent interface + persistent HTTP worker (port 37777) for async processing, web UI, queue management. Question: Should LoopFlow split into MCP server + worker service?",
-      "status": "TODO",
-      "priority": "medium",
-      "acceptance_criteria": [
-        "Understand benefits of split architecture (async processing, web UI, persistence)",
-        "Analyze current LoopFlow MCP server limitations",
-        "Identify what would benefit from async processing",
-        "Design worker service scope (what belongs in worker vs MCP)",
-        "Consider: Is this premature optimization for LoopFlow?",
-        "Document decision"
-      ],
-      "notes": "claude-mem worker handles: AI summarization, embedding generation, queue processing, web viewer, ChromaDB sync. LoopFlow currently reads files synchronously. Worker could enable: background summarization, web dashboard, cross-repo aggregation."
-    },
-    {
-      "id": "LF-051",
-      "title": "[DISCOVERY] AI-Powered Session Summarization",
-      "description": "Explore claude-mem's automatic session summarization: at session end, generates AI-powered semantic summary of what happened. Summaries are searchable and injected into future sessions. Question: Should LoopFlow generate automatic summaries, or rely on human-written progress entries?",
-      "status": "TODO",
-      "priority": "medium",
-      "acceptance_criteria": [
-        "Understand claude-mem's summarization flow (Stop hook → worker → AI → store)",
-        "Analyze what makes a good session summary",
-        "Compare: AI summary vs human-written progress.txt entry",
-        "Consider hybrid: AI draft + human refinement?",
-        "Design summarization prompt if we adopt this",
-        "Document decision and rationale"
-      ],
-      "notes": "LoopFlow currently relies on human writing progress entries. claude-mem generates summaries automatically. Trade-off: Automatic = comprehensive but possibly generic. Manual = intentional but might miss things. Hybrid could work: AI suggests, human refines."
-    },
-    {
-      "id": "LF-052",
-      "title": "[DISCOVERY] Timeline Context Tool",
-      "description": "Explore claude-mem's timeline tool: shows chronological context around a specific observation. 'What was happening when I made this decision?' Question: Should LoopFlow add temporal context to loop_connect?",
-      "status": "TODO",
-      "priority": "medium",
-      "acceptance_criteria": [
-        "Understand claude-mem's timeline implementation",
-        "Analyze use cases for temporal context in LoopFlow",
-        "Design loop_timeline tool or enhance loop_connect",
-        "Consider: depth_before/depth_after parameters",
-        "How does timeline interact with insights vs observations?",
-        "Document design"
-      ],
-      "notes": "Current loop_connect is associative (by concept). Timeline adds temporal dimension. Use case: 'What was I working on when I captured this insight?' helps reconstruct reasoning narrative."
-    },
-    {
       "id": "LF-053",
       "title": "[DISCOVERY] Web Viewer Dashboard",
       "description": "Explore claude-mem's real-time web viewer at localhost:37777. Shows: session feed, observation stream, search interface, settings. Question: Does LoopFlow need a visual interface, or is file-based + CLI sufficient?",
@@ -438,76 +527,20 @@
       "notes": "LoopFlow is currently file-based (backlog.json, insights.json, progress.txt). A web viewer could help: visualize knowledge graph, browse sessions, search across projects. But adds complexity. Is it needed?"
     },
     {
-      "id": "LF-054",
-      "title": "[DISCOVERY] Vector Search / Semantic Retrieval (ChromaDB)",
-      "description": "Explore claude-mem's hybrid search: SQLite for structured data + ChromaDB for vector embeddings. Enables semantic search ('find observations about authentication') not just keyword matching. Question: Should LoopFlow add vector search?",
-      "status": "TODO",
-      "priority": "medium",
-      "acceptance_criteria": [
-        "Understand ChromaDB integration in claude-mem",
-        "Analyze current LoopFlow search capabilities (file-based, keyword)",
-        "Evaluate semantic search value for insights/tasks",
-        "Consider embedding generation (when? what model?)",
-        "Assess complexity vs benefit trade-off",
-        "Document decision"
-      ],
-      "notes": "claude-mem uses 2-tier search: vector similarity for recall (1000s → 10s), LLM judgment for precision (10s → 2-3). LoopFlow currently does simple file reads. As knowledge grows, semantic search becomes more valuable."
-    },
-    {
-      "id": "LF-055",
-      "title": "[DISCOVERY] Privacy Controls (<private> tags)",
-      "description": "Explore claude-mem's privacy system: <private>content</private> tags prevent storage of sensitive content. Tag stripping happens at hook layer before data reaches worker/database. Question: Does LoopFlow need privacy controls?",
-      "status": "TODO",
-      "priority": "low",
-      "acceptance_criteria": [
-        "Understand claude-mem's privacy tag implementation",
-        "Identify LoopFlow scenarios where privacy matters",
-        "Consider: secrets, credentials, personal info in insights",
-        "Design privacy mechanism if needed",
-        "Document decision"
-      ],
-      "notes": "LoopFlow stores insights.json in repo (potentially version controlled). If auto-capture is added, privacy becomes more important. Users might not want all tool outputs stored."
-    },
-    {
-      "id": "LF-056",
-      "title": "[DISCOVERY] Context Injection Strategies",
-      "description": "Explore how claude-mem injects context: (1) Claude Code: additionalContext in hook output, (2) Cursor: auto-updated .cursor/rules/ file. Context refreshes at session start and after summaries. Question: How should LoopFlow inject context into new sessions?",
-      "status": "TODO",
-      "priority": "high",
-      "acceptance_criteria": [
-        "Understand Claude Code's additionalContext mechanism",
-        "Understand Cursor's rules file approach",
-        "Compare with LoopFlow's current approach (loop_orient tool)",
-        "Design optimal context injection for LoopFlow",
-        "Consider: automatic vs on-demand injection",
-        "Document design"
-      ],
-      "notes": "LoopFlow currently uses loop_orient (agent calls when needed). claude-mem auto-injects at session start. Trade-off: Auto-inject ensures context but uses tokens. On-demand is efficient but requires agent to remember to call."
-    },
-    {
-      "id": "LF-057",
-      "title": "[DISCOVERY] Dual Capture Architecture (Auto + Manual)",
-      "description": "Design LoopFlow's dual capture system: automatic observations (raw material) + manual insights (refined knowledge). This combines claude-mem's comprehensive capture with LoopFlow's intentional insight philosophy.",
-      "status": "TODO",
-      "priority": "high",
-      "depends_on": ["LF-048", "LF-049"],
-      "acceptance_criteria": [
-        "Define observation vs insight distinction clearly",
-        "Design observation schema (auto-captured tool usage)",
-        "Design insight schema (human-curated knowledge)",
-        "Define relationship: observations can spawn insights",
-        "Design synthesis: how observations inform insights",
-        "Document architecture"
-      ],
-      "notes": "Key insight from analysis: claude-mem captures everything automatically; LoopFlow captures intentionally. The synthesis: auto-capture the raw events, manual capture the meaning. Observations = what happened. Insights = why it matters."
-    },
-    {
       "id": "LF-058",
       "title": "[DESIGN] LoopFlow v2 Architecture (Post claude-mem Learning)",
       "description": "Synthesize learnings from claude-mem analysis into LoopFlow v2 architecture. Integrate: dual capture, progressive disclosure, timeline context, optional worker service. This is the design task that follows the discovery tasks.",
       "status": "TODO",
-      "priority": "high",
-      "depends_on": ["LF-048", "LF-049", "LF-050", "LF-051", "LF-052", "LF-056", "LF-057"],
+      "priority": "low",
+      "depends_on": [
+        "LF-048",
+        "LF-049",
+        "LF-050",
+        "LF-051",
+        "LF-052",
+        "LF-056",
+        "LF-057"
+      ],
       "acceptance_criteria": [
         "Synthesize decisions from all discovery tasks",
         "Update docs/DESIGN.md with v2 architecture",
@@ -516,7 +549,7 @@
         "Create implementation tasks",
         "Document rationale for included/excluded features"
       ],
-      "notes": "This is the capstone design task. By the time we reach this, all discovery tasks should have clear decisions. This task synthesizes them into a coherent v2 architecture."
+      "notes": "Deferred - discovery/research"
     },
     {
       "id": "LF-047",
@@ -524,7 +557,9 @@
       "description": "Build import functionality BEFORE full CRUD tools. This lets file-based LoopFlow continue as source of truth while MCP is developed. Import reads .loop-flow/ files from any repo and populates SQLite. Key milestone: once this works, cross-repo insights can flow through the database.",
       "status": "TODO",
       "priority": "medium",
-      "depends_on": ["LF-003"],
+      "depends_on": [
+        "LF-003"
+      ],
       "acceptance_criteria": [
         "loop.import tool reads .loop-flow/plan/backlog.json → tasks table",
         "loop.import reads .loop-flow/plan/insights.json → learnings table",
@@ -536,11 +571,115 @@
       "notes": "Priority lowered: Session 15 showed MCP server can read files directly without SQLite. Still valuable for cross-repo aggregation later, but not blocking."
     },
     {
+      "id": "LF-025",
+      "title": "[IMPL] Add multishot examples to LoopFlow skills",
+      "description": "Apply multishot prompting technique to loop-start, loop-end, and loop-bail skills. Add 1-2 concrete examples showing what good output looks like. Learning goal: deeply understand why examples improve consistency.",
+      "status": "CANCELLED",
+      "priority": "medium",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "loop-start skill has example of good session summary output",
+        "loop-end skill has example of good progress entry",
+        "Examples are diverse (cover different scenarios)",
+        "Document what you learned about multishot prompting in insights.json"
+      ],
+      "notes": "Skills system removed in S21"
+    },
+    {
+      "id": "LF-026",
+      "title": "[IMPL] Add XML structure to LoopFlow skill outputs",
+      "description": "Apply XML tagging technique to LoopFlow skills. Structure outputs with tags like <session_summary>, <suggested_tasks>, <learnings>. Learning goal: understand how XML improves parsing and reduces mixing.",
+      "status": "CANCELLED",
+      "priority": "medium",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "loop-start output uses XML tags for structure",
+        "loop-end output uses XML tags for structure",
+        "Tags are consistent across skills",
+        "Document what you learned about XML structuring in insights.json"
+      ],
+      "notes": "Skills system removed in S21"
+    },
+    {
+      "id": "LF-056",
+      "title": "[DISCOVERY] Context Injection Strategies",
+      "description": "Explore how claude-mem injects context: (1) Claude Code: additionalContext in hook output, (2) Cursor: auto-updated .cursor/rules/ file. Context refreshes at session start and after summaries. Question: How should LoopFlow inject context into new sessions?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand Claude Code's additionalContext mechanism",
+        "Understand Cursor's rules file approach",
+        "Compare with LoopFlow's current approach (loop_orient tool)",
+        "Design optimal context injection for LoopFlow",
+        "Consider: automatic vs on-demand injection",
+        "Document design"
+      ],
+      "notes": "Deferred - discovery/research"
+    },
+    {
+      "id": "LF-057",
+      "title": "[DISCOVERY] Dual Capture Architecture (Auto + Manual)",
+      "description": "Design LoopFlow's dual capture system: automatic observations (raw material) + manual insights (refined knowledge). This combines claude-mem's comprehensive capture with LoopFlow's intentional insight philosophy.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": [
+        "LF-048",
+        "LF-049"
+      ],
+      "acceptance_criteria": [
+        "Define observation vs insight distinction clearly",
+        "Design observation schema (auto-captured tool usage)",
+        "Design insight schema (human-curated knowledge)",
+        "Define relationship: observations can spawn insights",
+        "Design synthesis: how observations inform insights",
+        "Document architecture"
+      ],
+      "notes": "Deferred - discovery/research"
+    },
+    {
+      "id": "LF-029",
+      "title": "[IMPL] Add context for instructions in LoopFlow prompts",
+      "description": "Claude 4.x performs better when it understands WHY an instruction exists. Add brief context/motivation to key instructions in skills and WORKFLOW.md. Learning goal: understand how context improves Claude's targeting.",
+      "status": "CANCELLED",
+      "priority": "low",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "Key instructions have brief 'why' context",
+        "Context is concise (one sentence max)",
+        "Test if context improves compliance",
+        "Document learnings about context-giving"
+      ],
+      "notes": "Skills system removed in S21"
+    },
+    {
+      "id": "LF-030",
+      "title": "[IMPL] Add anti-overengineering guidance to WORKFLOW.md",
+      "description": "Claude 4.x tends to create extra files and abstractions. Add explicit guidance to WORKFLOW.md about keeping solutions minimal. Learning goal: understand Claude 4.x's overengineering tendency.",
+      "status": "CANCELLED",
+      "priority": "medium",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "WORKFLOW.md has section on minimal solutions",
+        "Guidance covers: no extra files, no speculative abstractions, DRY",
+        "Aligns with existing 'Easy to change' principle in AGENTS.md",
+        "Document the overengineering pattern in insights.json"
+      ],
+      "notes": "Outdated WORKFLOW.md tasks - defer or drop"
+    },
+    {
       "id": "LF-024",
       "title": "[LEARN] Anthropic Prompt Engineering Best Practices",
       "description": "Deep learning session on Anthropic's prompt engineering guides. Two sources: (1) General techniques guide, (2) Claude 4.x best practices. Internalize techniques thoroughly as foundation for improvement tasks.",
       "status": "TODO",
-      "priority": "medium",
+      "priority": "low",
       "acceptance_criteria": [
         "Work through all 8 general techniques with probing questions",
         "Understand Claude 4.x specific behaviors (precise instruction following, conciseness)",
@@ -550,341 +689,317 @@
       "notes": "Sources: (1) https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview (2) https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-4-best-practices"
     },
     {
-      "id": "LF-025",
-      "title": "[IMPL] Add multishot examples to LoopFlow skills",
-      "description": "Apply multishot prompting technique to loop-start, loop-end, and loop-bail skills. Add 1-2 concrete examples showing what good output looks like. Learning goal: deeply understand why examples improve consistency.",
-      "status": "TODO",
-      "priority": "medium",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "loop-start skill has example of good session summary output",
-        "loop-end skill has example of good progress entry",
-        "Examples are diverse (cover different scenarios)",
-        "Document what you learned about multishot prompting in insights.json"
-      ],
-      "notes": "Learning-by-doing task. The goal is twofold: improve the skills AND internalize the multishot technique."
-    },
-    {
-      "id": "LF-026",
-      "title": "[IMPL] Add XML structure to LoopFlow skill outputs",
-      "description": "Apply XML tagging technique to LoopFlow skills. Structure outputs with tags like <session_summary>, <suggested_tasks>, <learnings>. Learning goal: understand how XML improves parsing and reduces mixing.",
-      "status": "TODO",
-      "priority": "medium",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "loop-start output uses XML tags for structure",
-        "loop-end output uses XML tags for structure",
-        "Tags are consistent across skills",
-        "Document what you learned about XML structuring in insights.json"
-      ],
-      "notes": "Learning-by-doing task. Consider: do XML tags help the agent follow the format? Do they make outputs easier to parse programmatically?"
-    },
-    {
       "id": "LF-027",
       "title": "[IMPL] Add role prompting to LoopFlow skills",
       "description": "Apply role prompting technique to LoopFlow skills. Give the agent a clear persona/role that shapes tone and expertise. Learning goal: understand how roles affect output quality and consistency.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "Skills establish a clear role/persona for the agent",
         "Role aligns with LoopFlow philosophy (collaborative, teaches, developer-in-control)",
         "Test if role improves output quality",
         "Document what you learned about role prompting in insights.json"
       ],
-      "notes": "Learning-by-doing task. Question to explore: What role best fits LoopFlow? Senior pair programmer? Project manager? Thinking partner?"
+      "notes": "Skills system removed in S21"
     },
     {
       "id": "LF-028",
       "title": "[IMPL] Use explicit action language in LoopFlow skills",
       "description": "Claude 4.x follows instructions precisely — 'suggest' means only suggest, not implement. Review all skills and WORKFLOW.md for soft language that should be explicit action commands. Learning goal: understand Claude 4.x's precise instruction following.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "medium",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "Audit skills for soft language ('consider', 'you might', 'suggest')",
         "Replace with explicit actions where implementation is intended",
         "Keep soft language only where suggestions are actually wanted",
         "Document the distinction in insights.json"
       ],
-      "notes": "From Claude 4.x best practices: 'If you say suggest, it will suggest. If you want action, say make/change/update.'"
-    },
-    {
-      "id": "LF-029",
-      "title": "[IMPL] Add context for instructions in LoopFlow prompts",
-      "description": "Claude 4.x performs better when it understands WHY an instruction exists. Add brief context/motivation to key instructions in skills and WORKFLOW.md. Learning goal: understand how context improves Claude's targeting.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Key instructions have brief 'why' context",
-        "Context is concise (one sentence max)",
-        "Test if context improves compliance",
-        "Document learnings about context-giving"
-      ],
-      "notes": "Example from Anthropic: Instead of 'NEVER use ellipses', say 'Never use ellipses because text-to-speech can't pronounce them.' Claude generalizes from the explanation."
-    },
-    {
-      "id": "LF-030",
-      "title": "[IMPL] Add anti-overengineering guidance to WORKFLOW.md",
-      "description": "Claude 4.x tends to create extra files and abstractions. Add explicit guidance to WORKFLOW.md about keeping solutions minimal. Learning goal: understand Claude 4.x's overengineering tendency.",
-      "status": "TODO",
-      "priority": "medium",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "WORKFLOW.md has section on minimal solutions",
-        "Guidance covers: no extra files, no speculative abstractions, DRY",
-        "Aligns with existing 'Easy to change' principle in AGENTS.md",
-        "Document the overengineering pattern in insights.json"
-      ],
-      "notes": "From Claude 4.x docs: 'Opus 4.5 has a tendency to overengineer by creating extra files, adding unnecessary abstractions, or building in flexibility that wasn't requested.'"
+      "notes": "Skills system removed in S21"
     },
     {
       "id": "LF-031",
       "title": "[IMPL] Add code exploration requirements to WORKFLOW.md",
       "description": "Claude 4.x can be conservative about exploring code before proposing solutions. Add explicit guidance requiring code inspection before edits. Learning goal: understand the 'read before write' principle for agentic coding.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "medium",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "WORKFLOW.md requires reading code before proposing changes",
         "Guidance prevents speculation about unread code",
         "Aligns with 'Understand before changing' in AGENTS.md",
         "Document learnings about grounded vs speculative answers"
       ],
-      "notes": "From Claude 4.x docs: 'ALWAYS read and understand relevant files before proposing code edits. Do not speculate about code you have not inspected.'"
+      "notes": "Outdated WORKFLOW.md tasks - defer or drop"
     },
     {
       "id": "LF-032",
       "title": "[IMPL] Add parallel tool guidance to WORKFLOW.md",
       "description": "Claude 4.x aggressively parallelizes tool calls. Add guidance on when parallel is good (reading multiple files) vs when sequential is needed (dependent operations). Learning goal: understand parallel tool optimization.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "WORKFLOW.md has guidance on parallel vs sequential tool use",
         "Examples of good parallel use cases",
         "Examples where sequential is required",
         "Document learnings about tool parallelization"
       ],
-      "notes": "From Claude 4.x docs: 'Sonnet 4.5 is particularly aggressive in firing off multiple operations simultaneously.' Can bottleneck systems but also speed up work significantly."
+      "notes": "Outdated WORKFLOW.md tasks - defer or drop"
     },
     {
       "id": "LF-033",
       "title": "[IMPL] Document LoopFlow's alignment with Claude 4.x multi-window patterns",
       "description": "LoopFlow's file-based state (progress.txt, backlog.json, insights.json) aligns with Anthropic's recommended patterns for multi-context-window workflows. Document this alignment explicitly. Learning goal: validate LoopFlow's design against Anthropic's recommendations.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "README or DESIGN.md notes alignment with Claude 4.x patterns",
         "Mapping: progress.txt = progress notes, backlog.json = structured state, git = checkpoints",
         "Validates LoopFlow's 'one task, one session' model",
         "Document insights about why LoopFlow works well with Claude 4.x"
       ],
-      "notes": "Anthropic recommends: structured JSON for status tracking, freeform text for progress notes, git for state across sessions. LoopFlow already does all of this!"
+      "notes": "Outdated WORKFLOW.md tasks - defer or drop"
     },
     {
       "id": "LF-034",
       "title": "[IMPL] Add 'think' word sensitivity note to WORKFLOW.md",
       "description": "When extended thinking is OFF, Claude 4.5 is sensitive to the word 'think'. Add note to use alternatives like 'consider', 'evaluate'. Learning goal: understand extended thinking interaction.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "WORKFLOW.md notes the 'think' sensitivity",
         "Suggests alternatives: consider, evaluate, believe",
         "Only applies when extended thinking is disabled",
         "Document this quirk in insights.json"
       ],
-      "notes": "From Claude 4.x docs: 'When extended thinking is disabled, Claude Opus 4.5 is particularly sensitive to the word think and its variants.'"
-    },
-    {
-      "id": "LF-035",
-      "title": "[LEARN] Dial back aggressive prompting language",
-      "description": "Claude 4.x is more responsive to prompts — aggressive language ('CRITICAL', 'YOU MUST') may overtrigger. Learn when normal language suffices. Audit LoopFlow for aggressive patterns.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand why aggressive language was needed before (undertriggering)",
-        "Understand why it's counterproductive now (overtriggering)",
-        "Audit LoopFlow prompts for aggressive patterns",
-        "Document findings and any changes made"
-      ],
-      "notes": "From Claude 4.x docs: 'Where you might have said CRITICAL: You MUST use this tool when..., you can use more normal prompting like Use this tool when...'"
-    },
-    {
-      "id": "LF-036",
-      "title": "[LEARN] Verbosity control in Claude 4.x",
-      "description": "Claude 4.x is concise by default — may skip summaries after tool calls. Learn how to request updates when needed. Consider if LoopFlow should request more verbosity.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand Claude 4.x's default concise style",
-        "Learn the prompt pattern for requesting summaries",
-        "Decide if LoopFlow skills need verbosity adjustments",
-        "Document learnings about verbosity control"
-      ],
-      "notes": "Sample prompt: 'After completing a task that involves tool use, provide a quick summary of the work you've done.'"
-    },
-    {
-      "id": "LF-037",
-      "title": "[LEARN] Format control techniques in Claude 4.x",
-      "description": "Learn techniques for controlling output format: (1) say what TO do not what NOT to do, (2) XML format indicators, (3) match prompt style to desired output, (4) detailed formatting prompts.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand all 4 format control techniques",
-        "Practice each technique with examples",
-        "Consider applications to LoopFlow outputs",
-        "Document learnings about format steering"
-      ],
-      "notes": "Key insight: 'Tell Claude what to do instead of what not to do.' Also: removing markdown from prompt reduces markdown in output."
-    },
-    {
-      "id": "LF-038",
-      "title": "[LEARN] Research and information gathering patterns",
-      "description": "Learn Claude 4.x's agentic search capabilities: clear success criteria, source verification, structured research with hypothesis tracking. Consider applications to LoopFlow's Learn mode.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand the structured research prompt pattern",
-        "Practice with a real research task",
-        "Consider if LoopFlow's Learn mode should incorporate these patterns",
-        "Document learnings about research orchestration"
-      ],
-      "notes": "Pattern: 'develop competing hypotheses, track confidence levels, self-critique, update hypothesis tree.' Could enhance LoopFlow's [LEARN] and [SPIKE] task types."
-    },
-    {
-      "id": "LF-039",
-      "title": "[LEARN] Subagent orchestration in Claude 4.x",
-      "description": "Learn how Claude 4.5 natively delegates to subagents. Understand when this is beneficial vs when to constrain it. Consider implications for LoopFlow's architecture.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand native subagent orchestration behavior",
-        "Learn how to steer conservativeness",
-        "Consider if LoopFlow should leverage or constrain this",
-        "Document learnings about multi-agent patterns"
-      ],
-      "notes": "Claude 4.5 proactively delegates to subagents when beneficial. Can be steered: 'Only delegate when task clearly benefits from separate context window.'"
+      "notes": "Outdated WORKFLOW.md tasks - defer or drop"
     },
     {
       "id": "LF-040",
       "title": "[LEARN] Interleaved thinking capabilities",
       "description": "Learn how to leverage Claude 4.x's thinking capabilities for reflection after tool use and multi-step reasoning. Consider applications to complex LoopFlow tasks.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "Understand interleaved thinking vs extended thinking",
         "Learn prompt patterns that leverage reflection",
         "Consider if LoopFlow should prompt for post-tool reflection",
         "Document learnings about thinking capabilities"
       ],
-      "notes": "Sample: 'After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding.'"
+      "notes": "Learn tasks - defer to future"
     },
     {
-      "id": "LF-041",
-      "title": "[LEARN] File creation and cleanup patterns",
-      "description": "Learn Claude 4.x's tendency to create temp files as scratchpads. Understand when this helps vs when to request cleanup. Consider guidance for LoopFlow's WORKFLOW.md.",
-      "status": "TODO",
+      "id": "LF-035",
+      "title": "[LEARN] Dial back aggressive prompting language",
+      "description": "Claude 4.x is more responsive to prompts — aggressive language ('CRITICAL', 'YOU MUST') may overtrigger. Learn when normal language suffices. Audit LoopFlow for aggressive patterns.",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand why Claude creates temp files (scratchpad pattern)",
-        "Learn cleanup prompt patterns",
-        "Decide if LoopFlow should have file cleanup guidance",
-        "Document learnings about file management"
+      "depends_on": [
+        "LF-024"
       ],
-      "notes": "Sample: 'If you create any temporary new files, scripts, or helper files for iteration, clean up these files by removing them at the end of the task.'"
+      "acceptance_criteria": [
+        "Understand why aggressive language was needed before (undertriggering)",
+        "Understand why it's counterproductive now (overtriggering)",
+        "Audit LoopFlow prompts for aggressive patterns",
+        "Document findings and any changes made"
+      ],
+      "notes": "Learn tasks - defer to future"
     },
     {
-      "id": "LF-042",
-      "title": "[LEARN] Avoiding hard-coding and test-focused solutions",
-      "description": "Learn how Claude 4.x can focus too heavily on passing tests at expense of general solutions. Understand prompts for principled implementations. Relevant to LoopFlow's testing philosophy.",
-      "status": "TODO",
+      "id": "LF-036",
+      "title": "[LEARN] Verbosity control in Claude 4.x",
+      "description": "Claude 4.x is concise by default — may skip summaries after tool calls. Learn how to request updates when needed. Consider if LoopFlow should request more verbosity.",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand the test-focused solution anti-pattern",
-        "Learn prompts for general-purpose solutions",
-        "Connect to LoopFlow's spec-driven development insights",
-        "Document learnings about test vs implementation relationship"
+      "depends_on": [
+        "LF-024"
       ],
-      "notes": "Connects to LF-PROC-007/008 (spec-driven development). Key: 'Tests verify correctness, not define the solution. Implement actual logic that solves the problem generally.'"
+      "acceptance_criteria": [
+        "Understand Claude 4.x's default concise style",
+        "Learn the prompt pattern for requesting summaries",
+        "Decide if LoopFlow skills need verbosity adjustments",
+        "Document learnings about verbosity control"
+      ],
+      "notes": "Learn tasks - defer to future"
     },
     {
-      "id": "LF-043",
-      "title": "[LEARN] Minimizing hallucinations in agentic coding",
-      "description": "Learn the 'investigate before answering' pattern for grounded, hallucination-free responses. Strengthen LoopFlow's 'understand before changing' principle.",
-      "status": "TODO",
+      "id": "LF-037",
+      "title": "[LEARN] Format control techniques in Claude 4.x",
+      "description": "Learn techniques for controlling output format: (1) say what TO do not what NOT to do, (2) XML format indicators, (3) match prompt style to desired output, (4) detailed formatting prompts.",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
-      "acceptance_criteria": [
-        "Understand why hallucinations occur (speculation without reading)",
-        "Learn the investigation-first prompt pattern",
-        "Strengthen LoopFlow's existing guidance",
-        "Document learnings about grounded responses"
+      "depends_on": [
+        "LF-024"
       ],
-      "notes": "Sample: 'Never speculate about code you have not opened. MUST read the file before answering.' Reinforces LoopFlow's 'Understand before changing' rule."
+      "acceptance_criteria": [
+        "Understand all 4 format control techniques",
+        "Practice each technique with examples",
+        "Consider applications to LoopFlow outputs",
+        "Document learnings about format steering"
+      ],
+      "notes": "Learn tasks - defer to future"
     },
     {
       "id": "LF-044",
       "title": "[LEARN] Frontend design and avoiding 'AI slop'",
       "description": "Learn the 'AI slop' aesthetic problem and techniques for distinctive frontend design. Even if not directly applicable, understand the principle of avoiding generic outputs.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "Understand what creates 'AI slop' aesthetic",
         "Learn the frontend_aesthetics prompt pattern",
         "Extract generalizable principle about avoiding generic outputs",
         "Document learnings — may spark unexpected ideas"
       ],
-      "notes": "Key insight: Claude converges toward 'on distribution' outputs. The fix is explicit guidance toward distinctiveness. Could this apply to LoopFlow's outputs too?"
+      "notes": "Learn tasks - defer to future"
+    },
+    {
+      "id": "LF-038",
+      "title": "[LEARN] Research and information gathering patterns",
+      "description": "Learn Claude 4.x's agentic search capabilities: clear success criteria, source verification, structured research with hypothesis tracking. Consider applications to LoopFlow's Learn mode.",
+      "status": "CANCELLED",
+      "priority": "low",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "Understand the structured research prompt pattern",
+        "Practice with a real research task",
+        "Consider if LoopFlow's Learn mode should incorporate these patterns",
+        "Document learnings about research orchestration"
+      ],
+      "notes": "Learn tasks - defer to future"
+    },
+    {
+      "id": "LF-039",
+      "title": "[LEARN] Subagent orchestration in Claude 4.x",
+      "description": "Learn how Claude 4.5 natively delegates to subagents. Understand when this is beneficial vs when to constrain it. Consider implications for LoopFlow's architecture.",
+      "status": "CANCELLED",
+      "priority": "low",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "Understand native subagent orchestration behavior",
+        "Learn how to steer conservativeness",
+        "Consider if LoopFlow should leverage or constrain this",
+        "Document learnings about multi-agent patterns"
+      ],
+      "notes": "Learn tasks - defer to future"
+    },
+    {
+      "id": "LF-043",
+      "title": "[LEARN] Minimizing hallucinations in agentic coding",
+      "description": "Learn the 'investigate before answering' pattern for grounded, hallucination-free responses. Strengthen LoopFlow's 'understand before changing' principle.",
+      "status": "CANCELLED",
+      "priority": "low",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "Understand why hallucinations occur (speculation without reading)",
+        "Learn the investigation-first prompt pattern",
+        "Strengthen LoopFlow's existing guidance",
+        "Document learnings about grounded responses"
+      ],
+      "notes": "Learn tasks - defer to future"
+    },
+    {
+      "id": "LF-041",
+      "title": "[LEARN] File creation and cleanup patterns",
+      "description": "Learn Claude 4.x's tendency to create temp files as scratchpads. Understand when this helps vs when to request cleanup. Consider guidance for LoopFlow's WORKFLOW.md.",
+      "status": "CANCELLED",
+      "priority": "low",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "Understand why Claude creates temp files (scratchpad pattern)",
+        "Learn cleanup prompt patterns",
+        "Decide if LoopFlow should have file cleanup guidance",
+        "Document learnings about file management"
+      ],
+      "notes": "Learn tasks - defer to future"
+    },
+    {
+      "id": "LF-042",
+      "title": "[LEARN] Avoiding hard-coding and test-focused solutions",
+      "description": "Learn how Claude 4.x can focus too heavily on passing tests at expense of general solutions. Understand prompts for principled implementations. Relevant to LoopFlow's testing philosophy.",
+      "status": "CANCELLED",
+      "priority": "low",
+      "depends_on": [
+        "LF-024"
+      ],
+      "acceptance_criteria": [
+        "Understand the test-focused solution anti-pattern",
+        "Learn prompts for general-purpose solutions",
+        "Connect to LoopFlow's spec-driven development insights",
+        "Document learnings about test vs implementation relationship"
+      ],
+      "notes": "Learn tasks - defer to future"
     },
     {
       "id": "LF-045",
       "title": "[LEARN] Vision capabilities and crop tool pattern",
       "description": "Learn Claude 4.x's improved vision and the crop tool pattern for 'zooming in' on image regions. Understand even if not immediately applicable — may inspire ideas.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "Understand improved vision capabilities",
         "Learn the crop tool pattern (zoom for detail)",
         "Consider if similar 'zoom' patterns apply elsewhere",
         "Document learnings and any sparked ideas"
       ],
-      "notes": "The crop tool lets Claude 'zoom' into relevant regions. Is there a metaphorical equivalent for code? Zooming into relevant functions/classes?"
+      "notes": "Learn tasks - defer to future"
     },
     {
       "id": "LF-046",
       "title": "[LEARN] Document creation capabilities",
       "description": "Learn Claude 4.x's presentation and visual document creation abilities. Understand the pattern even if not core to LoopFlow — may inspire documentation ideas.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "low",
-      "depends_on": ["LF-024"],
+      "depends_on": [
+        "LF-024"
+      ],
       "acceptance_criteria": [
         "Understand document creation capabilities",
         "Try creating a presentation or visual doc",
         "Consider if LoopFlow could generate visual artifacts",
         "Document learnings and ideas"
       ],
-      "notes": "Could LoopFlow generate visual progress reports? Architecture diagrams? Knowledge graph visualizations? Explore the possibility."
+      "notes": "Learn tasks - defer to future"
     },
     {
       "id": "LF-023",
       "title": "[DISCUSS] Integrate Imported Insights from learn-tdd-go",
       "description": "Deep discussion session to fully integrate 8 insights imported from learn-tdd-go into Loop-Flow's core philosophy. Topics: cross-project insight flow, skills reliability, Loop-Flow as learning platform, verification functions pattern, spec-driven development, human's role as spec author, property-based testing, and test-production code reuse.",
       "status": "TODO",
-      "priority": "high",
+      "priority": "low",
       "acceptance_criteria": [
         "Review and refine each imported insight (INS-031 to INS-038)",
         "Establish links to existing insights",
@@ -973,12 +1088,32 @@
       "notes": "Completed in PROTOTYPE repo, then transitioned here. See progress.txt for details."
     },
     {
+      "id": "LF-005",
+      "title": "[IMPL] MCP server skeleton",
+      "description": "Implement MCP server that registers with Claude Code. Start with a simple echo tool.",
+      "status": "CANCELLED",
+      "priority": "high",
+      "depends_on": [
+        "LF-001",
+        "LF-002"
+      ],
+      "acceptance_criteria": [
+        "MCP server starts via CLI",
+        "Registers with Claude Code (or can be manually added)",
+        "Has one working tool (echo or ping)",
+        "Proper error handling"
+      ],
+      "notes": "Superseded - project already set up"
+    },
+    {
       "id": "LF-001",
       "title": "[SPIKE] Research MCP Protocol",
       "description": "Understand how MCP servers work: protocol, transport (stdio vs HTTP), how Claude Code discovers/connects to them, SDK usage.",
       "status": "DONE",
       "priority": "high",
-      "depends_on": ["LF-001.5"],
+      "depends_on": [
+        "LF-001.5"
+      ],
       "acceptance_criteria": [
         "Understand MCP message format",
         "Know how to register tools with Claude Code",
@@ -993,7 +1128,9 @@
       "description": "Continue MCP learning from Session 3. Remaining: figure out Claude Code server registration, build hello-world MCP server, document findings.",
       "status": "DONE",
       "priority": "high",
-      "depends_on": ["LF-001"],
+      "depends_on": [
+        "LF-001"
+      ],
       "acceptance_criteria": [
         "Understand Claude Code MCP server registration config",
         "Build and test hello-world MCP server",
@@ -1005,98 +1142,35 @@
       "id": "LF-002",
       "title": "[IMPL] Set up TypeScript project",
       "description": "Initialize npm package with TypeScript, ESLint, Vitest, proper tsconfig.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "high",
-      "depends_on": ["LF-001"],
+      "depends_on": [
+        "LF-001"
+      ],
       "acceptance_criteria": [
         "package.json with proper scripts",
         "tsconfig.json with strict mode",
         "ESLint configured",
         "Vitest for testing",
         "src/ structure matches design"
-      ]
-    },
-    {
-      "id": "LF-003",
-      "title": "[IMPL] SQLite schema and migrations",
-      "description": "Implement database schema for repos, tasks, sessions, learnings. Use better-sqlite3.",
-      "status": "TODO",
-      "priority": "high",
-      "depends_on": ["LF-002"],
-      "acceptance_criteria": [
-        "Schema matches DESIGN.md data model",
-        "Migration system (even if simple)",
-        "CRUD functions for each entity",
-        "Tests for database operations"
-      ]
-    },
-    {
-      "id": "LF-004",
-      "title": "[IMPL] Basic CLI (init, status)",
-      "description": "Implement CLI entry point with commander. Start with init and status commands.",
-      "status": "TODO",
-      "priority": "medium",
-      "depends_on": ["LF-003"],
-      "acceptance_criteria": [
-        "loop-flow init creates ~/.loop-flow/ and registers repo",
-        "loop-flow status shows current repo and active task",
-        "Proper error handling and help text"
-      ]
-    },
-    {
-      "id": "LF-005",
-      "title": "[IMPL] MCP server skeleton",
-      "description": "Implement MCP server that registers with Claude Code. Start with a simple echo tool.",
-      "status": "TODO",
-      "priority": "high",
-      "depends_on": ["LF-001", "LF-002"],
-      "acceptance_criteria": [
-        "MCP server starts via CLI",
-        "Registers with Claude Code (or can be manually added)",
-        "Has one working tool (echo or ping)",
-        "Proper error handling"
-      ]
-    },
-    {
-      "id": "LF-006",
-      "title": "[IMPL] loop.start and loop.end tools",
-      "description": "Core MCP tools for session management. Returns focused context, records outcomes.",
-      "status": "TODO",
-      "priority": "high",
-      "depends_on": ["LF-003", "LF-005"],
-      "acceptance_criteria": [
-        "loop.start returns repo info, suggested task, recent learnings",
-        "loop.end records session, updates task, saves learnings",
-        "Context is minimal (token-efficient)",
-        "Tests for both tools"
-      ]
-    },
-    {
-      "id": "LF-007",
-      "title": "[IMPL] task.* MCP tools",
-      "description": "Task management tools: add, update, list, get.",
-      "status": "TODO",
-      "priority": "medium",
-      "depends_on": ["LF-006"],
-      "acceptance_criteria": [
-        "task.add creates new task",
-        "task.update modifies task",
-        "task.list with filters",
-        "task.get with related context"
-      ]
+      ],
+      "notes": "Superseded - project already set up"
     },
     {
       "id": "LF-008",
       "title": "[IMPL] learning.* MCP tools",
       "description": "Learning management tools: add, search, related.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "medium",
-      "depends_on": ["LF-006"],
+      "depends_on": [
+        "LF-006"
+      ],
       "acceptance_criteria": [
         "learning.add records learning with type/tags",
         "learning.search with full-text search",
         "learning.related finds relevant learnings"
-      ]
+      ],
+      "notes": "Superseded by current MCP tools"
     },
     {
       "id": "LF-009",
@@ -1104,7 +1178,10 @@
       "description": "SUPERSEDED by LF-047. Original scope was one-time migration. LF-047 is ongoing import bridge for parallel development.",
       "status": "DONE",
       "priority": "medium",
-      "depends_on": ["LF-003", "LF-004"],
+      "depends_on": [
+        "LF-003",
+        "LF-004"
+      ],
       "acceptance_criteria": [
         "Parses backlog.json format",
         "Parses progress.txt format (including learnings)",
@@ -1114,30 +1191,35 @@
       "notes": "Merged into LF-047 which has broader scope (ongoing sync, not one-time migration)."
     },
     {
-      "id": "LF-010",
-      "title": "[IMPL] Export commands",
-      "description": "Export backlog and progress to human-readable formats.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-007", "LF-008"],
+      "id": "LF-003",
+      "title": "[IMPL] SQLite schema and migrations",
+      "description": "Implement database schema for repos, tasks, sessions, learnings. Use better-sqlite3.",
+      "status": "CANCELLED",
+      "priority": "high",
+      "depends_on": [
+        "LF-002"
+      ],
       "acceptance_criteria": [
-        "Export to JSON",
-        "Export to Markdown",
-        "CLI commands and MCP tools"
-      ]
+        "Schema matches DESIGN.md data model",
+        "Migration system (even if simple)",
+        "CRUD functions for each entity",
+        "Tests for database operations"
+      ],
+      "notes": "Superseded - project already set up"
     },
     {
-      "id": "LF-011",
-      "title": "[IMPL] Multi-repo support",
-      "description": "Support multiple repos from single Loop-Flow instance.",
+      "id": "LF-004",
+      "title": "[IMPL] Basic CLI (init, status)",
+      "description": "Implement CLI entry point with commander. Start with init and status commands.",
       "status": "TODO",
       "priority": "medium",
-      "depends_on": ["LF-006"],
+      "depends_on": [
+        "LF-003"
+      ],
       "acceptance_criteria": [
-        "repo.init registers new repo",
-        "repo.list shows all repos",
-        "repo.switch changes active repo",
-        "Cross-repo learning search"
+        "loop-flow init creates ~/.loop-flow/ and registers repo",
+        "loop-flow status shows current repo and active task",
+        "Proper error handling and help text"
       ]
     },
     {
@@ -1145,8 +1227,10 @@
       "title": "[IMPL] Templates system",
       "description": "Template system for scaffolding AGENTS.md files.",
       "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-004"],
+      "priority": "medium",
+      "depends_on": [
+        "LF-004"
+      ],
       "acceptance_criteria": [
         "Generic template",
         "Next.js template",
@@ -1163,35 +1247,56 @@
       "notes": "Future feature. Pin for consideration."
     },
     {
-      "id": "LF-014",
-      "title": "[IMPL] Local dashboard UI",
-      "description": "Web-based dashboard at localhost for viewing tasks, learnings, progress.",
-      "status": "TODO",
-      "priority": "low",
-      "depends_on": ["LF-007", "LF-008"],
-      "notes": "Future feature. Consider React + Vite or simple HTML."
+      "id": "LF-006",
+      "title": "[IMPL] loop.start and loop.end tools",
+      "description": "Core MCP tools for session management. Returns focused context, records outcomes.",
+      "status": "CANCELLED",
+      "priority": "high",
+      "depends_on": [
+        "LF-003",
+        "LF-005"
+      ],
+      "acceptance_criteria": [
+        "loop.start returns repo info, suggested task, recent learnings",
+        "loop.end records session, updates task, saves learnings",
+        "Context is minimal (token-efficient)",
+        "Tests for both tools"
+      ],
+      "notes": "Superseded - project already set up"
     },
     {
-      "id": "LF-015",
-      "title": "[DESIGN] Knowledge Abstraction & Context Scaling",
-      "description": "Design how learnings scale as they accumulate. Explore abstraction: many concrete insights synthesize into fewer abstract principles. Concrete insights archive, abstract ones load by default.",
-      "status": "TODO",
-      "priority": "low",
-      "notes": "Deferred until we hit the scaling problem. Key insight: knowledge compounds through abstraction, mirroring how humans learn. See INS-005."
+      "id": "LF-007",
+      "title": "[IMPL] task.* MCP tools",
+      "description": "Task management tools: add, update, list, get.",
+      "status": "CANCELLED",
+      "priority": "medium",
+      "depends_on": [
+        "LF-006"
+      ],
+      "acceptance_criteria": [
+        "task.add creates new task",
+        "task.update modifies task",
+        "task.list with filters",
+        "task.get with related context"
+      ],
+      "notes": "Superseded by current MCP tools"
     },
     {
       "id": "LF-016",
       "title": "[IMPL] learning.capture quick mode",
       "description": "Implement quick capture for insights that auto-schedules [DISCUSS] task. Minimal context spent during capture.",
-      "status": "TODO",
+      "status": "CANCELLED",
       "priority": "medium",
-      "depends_on": ["LF-008"],
+      "depends_on": [
+        "LF-008"
+      ],
       "acceptance_criteria": [
         "learning.capture takes minimal input",
         "Auto-creates [DISCUSS] task",
         "Marks insight as unprocessed",
         "Returns immediately to minimize context use"
-      ]
+      ],
+      "notes": "Skills system removed in S21"
     },
     {
       "id": "LF-017",
@@ -1199,7 +1304,9 @@
       "description": "Design the knowledge retrieval architecture: domain knowledge index (llms.txt-style), two-tier curation (embeddings + LLM judgment), lazy loading, MCP Resources for context. This is how Loop-Flow manages what context to surface without polluting the main agent's window.",
       "status": "TODO",
       "priority": "medium",
-      "depends_on": ["LF-001"],
+      "depends_on": [
+        "LF-001"
+      ],
       "acceptance_criteria": [
         "Define domain knowledge index schema (links, summaries, embeddings)",
         "Design two-tier curation flow (vector recall → LLM selection)",
@@ -1210,19 +1317,36 @@
       "notes": "Emerged from LF-001 research session. See INS-022, INS-023, INS-024. Key insight: Loop-Flow isn't just storing knowledge — it's a knowledge retrieval system with real architecture."
     },
     {
-      "id": "LF-018",
-      "title": "[IMPL] Loop-Flow Update Mechanism",
-      "description": "Create a document/file that lets an agent update a local file-based Loop-Flow installation to the latest process knowledge. Like LOOP-FLOW-BOOTSTRAP.md but for upgrades. Should include updated AGENTS.md content, new modes/task types, and selected process insights.",
-      "status": "DONE",
+      "id": "LF-010",
+      "title": "[IMPL] Export commands",
+      "description": "Export backlog and progress to human-readable formats.",
+      "status": "TODO",
       "priority": "medium",
-      "acceptance_criteria": [
-        "Create LOOP-FLOW-UPDATE.md (or similar) with update instructions for agents",
-        "Include latest AGENTS.md template content",
-        "Include selected process insights (filter by type=process, relevant to workflow)",
-        "Agent can apply update to any file-based Loop-Flow installation",
-        "Document what gets updated vs what stays (project state preserved)"
+      "depends_on": [
+        "LF-007",
+        "LF-008"
       ],
-      "notes": "Enables propagating workflow improvements to other projects using file-based Loop-Flow. SUPERSEDED by LF-020 (unified setup file)."
+      "acceptance_criteria": [
+        "Export to JSON",
+        "Export to Markdown",
+        "CLI commands and MCP tools"
+      ]
+    },
+    {
+      "id": "LF-011",
+      "title": "[IMPL] Multi-repo support",
+      "description": "Support multiple repos from single Loop-Flow instance.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [
+        "LF-006"
+      ],
+      "acceptance_criteria": [
+        "repo.init registers new repo",
+        "repo.list shows all repos",
+        "repo.switch changes active repo",
+        "Cross-repo learning search"
+      ]
     },
     {
       "id": "LF-019",
@@ -1230,7 +1354,9 @@
       "description": "Design how to version Loop-Flow's process knowledge. Should enable: knowing what version a project is on, diffing between versions, changelogs, upgrade paths.",
       "status": "DONE",
       "priority": "low",
-      "depends_on": ["LF-018"],
+      "depends_on": [
+        "LF-018"
+      ],
       "acceptance_criteria": [
         "Version scheme defined (semver? date-based?)",
         "Where version is stored in file-based installations",
@@ -1253,6 +1379,400 @@
         "Prototype /version skill as first example"
       ],
       "notes": "Completed in Session 11. Design doc: docs/SKILLS-DESIGN.md. Key decisions: framework metadata marker, accept duplication for compatibility, hybrid invocation control. See INS-044."
+    },
+    {
+      "id": "LF-014",
+      "title": "[IMPL] Local dashboard UI",
+      "description": "Web-based dashboard at localhost for viewing tasks, learnings, progress.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": [
+        "LF-007",
+        "LF-008"
+      ],
+      "notes": "Future feature. Consider React + Vite or simple HTML."
+    },
+    {
+      "id": "LF-015",
+      "title": "[DESIGN] Knowledge Abstraction & Context Scaling",
+      "description": "Design how learnings scale as they accumulate. Explore abstraction: many concrete insights synthesize into fewer abstract principles. Concrete insights archive, abstract ones load by default.",
+      "status": "TODO",
+      "priority": "low",
+      "notes": "Deferred until we hit the scaling problem. Key insight: knowledge compounds through abstraction, mirroring how humans learn. See INS-005."
+    },
+    {
+      "id": "LF-018",
+      "title": "[IMPL] Loop-Flow Update Mechanism",
+      "description": "Create a document/file that lets an agent update a local file-based Loop-Flow installation to the latest process knowledge. Like LOOP-FLOW-BOOTSTRAP.md but for upgrades. Should include updated AGENTS.md content, new modes/task types, and selected process insights.",
+      "status": "DONE",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Create LOOP-FLOW-UPDATE.md (or similar) with update instructions for agents",
+        "Include latest AGENTS.md template content",
+        "Include selected process insights (filter by type=process, relevant to workflow)",
+        "Agent can apply update to any file-based Loop-Flow installation",
+        "Document what gets updated vs what stays (project state preserved)"
+      ],
+      "notes": "Enables propagating workflow improvements to other projects using file-based Loop-Flow. SUPERSEDED by LF-020 (unified setup file)."
+    },
+    {
+      "id": "LF-104",
+      "title": "[IMPL] Add CRUD MCP tools for tasks and insights",
+      "description": "Add loop_task_create, loop_task_update, loop_task_list, and loop_insight_update MCP tools so agents can manage tasks properly without raw SQL.",
+      "status": "DONE",
+      "priority": "high",
+      "notes": "Completed in S24. Adds proper task/insight management to avoid raw SQL."
+    },
+    {
+      "id": "LF-098",
+      "title": "[DESIGN] Team sync protocol",
+      "description": "Design how insights sync between team members. Consider: conflict resolution, privacy model, sync frequency, offline support.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "Sync protocol documented",
+        "Conflict resolution strategy",
+        "Privacy model (private/team/public)",
+        "Offline-first approach"
+      ],
+      "notes": "v2.0 milestone"
+    },
+    {
+      "id": "LF-099",
+      "title": "[IMPL] Insight visibility model",
+      "description": "Add visibility field to insights: private (local only), team (synced), public (publishable). Default private.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [
+        "LF-098"
+      ],
+      "acceptance_criteria": [
+        "visibility column in schema",
+        "Default is private",
+        "loop_remember accepts visibility param",
+        "UI to change visibility"
+      ],
+      "notes": "v2.0 milestone"
+    },
+    {
+      "id": "LF-100",
+      "title": "[IMPL] REST API for dashboard",
+      "description": "Add HTTP API alongside MCP. Same business logic, different transport. Enables web dashboard.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "GET /insights, POST /insights",
+        "GET /tasks, PATCH /tasks/:id",
+        "GET /sessions",
+        "Authentication layer"
+      ],
+      "notes": "v2.0 milestone"
+    },
+    {
+      "id": "LF-101",
+      "title": "[IMPL] Postgres schema for teams",
+      "description": "Multi-tenant Postgres schema for team sync. User accounts, team memberships, shared insights.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [
+        "LF-098"
+      ],
+      "acceptance_criteria": [
+        "Users and teams tables",
+        "Shared insights with ownership",
+        "Audit trail",
+        "Tenant isolation"
+      ],
+      "notes": "v2.0 milestone"
+    },
+    {
+      "id": "LF-102",
+      "title": "[IMPL] Sync service",
+      "description": "Background service to sync local SQLite with cloud Postgres. Handles conflicts, offline queue.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [
+        "LF-099",
+        "LF-101"
+      ],
+      "acceptance_criteria": [
+        "Push team-visible insights",
+        "Pull team insights to local",
+        "Conflict detection and resolution",
+        "Offline queue with retry"
+      ],
+      "notes": "v2.0 milestone"
+    },
+    {
+      "id": "LF-103",
+      "title": "[IMPL] Web dashboard UI",
+      "description": "Browser-based UI for viewing insights, tasks, sessions. Read-heavy, minimal editing.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": [
+        "LF-100"
+      ],
+      "acceptance_criteria": [
+        "Insights browser with search",
+        "Task board view",
+        "Session timeline",
+        "Cross-repo view"
+      ],
+      "notes": "v2.0 milestone - nice to have"
+    },
+    {
+      "id": "LF-094",
+      "title": "[IMPL] Backup/restore commands",
+      "description": "CLI commands to backup and restore LoopFlow data. loopflow backup creates timestamped archive, loopflow restore imports from archive.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "loopflow backup creates .tar.gz",
+        "loopflow restore imports archive",
+        "Works with external DB structure",
+        "Handles version differences"
+      ],
+      "notes": "v1.2 milestone"
+    },
+    {
+      "id": "LF-095",
+      "title": "[IMPL] loopflow status command",
+      "description": "Show current LoopFlow status: active repo, DB stats, recent sessions, any issues.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "Shows current repo",
+        "DB statistics (insights, tasks, sessions)",
+        "Recent session summary",
+        "Health check warnings"
+      ],
+      "notes": "v1.2 polish"
+    },
+    {
+      "id": "LF-096",
+      "title": "[IMPL] Schema migrations for upgrades",
+      "description": "Handle SQLite schema changes between versions. Auto-migrate on startup with backup.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "Version tracked in DB",
+        "Migrations run automatically",
+        "Backup before migration",
+        "Rollback on failure"
+      ],
+      "notes": "v1.2 robustness"
+    },
+    {
+      "id": "LF-097",
+      "title": "[IMPL] Insight deduplication",
+      "description": "Detect and merge duplicate or near-duplicate insights. Use fuzzy matching or embeddings.",
+      "status": "TODO",
+      "priority": "low",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "Detects similar insights",
+        "Suggests merge to user",
+        "Optional auto-merge threshold",
+        "Preserves links/tags from both"
+      ],
+      "notes": "v1.2 polish"
+    },
+    {
+      "id": "LF-087",
+      "title": "[DESIGN] External DB architecture",
+      "description": "Design the ~/.loopflow/ folder structure, config schema, and how MCP server resolves which DB to use. Consider: repo registration, auto-detection, cross-repo queries.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "~/.loopflow/ folder structure defined",
+        "Config schema documented",
+        "DB resolution logic designed",
+        "Cross-repo query approach defined",
+        "Migration path from in-repo DB"
+      ],
+      "notes": "v1.1 milestone - enables multi-repo vision"
+    },
+    {
+      "id": "LF-088",
+      "title": "[IMPL] ~/.loopflow/ folder structure",
+      "description": "Implement the external folder structure: ~/.loopflow/config.yaml, ~/.loopflow/repos/*.db, ~/.loopflow/global.db (optional).",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [
+        "LF-087"
+      ],
+      "acceptance_criteria": [
+        "Folder created on first use",
+        "Config file initialized",
+        "Per-repo DB location works",
+        "Global DB optional"
+      ],
+      "notes": "v1.1 milestone"
+    },
+    {
+      "id": "LF-089",
+      "title": "[IMPL] config.yaml schema and loading",
+      "description": "Implement config file parsing: registered repos, default repo, future team settings placeholder.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [
+        "LF-088"
+      ],
+      "acceptance_criteria": [
+        "YAML schema defined",
+        "Config loading works",
+        "Validation with clear errors",
+        "Default values sensible"
+      ],
+      "notes": "v1.1 milestone"
+    },
+    {
+      "id": "LF-090",
+      "title": "[IMPL] loopflow register command",
+      "description": "CLI command to register a repo with LoopFlow. Adds entry to config.yaml, creates DB if needed.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [
+        "LF-089"
+      ],
+      "acceptance_criteria": [
+        "loopflow register adds repo to config",
+        "Creates ~/.loopflow/repos/<name>.db",
+        "Handles name conflicts",
+        "Works from any directory"
+      ],
+      "notes": "v1.1 milestone"
+    },
+    {
+      "id": "LF-091",
+      "title": "[IMPL] Auto-detect repo from cwd",
+      "description": "MCP server auto-detects which registered repo matches current working directory.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [
+        "LF-089"
+      ],
+      "acceptance_criteria": [
+        "Matches cwd to registered repos",
+        "Falls back to default_repo",
+        "Clear message if no match"
+      ],
+      "notes": "v1.1 milestone"
+    },
+    {
+      "id": "LF-092",
+      "title": "[IMPL] Cross-repo search",
+      "description": "Add scope:all option to loop_scan that searches across all registered repos.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [
+        "LF-089"
+      ],
+      "acceptance_criteria": [
+        "loop_scan scope:all searches all DBs",
+        "Results indicate source repo",
+        "Performance acceptable (<2s for 5 repos)"
+      ],
+      "notes": "v1.1 milestone - key differentiator"
+    },
+    {
+      "id": "LF-093",
+      "title": "[IMPL] Migration: in-repo to external DB",
+      "description": "Migrate existing .loop-flow/loopflow.db to ~/.loopflow/repos/<name>.db. Preserve all data.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [
+        "LF-088"
+      ],
+      "acceptance_criteria": [
+        "loopflow migrate command",
+        "Copies all data correctly",
+        "Updates config.yaml",
+        "Optional: keep .loop-flow/ as cache"
+      ],
+      "notes": "v1.1 milestone"
+    },
+    {
+      "id": "LF-082",
+      "title": "[IMPL] loopflow init CLI command",
+      "description": "Create CLI command that bootstraps LoopFlow in a repository. Should create .loop-flow/ folder, initialize SQLite DB, create WORKFLOW.md, and optionally update AGENTS.md.",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "loopflow init creates .loop-flow/ folder",
+        "Creates loopflow.db with schema",
+        "Copies default WORKFLOW.md",
+        "Optionally adds hook to AGENTS.md",
+        "Works with npx loopflow init"
+      ],
+      "notes": "v1.0 milestone - blocks team adoption"
+    },
+    {
+      "id": "LF-083",
+      "title": "[DOCS] Cursor MCP configuration",
+      "description": "Document how to configure Cursor to use LoopFlow MCP server. Include mcp.json format, path configuration, and troubleshooting.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "Cursor MCP config documented",
+        "Step-by-step instructions",
+        "Troubleshooting section",
+        "Verified working on Cursor"
+      ],
+      "notes": "v1.0 milestone - enables jr dev adoption"
+    },
+    {
+      "id": "LF-084",
+      "title": "[DOCS] README.md quickstart",
+      "description": "Create README with: what is LoopFlow, why use it, 5-minute quickstart, tool reference. Target audience: developers new to LoopFlow.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "What/Why/How sections",
+        "5-minute quickstart",
+        "Tool reference table",
+        "Links to detailed docs"
+      ],
+      "notes": "v1.0 milestone"
+    },
+    {
+      "id": "LF-085",
+      "title": "[IMPL] Fresh repo handling",
+      "description": "Ensure MCP server handles fresh repos (no .loop-flow/) gracefully. Should guide user to run loopflow init or auto-initialize.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": [
+        "LF-082"
+      ],
+      "acceptance_criteria": [
+        "Clear error message if .loop-flow/ missing",
+        "Suggests loopflow init command",
+        "Optional: auto-init with confirmation"
+      ],
+      "notes": "v1.0 milestone"
+    },
+    {
+      "id": "LF-086",
+      "title": "[IMPL] Error messages for common issues",
+      "description": "Improve error messages for: DB locked, missing files, version mismatch, MCP connection issues.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "DB locked error with fix suggestion",
+        "Missing file errors are actionable",
+        "Version mismatch guidance",
+        "MCP troubleshooting hints"
+      ],
+      "notes": "v1.0 polish"
     }
   ]
 }

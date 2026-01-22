@@ -13,6 +13,7 @@
 
 import { Command } from "commander";
 import { VERSION } from "../index.js";
+import { initLoopFlow, formatInitResult } from "./init.js";
 
 const program = new Command();
 
@@ -24,15 +25,18 @@ program
 // Init command
 program
   .command("init")
-  .description("Initialize loop-flow for the current repository")
-  .option("-t, --template <template>", "Template to use", "generic")
-  .option("--no-agents-md", "Skip creating AGENTS.md")
+  .description("Initialize LoopFlow for the current repository")
+  .option("-p, --path <path>", "Target directory (defaults to current)")
+  .option("--no-agents-md", "Skip creating/updating AGENTS.md")
+  .option("-f, --force", "Reinitialize even if already set up")
   .action(async (options) => {
-    console.log("Initializing loop-flow...");
-    console.log("Template:", options.template);
-    console.log("Create AGENTS.md:", options.agentsMd);
-    // TODO: Implement init logic
-    console.log("\n[Not yet implemented - see LF-004]");
+    const result = await initLoopFlow({
+      path: options.path,
+      noAgentsMd: !options.agentsMd,
+      force: options.force,
+    });
+    console.log(formatInitResult(result));
+    process.exit(result.success ? 0 : 1);
   });
 
 // Status command
