@@ -767,3 +767,159 @@ Built a working LoopFlow MCP server with 5 cognitive tools. Validated in both Cl
 - Consider: loop.simulate, loop.guardrail, loop.celebrate (proposed but not built)
 
 ---
+
+## 2026-01-21 | Session 16 (claude-mem Analysis & Discovery Planning)
+Task: Ad-hoc: Analyze claude-mem project and plan feature adoption
+Outcome: COMPLETE
+Tests: N/A
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Analyzed the claude-mem project (persistent memory compression system for Claude Code) to understand their approach and identify features LoopFlow could adopt. Created 11 discovery tasks (LF-048 to LF-058) breaking down claude-mem features for evaluation. Key synthesis: dual capture strategy combining auto-capture (observations) with manual capture (insights).
+
+### Key Findings from claude-mem
+
+**Architecture:**
+- 5 lifecycle hooks (SessionStart, UserPromptSubmit, PostToolUse, Stop, SessionEnd)
+- Worker service on port 37777 (HTTP API, web viewer, async processing)
+- SQLite + ChromaDB (structured + vector search)
+- Automatic observation capture → AI summarization → context injection
+
+**Notable Patterns:**
+- Progressive disclosure: 3-layer search (index → filter → expand) achieves ~10x token savings
+- Timeline context: temporal dimension complements associative search
+- Dual storage: observations (raw events) + summaries (compressed knowledge)
+
+### Discovery Tasks Created
+
+| Priority | Tasks |
+|----------|-------|
+| High | LF-048 (Auto Capture), LF-049 (Progressive Disclosure), LF-056 (Context Injection), LF-057 (Dual Capture), LF-058 (v2 Architecture) |
+| Medium | LF-050 (Worker Service), LF-051 (Summarization), LF-052 (Timeline), LF-054 (Vector Search) |
+| Low | LF-053 (Web Viewer), LF-055 (Privacy Controls) |
+
+### Learnings
+
+- **INS-049**: Philosophy difference — claude-mem auto-captures everything, LoopFlow captures intentionally. Synthesis: both have value.
+- **INS-050**: Progressive disclosure achieves ~10x token savings through layered retrieval.
+- **INS-051**: Observations (what happened) vs Insights (why it matters) — complementary, not competing.
+- **INS-052**: Worker service enables async processing but may be premature for LoopFlow.
+- **INS-053**: Timeline (temporal) + association (conceptual) = full context picture.
+
+### Recommended Next Session
+
+Start with **LF-049 (Progressive Disclosure)** — valuable regardless of other decisions, directly improves current MCP tools.
+
+---
+
+## 2026-01-21 | Session 17 (claude-mem Segmentation)
+Task: Ad-hoc: Segment claude-mem.txt for multi-session analysis
+Outcome: COMPLETE
+Tests: N/A
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Segmented the massive claude-mem.txt file (3.2MB, 97K lines, 550 files) into 18 logical analysis chunks. Created a Python script to extract files by path patterns and wrote an INDEX.md with reading priorities mapped to LoopFlow discovery tasks.
+
+### Files Created
+
+- `referece-repo/claude-mem-segments/` — Directory with 18 segment files
+- `referece-repo/claude-mem-segments/INDEX.md` — Reading guide with priorities
+- `referece-repo/segment-claude-mem.py` — Extraction script
+
+### Segment Summary
+
+| Priority | Segments | Combined Size |
+|----------|----------|---------------|
+| HIGH | 01-core-config, 02-architecture-docs, 03-public-docs, 04-hooks-system, 05-worker-service, 06-sqlite-database | ~900 KB |
+| MEDIUM | 08-context-mcp, 15-shared-utils, 16-infrastructure | ~270 KB |
+| LOW | Tests, UI, scripts, Cursor, i18n | ~1.5 MB |
+
+### Recommended Analysis Sessions
+
+1. **Session A**: 01-core-config + 02-architecture-docs (~150 KB)
+2. **Session B**: 04-hooks-system + 06-sqlite-database (~190 KB)
+3. **Session C**: 05-worker-service (318 KB)
+4. **Session D**: 03-public-docs + 08-context-mcp (~320 KB)
+
+---
+
+## 2026-01-21 | Session 18 (Progressive Disclosure Spec)
+Task: LF-049 [DISCOVERY] Progressive Disclosure / Token-Efficient Retrieval
+Outcome: COMPLETE
+Tests: N/A (design session)
+Manual QA: NOT_REQUIRED
+
+### Summary
+
+Vibe-designed the progressive disclosure system — comprehensive best-effort spec first, then refined via Q&A. Created docs/PROGRESSIVE-DISCLOSURE-SPEC.md (v1.1, ~1800 lines) covering 16 modules.
+
+**Core design:**
+- 3-layer retrieval: scan (summaries) → filter → expand (full content)
+- SQLite as source of truth, JSON files as generated views
+- Pure business rules layer for testability
+- Heuristic + Ollama summarization
+
+**Added in v1.1 (addressing migration & sharing gaps):**
+- Global IDs: `INS-{YYYYMMDD}-{random6}` format prevents cross-repo conflicts
+- Format versioning: v0.x → v1.0 → v2.0 upgrade paths
+- Cross-repo sharing: export bundles, preview before import, content-hash deduplication
+
+**New tasks created:** LF-059 to LF-076 (18 implementation tasks across 8 sprints)
+
+### Learnings
+
+- **INS-054**: Vibe-design — draft full design quickly, then poke holes
+- **INS-055**: Layered architecture with pure business rules for testability
+- **INS-056**: SQLite + JSON views pattern
+- **INS-057**: Hybrid AI strategy (heuristics → Ollama → cloud)
+- **INS-058**: DSPy for programmatic prompt engineering
+- **INS-059**: Persona-based agent architecture (Curator, Scholar, Contrarian, etc.)
+- **INS-060**: Digital Clockwork Muse paper — creativity from multi-agent social dynamics
+
+### Key Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Storage | SQLite now | Progressive disclosure needs efficient queries |
+| IDs | Global format | Cross-repo sharing requires collision resistance |
+| Summaries | Heuristic + Ollama | Fast default, smart upgrade path |
+| Sharing | Bundle format | Export/preview/import workflow |
+
+### Next Session
+
+Start implementation with **LF-059** (SQLite schema) or explore **LF-076** (persona architecture) if feeling exploratory.
+
+### Late Session Breakthrough: Paradigm Shift
+
+At session end, a major insight emerged about the nature of the API:
+
+**The Fluid API Paradigm** (INS-061 through INS-064):
+
+1. **Semantic not Procedural**: Instead of `loop_scan()` / `loop_expand()`, the agent reasons "maybe the Curator can answer this". API becomes conversation with collaborators, not function calls.
+
+2. **Creative Extensibility**: The main agent's creativity becomes the extensibility mechanism. New capabilities emerge from novel persona combinations, not code changes.
+
+3. **Use-Case Driven Development**: Use cases defined ad-hoc in markdown → agent figures out how to handle with personas → valuable patterns crystallize into process insights → insights enhance future behavior.
+
+4. **Self-Improving System**: LoopFlow learns from its own use. The loop closes: using → discovering → capturing → improving.
+
+**Key quote from Jorge**: "We let the main agent reason about how to CREATIVELY use it to support whatever use case I can think of — thus development loops back to 'program in English' — further more we may even allow for use cases to be completely ad-hoc defined in markdown, so it can potentially be looped back into a process insight!"
+
+This is cooking. Next session: **LF-076** (deep design of persona architecture with Digital Clockwork Muse integration) → **LF-077** (use case examples to validate).
+
+### Artifact Created
+
+**docs/FLUID-API-PARADIGM.md** (v0.1) — Captures:
+- The paradigm shift (procedural → semantic)
+- The feedback loop diagram
+- Persona roster and relationships
+- API interaction semantics with examples
+- Use-case driven development pattern
+- Relationship to Progressive Disclosure spec ("Curator's brain" vs "how you talk to Curator")
+
+Updated Progressive Disclosure spec to reference this higher-level document.
+
+---

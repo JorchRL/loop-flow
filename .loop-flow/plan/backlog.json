@@ -1,8 +1,505 @@
 {
   "project": "LoopFlow MCP Server",
   "last_updated": "2026-01-21",
-  "notes": "v0.8.0. Session 15: MAJOR MILESTONE - Built working MCP server with 5 cognitive tools (orient/remember/connect/probe/handoff). Works in both Claude Code and OpenCode. LF-001 DONE, LF-001.7 DONE. Vibecode-first approach validated.",
+  "notes": "v0.8.0. Session 18: Designed Progressive Disclosure system (docs/PROGRESSIVE-DISCLOSURE-SPEC.md v1.1). Added migration paths, cross-repo sharing, global IDs. Captured persona-based architecture idea inspired by 'The Digital Clockwork Muse'.",
   "tasks": [
+    {
+      "id": "LF-076",
+      "title": "[DESIGN] Persona-Based Fluid API Architecture",
+      "description": "Design the persona-based architecture integrating Digital Clockwork Muse paradigm. Key insight: API becomes semantic (consult personas) not procedural (call functions). The main agent's creative reasoning becomes the extensibility mechanism. Use cases defined ad-hoc in markdown can crystallize into process insights that enhance persona behavior. This closes the loop: using LoopFlow → discovering use cases → capturing insights → improving LoopFlow.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Deep read of Digital Clockwork Muse paper, map concepts to LoopFlow",
+        "Define persona roster: Curator, TaskMaster, Scholar, Contrarian, Council, others?",
+        "Design persona interaction semantics: what questions can be asked?",
+        "Design inter-persona communication: can personas consult each other?",
+        "Design ad-hoc use case → insight feedback loop",
+        "Create example use cases showing creative persona combinations",
+        "Define how use cases get captured as process insights",
+        "Document in docs/PERSONA-ARCHITECTURE.md with use case examples",
+        "Review use cases to validate the design"
+      ],
+      "notes": "PARADIGM SHIFT. See INS-059 through INS-064. Key insights: (1) Fluid API - agent reasons creatively about persona consultation, (2) Use-case driven - ad-hoc descriptions become insights, (3) Self-improving - system learns from its own use, (4) Creative extensibility - capability bounded by agent creativity not code."
+    },
+    {
+      "id": "LF-077",
+      "title": "[DESIGN] Use Case Examples for Persona API",
+      "description": "Create concrete use case examples demonstrating the persona-based fluid API. Each example shows: (1) User need in plain English, (2) How main agent reasons about which personas to consult, (3) The consultation dialogue, (4) How the pattern could become a process insight. Examples should cover diverse scenarios to validate API expressiveness.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-076"],
+      "acceptance_criteria": [
+        "5-10 diverse use case examples",
+        "Examples cover: insight retrieval, design review, research, conflict resolution, learning",
+        "Each example shows agent reasoning process",
+        "Each example shows potential insight capture",
+        "Examples demonstrate creative persona combinations",
+        "Examples validate that fluid API can handle ad-hoc needs",
+        "Document in docs/USE-CASE-EXAMPLES.md"
+      ],
+      "notes": "Validation task for LF-076. Use cases drive development — we build what the examples need. See INS-062."
+    },
+    {
+      "id": "LF-059",
+      "title": "[IMPL] SQLite Schema & Migrations",
+      "description": "Implement SQLite database schema for insights, tasks, sessions, observations. Include FTS5 full-text search indexes. Create migration system for schema versioning.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Schema matches PROGRESSIVE-DISCLOSURE-SPEC.md data model",
+        "FTS5 virtual tables for insights and tasks",
+        "schema_migrations table for version tracking",
+        "migrateToLatest() is idempotent",
+        "Tests: fresh install, idempotent migrate, FTS triggers"
+      ],
+      "notes": "Sprint 1 of Progressive Disclosure. Foundation for all other work. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 1."
+    },
+    {
+      "id": "LF-060",
+      "title": "[IMPL] Repository Layer",
+      "description": "Implement data access repositories for insights, tasks, sessions, observations. Abstract SQLite queries behind clean interfaces.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-059"],
+      "acceptance_criteria": [
+        "InsightsRepository with CRUD + search + count",
+        "TasksRepository with CRUD + search + count",
+        "SessionsRepository with CRUD + findRecent",
+        "ObservationsRepository with CRUD + findAroundTimestamp",
+        "All repos handle missing IDs gracefully",
+        "Tests: insert, findById, findByIds, search, pagination"
+      ],
+      "notes": "Sprint 2 of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 2."
+    },
+    {
+      "id": "LF-061",
+      "title": "[IMPL] Business Rules - Summarization",
+      "description": "Pure functions for generating summaries from content. Heuristic-based (first sentence, truncation) with hooks for AI enhancement.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "summarizeHeuristic() extracts first sentence or truncates",
+        "extractFirstSentence() handles edge cases (no period, unicode)",
+        "truncateAtWord() never cuts mid-word",
+        "summarizeTask() preserves type prefix",
+        "All functions are pure (no I/O)",
+        "Tests: short content, sentence extraction, truncation, unicode"
+      ],
+      "notes": "Sprint 3a of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 3."
+    },
+    {
+      "id": "LF-062",
+      "title": "[IMPL] Business Rules - Scoring & Filtering",
+      "description": "Pure functions for relevance scoring and filter predicates. Used by search service for ranking results.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "scoreItems() ranks by term frequency",
+        "parseSearchQuery() handles phrases, exclusions, field filters",
+        "applyRecencyBoost() decays over time",
+        "Predicate combinators (and, or) work correctly",
+        "All functions are pure (no I/O)",
+        "Tests: scoring, recency boost, predicate logic, query parsing"
+      ],
+      "notes": "Sprint 3b of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Modules 4 & 6."
+    },
+    {
+      "id": "LF-063",
+      "title": "[IMPL] Business Rules - Migration Transforms",
+      "description": "Pure functions for transforming between JSON file formats and DB records. Bidirectional for import/export.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "jsonInsightToRecord() maps all fields correctly",
+        "recordToJsonInsight() produces valid JSON",
+        "Round-trip preserves all data",
+        "parseProgressFile() extracts sessions from markdown",
+        "generateProgressFile() produces valid markdown",
+        "Validation functions catch invalid data",
+        "Tests: mapping, round-trip, progress parsing, validation"
+      ],
+      "notes": "Sprint 3c of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 5."
+    },
+    {
+      "id": "LF-064",
+      "title": "[IMPL] Summary Service",
+      "description": "Service that orchestrates summary generation. Uses heuristics by default, optional Ollama integration for AI enhancement.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-061"],
+      "acceptance_criteria": [
+        "summarize() uses heuristics for short content",
+        "summarize() attempts AI for long content if Ollama available",
+        "Graceful fallback on AI failure",
+        "summarizeBatch() for efficient bulk processing",
+        "isAiAvailable() detects Ollama with caching",
+        "Tests: heuristic path, AI path, fallback, batch"
+      ],
+      "notes": "Sprint 4a of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 8."
+    },
+    {
+      "id": "LF-065",
+      "title": "[IMPL] Migration Service",
+      "description": "Service that orchestrates JSON to SQLite migration and export. Idempotent import, generates summaries on migration.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-060", "LF-063", "LF-064"],
+      "acceptance_criteria": [
+        "importFromFiles() creates records from JSON",
+        "importFromFiles() generates summaries for insights",
+        "importFromFiles() is idempotent (skips existing IDs)",
+        "exportToFiles() creates valid JSON files",
+        "needsMigration() detects JSON-only state",
+        "Tests: import, idempotent re-import, export, detection"
+      ],
+      "notes": "Sprint 4b of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 9."
+    },
+    {
+      "id": "LF-066",
+      "title": "[IMPL] Search Service",
+      "description": "Service that orchestrates search with progressive disclosure. Implements scan (Layer 1), expand (Layer 3), and timeline.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-060", "LF-062"],
+      "acceptance_criteria": [
+        "scan() returns summaries sorted by relevance",
+        "scan() respects limit and sets truncated flag",
+        "scan() combines text search with filters",
+        "expand() returns full content for IDs",
+        "expand() includes linked items and timeline if requested",
+        "timeline() returns items around anchor",
+        "Tests: scan ranking, pagination, expand, timeline"
+      ],
+      "notes": "Sprint 4c of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 7."
+    },
+    {
+      "id": "LF-067",
+      "title": "[IMPL] MCP Tools - loop_scan & loop_expand",
+      "description": "New MCP tools for progressive disclosure. loop_scan for Layer 1 index search, loop_expand for Layer 3 full retrieval.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-066"],
+      "acceptance_criteria": [
+        "loop_scan tool with query, scope, filters, limit params",
+        "loop_expand tool with ids, includeLinks, includeTimeline params",
+        "Both tools validate parameters",
+        "Both return well-formed MCP responses",
+        "Integration tests with real search service"
+      ],
+      "notes": "Sprint 5a of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 10."
+    },
+    {
+      "id": "LF-068",
+      "title": "[IMPL] MCP Tools - loop_timeline & Retrofit Existing",
+      "description": "New loop_timeline tool. Retrofit loop_orient and loop_connect to use progressive disclosure (return summaries by default).",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-066", "LF-067"],
+      "acceptance_criteria": [
+        "loop_timeline tool with anchor, depth, scope params",
+        "loop_orient returns summaries instead of full content",
+        "loop_connect returns summaries instead of full content",
+        "Both retrofitted tools suggest loop_expand for details",
+        "Backward compatibility: existing usage still works",
+        "Integration tests for all tools"
+      ],
+      "notes": "Sprint 5b of Progressive Disclosure. Completes the MCP tool layer."
+    },
+    {
+      "id": "LF-070",
+      "title": "[IMPL] Business Rules - Global ID Generation",
+      "description": "Pure functions for generating globally unique IDs that prevent conflicts in cross-repo sharing. Format: INS-{YYYYMMDD}-{random6}",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "generateId() produces valid INS-{date}-{random} format",
+        "parseId() extracts components correctly",
+        "isGlobalId() vs isLegacyId() detection works",
+        "migrateLegacyId() is deterministic (same input = same output)",
+        "repoHash() produces consistent short hash",
+        "All functions are pure (no I/O)",
+        "Tests: format, uniqueness, parsing, legacy detection, migration"
+      ],
+      "notes": "Sprint 1 addition. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 11."
+    },
+    {
+      "id": "LF-071",
+      "title": "[IMPL] Business Rules - Format Version Detection",
+      "description": "Pure functions for detecting LoopFlow data format versions (v0.x sequential IDs, v1.0 global IDs, v2.0 SQLite). Enables multi-step upgrades.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-070"],
+      "acceptance_criteria": [
+        "detectInsightsVersion() identifies v0.x by sequential IDs",
+        "detectInsightsVersion() identifies v1.0 by global IDs + summaries",
+        "detectRepoFormat() combines file + content analysis",
+        "getUpgradePath() returns correct steps for any version pair",
+        "All functions are pure (no I/O)",
+        "Tests: version detection, upgrade path calculation"
+      ],
+      "notes": "Sprint 3 addition. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 12."
+    },
+    {
+      "id": "LF-072",
+      "title": "[IMPL] Upgrade Service",
+      "description": "Service that orchestrates multi-step upgrades between LoopFlow format versions. Supports v0.x → v1.0 → v2.0 with backup and rollback.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-065", "LF-070", "LF-071"],
+      "acceptance_criteria": [
+        "detectFormat() identifies current version",
+        "planUpgrade() returns steps for target version",
+        "executeUpgrade() performs ID migration (v0.x → v1.0)",
+        "executeUpgrade() imports to SQLite (v1.0 → v2.0)",
+        "createBackup() before upgrade, rollback() on failure",
+        "Progress callback for UI feedback",
+        "Tests: all upgrade paths, backup/rollback, idempotency"
+      ],
+      "notes": "Sprint 6 of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 15."
+    },
+    {
+      "id": "LF-073",
+      "title": "[IMPL] Business Rules - Export/Import Transforms",
+      "description": "Pure functions for creating shareable insight bundles and merging them. Content hashing for deduplication, link remapping for imports.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-070"],
+      "acceptance_criteria": [
+        "createExportBundle() creates valid bundle with metadata",
+        "hashInsightContent() deduplicates by content",
+        "previewImport() identifies new/duplicate/conflict insights",
+        "createImportPlan() generates new IDs and remaps links",
+        "validateBundle() catches invalid bundle structure",
+        "All functions are pure (no I/O)",
+        "Tests: export, hashing, preview, import planning, validation"
+      ],
+      "notes": "Sprint 7a of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 13."
+    },
+    {
+      "id": "LF-074",
+      "title": "[IMPL] Sharing Service",
+      "description": "Service that orchestrates export and import of insight bundles. Enables cross-repo knowledge sharing with preview before import.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-060", "LF-064", "LF-073"],
+      "acceptance_criteria": [
+        "exportToFile() creates bundle JSON file",
+        "previewImportFromFile() parses and analyzes bundle",
+        "executeImport() creates insights with new IDs",
+        "Selective import with selectedIds parameter",
+        "Summary generation for imported insights",
+        "Tests: export, preview, import, selective import"
+      ],
+      "notes": "Sprint 7b of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 14."
+    },
+    {
+      "id": "LF-075",
+      "title": "[IMPL] MCP Tools - Sharing (loop_export, loop_import)",
+      "description": "MCP tools for exporting and importing insight bundles. Includes preview step before import for user confirmation.",
+      "status": "TODO",
+      "priority": "medium",
+      "depends_on": ["LF-074"],
+      "acceptance_criteria": [
+        "loop_export tool with filters and output path",
+        "loop_import_preview tool shows what would happen",
+        "loop_import tool with selective import support",
+        "All tools validate parameters",
+        "Integration tests with real sharing service"
+      ],
+      "notes": "Sprint 7c of Progressive Disclosure. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Module 16."
+    },
+    {
+      "id": "LF-069",
+      "title": "[SPIKE] DSPy Integration Exploration",
+      "description": "Explore DSPy for programmatic prompt optimization. Test summarization signature, evaluate TypeScript integration options (subprocess, HTTP service, port concepts).",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand DSPy signature system",
+        "Prototype SummarizeInsight signature in Python",
+        "Test quality vs heuristic summarization",
+        "Evaluate integration patterns for TypeScript MCP server",
+        "Document findings and recommendation"
+      ],
+      "notes": "Future enhancement. DSPy could improve summary quality and enable prompt optimization. See docs/PROGRESSIVE-DISCLOSURE-SPEC.md Appendix."
+    },
+    {
+      "id": "LF-048",
+      "title": "[DISCOVERY] Automatic Observation Capture via Lifecycle Hooks",
+      "description": "Explore automatic capture of tool usage, file edits, shell commands via Claude Code lifecycle hooks. claude-mem hooks into PostToolUse, afterFileEdit, afterShellExecution to capture EVERYTHING automatically. Question: Should LoopFlow capture automatically (like claude-mem) or stay intentional? Hypothesis: Both - auto-capture as raw material, manual insights as refined knowledge.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Understand Claude Code's hook system (SessionStart, PostToolUse, Stop, etc.)",
+        "Map what data is available at each hook point",
+        "Decide: What should be auto-captured vs manual?",
+        "Design observation schema (tool_name, input, output, timestamp, session_id)",
+        "Consider storage implications (could be high volume)",
+        "Document decision and rationale"
+      ],
+      "notes": "claude-mem captures: MCP tool executions, shell commands, file edits, user prompts. They store observations → generate summaries → inject context. Key question: Does auto-capture conflict with LoopFlow's 'intentional insight' philosophy, or complement it?"
+    },
+    {
+      "id": "LF-049",
+      "title": "[DISCOVERY] Progressive Disclosure / Token-Efficient Retrieval",
+      "description": "Explore claude-mem's 3-layer search workflow: (1) search → compact index ~50-100 tokens/result, (2) timeline → chronological context, (3) get_observations → full details ~500-1000 tokens/result. This achieves ~10x token savings by filtering before fetching. Question: How should LoopFlow implement progressive disclosure?",
+      "status": "DONE",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Understand the 3-layer pattern deeply (index → filter → expand)",
+        "Analyze current LoopFlow tools for token efficiency",
+        "Design progressive disclosure for loop_connect (associative search)",
+        "Design progressive disclosure for loop_orient (situational awareness)",
+        "Consider: loop_scan (index) + loop_expand (details) pattern?",
+        "Document design decisions"
+      ],
+      "notes": "COMPLETED Session 18. Created comprehensive spec: docs/PROGRESSIVE-DISCLOSURE-SPEC.md. Key decisions: SQLite migration, 3-layer retrieval (scan/expand/timeline), heuristic+Ollama summarization, modular architecture with testable pure business rules. Implementation tasks: LF-059 through LF-069."
+    },
+    {
+      "id": "LF-050",
+      "title": "[DISCOVERY] Worker Service Architecture (MCP + HTTP Worker)",
+      "description": "Explore claude-mem's split architecture: lightweight MCP server for agent interface + persistent HTTP worker (port 37777) for async processing, web UI, queue management. Question: Should LoopFlow split into MCP server + worker service?",
+      "status": "TODO",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Understand benefits of split architecture (async processing, web UI, persistence)",
+        "Analyze current LoopFlow MCP server limitations",
+        "Identify what would benefit from async processing",
+        "Design worker service scope (what belongs in worker vs MCP)",
+        "Consider: Is this premature optimization for LoopFlow?",
+        "Document decision"
+      ],
+      "notes": "claude-mem worker handles: AI summarization, embedding generation, queue processing, web viewer, ChromaDB sync. LoopFlow currently reads files synchronously. Worker could enable: background summarization, web dashboard, cross-repo aggregation."
+    },
+    {
+      "id": "LF-051",
+      "title": "[DISCOVERY] AI-Powered Session Summarization",
+      "description": "Explore claude-mem's automatic session summarization: at session end, generates AI-powered semantic summary of what happened. Summaries are searchable and injected into future sessions. Question: Should LoopFlow generate automatic summaries, or rely on human-written progress entries?",
+      "status": "TODO",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Understand claude-mem's summarization flow (Stop hook → worker → AI → store)",
+        "Analyze what makes a good session summary",
+        "Compare: AI summary vs human-written progress.txt entry",
+        "Consider hybrid: AI draft + human refinement?",
+        "Design summarization prompt if we adopt this",
+        "Document decision and rationale"
+      ],
+      "notes": "LoopFlow currently relies on human writing progress entries. claude-mem generates summaries automatically. Trade-off: Automatic = comprehensive but possibly generic. Manual = intentional but might miss things. Hybrid could work: AI suggests, human refines."
+    },
+    {
+      "id": "LF-052",
+      "title": "[DISCOVERY] Timeline Context Tool",
+      "description": "Explore claude-mem's timeline tool: shows chronological context around a specific observation. 'What was happening when I made this decision?' Question: Should LoopFlow add temporal context to loop_connect?",
+      "status": "TODO",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Understand claude-mem's timeline implementation",
+        "Analyze use cases for temporal context in LoopFlow",
+        "Design loop_timeline tool or enhance loop_connect",
+        "Consider: depth_before/depth_after parameters",
+        "How does timeline interact with insights vs observations?",
+        "Document design"
+      ],
+      "notes": "Current loop_connect is associative (by concept). Timeline adds temporal dimension. Use case: 'What was I working on when I captured this insight?' helps reconstruct reasoning narrative."
+    },
+    {
+      "id": "LF-053",
+      "title": "[DISCOVERY] Web Viewer Dashboard",
+      "description": "Explore claude-mem's real-time web viewer at localhost:37777. Shows: session feed, observation stream, search interface, settings. Question: Does LoopFlow need a visual interface, or is file-based + CLI sufficient?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand what claude-mem's web viewer provides",
+        "Identify LoopFlow use cases that would benefit from visual UI",
+        "Consider: browsing insights, visualizing knowledge graph, search",
+        "Evaluate build complexity (React? Simple HTML?)",
+        "Document decision"
+      ],
+      "notes": "LoopFlow is currently file-based (backlog.json, insights.json, progress.txt). A web viewer could help: visualize knowledge graph, browse sessions, search across projects. But adds complexity. Is it needed?"
+    },
+    {
+      "id": "LF-054",
+      "title": "[DISCOVERY] Vector Search / Semantic Retrieval (ChromaDB)",
+      "description": "Explore claude-mem's hybrid search: SQLite for structured data + ChromaDB for vector embeddings. Enables semantic search ('find observations about authentication') not just keyword matching. Question: Should LoopFlow add vector search?",
+      "status": "TODO",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Understand ChromaDB integration in claude-mem",
+        "Analyze current LoopFlow search capabilities (file-based, keyword)",
+        "Evaluate semantic search value for insights/tasks",
+        "Consider embedding generation (when? what model?)",
+        "Assess complexity vs benefit trade-off",
+        "Document decision"
+      ],
+      "notes": "claude-mem uses 2-tier search: vector similarity for recall (1000s → 10s), LLM judgment for precision (10s → 2-3). LoopFlow currently does simple file reads. As knowledge grows, semantic search becomes more valuable."
+    },
+    {
+      "id": "LF-055",
+      "title": "[DISCOVERY] Privacy Controls (<private> tags)",
+      "description": "Explore claude-mem's privacy system: <private>content</private> tags prevent storage of sensitive content. Tag stripping happens at hook layer before data reaches worker/database. Question: Does LoopFlow need privacy controls?",
+      "status": "TODO",
+      "priority": "low",
+      "acceptance_criteria": [
+        "Understand claude-mem's privacy tag implementation",
+        "Identify LoopFlow scenarios where privacy matters",
+        "Consider: secrets, credentials, personal info in insights",
+        "Design privacy mechanism if needed",
+        "Document decision"
+      ],
+      "notes": "LoopFlow stores insights.json in repo (potentially version controlled). If auto-capture is added, privacy becomes more important. Users might not want all tool outputs stored."
+    },
+    {
+      "id": "LF-056",
+      "title": "[DISCOVERY] Context Injection Strategies",
+      "description": "Explore how claude-mem injects context: (1) Claude Code: additionalContext in hook output, (2) Cursor: auto-updated .cursor/rules/ file. Context refreshes at session start and after summaries. Question: How should LoopFlow inject context into new sessions?",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Understand Claude Code's additionalContext mechanism",
+        "Understand Cursor's rules file approach",
+        "Compare with LoopFlow's current approach (loop_orient tool)",
+        "Design optimal context injection for LoopFlow",
+        "Consider: automatic vs on-demand injection",
+        "Document design"
+      ],
+      "notes": "LoopFlow currently uses loop_orient (agent calls when needed). claude-mem auto-injects at session start. Trade-off: Auto-inject ensures context but uses tokens. On-demand is efficient but requires agent to remember to call."
+    },
+    {
+      "id": "LF-057",
+      "title": "[DISCOVERY] Dual Capture Architecture (Auto + Manual)",
+      "description": "Design LoopFlow's dual capture system: automatic observations (raw material) + manual insights (refined knowledge). This combines claude-mem's comprehensive capture with LoopFlow's intentional insight philosophy.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-048", "LF-049"],
+      "acceptance_criteria": [
+        "Define observation vs insight distinction clearly",
+        "Design observation schema (auto-captured tool usage)",
+        "Design insight schema (human-curated knowledge)",
+        "Define relationship: observations can spawn insights",
+        "Design synthesis: how observations inform insights",
+        "Document architecture"
+      ],
+      "notes": "Key insight from analysis: claude-mem captures everything automatically; LoopFlow captures intentionally. The synthesis: auto-capture the raw events, manual capture the meaning. Observations = what happened. Insights = why it matters."
+    },
+    {
+      "id": "LF-058",
+      "title": "[DESIGN] LoopFlow v2 Architecture (Post claude-mem Learning)",
+      "description": "Synthesize learnings from claude-mem analysis into LoopFlow v2 architecture. Integrate: dual capture, progressive disclosure, timeline context, optional worker service. This is the design task that follows the discovery tasks.",
+      "status": "TODO",
+      "priority": "high",
+      "depends_on": ["LF-048", "LF-049", "LF-050", "LF-051", "LF-052", "LF-056", "LF-057"],
+      "acceptance_criteria": [
+        "Synthesize decisions from all discovery tasks",
+        "Update docs/DESIGN.md with v2 architecture",
+        "Define implementation phases",
+        "Prioritize features based on value/complexity",
+        "Create implementation tasks",
+        "Document rationale for included/excluded features"
+      ],
+      "notes": "This is the capstone design task. By the time we reach this, all discovery tasks should have clear decisions. This task synthesizes them into a coherent v2 architecture."
+    },
     {
       "id": "LF-047",
       "title": "[IMPL] File-to-MCP Import Bridge",
