@@ -2,7 +2,7 @@
 
 > Structured AI-assisted development workflows that actually work.
 
-LoopFlow helps you collaborate effectively with AI coding assistants while **becoming a better engineer** — not just shipping faster.
+LoopFlow is an MCP server that helps you collaborate effectively with AI coding assistants while **becoming a better engineer** — not just shipping faster.
 
 ---
 
@@ -14,39 +14,98 @@ The core idea: **one task, one session, one handoff** — with the human firmly 
 
 - **Session structure** — Clear start/end boundaries for focused work
 - **Task management** — Backlog tracking that persists across sessions  
-- **Learning capture** — Knowledge that compounds instead of getting lost
+- **Insight capture** — Knowledge that compounds instead of getting lost
 - **Context economy** — Only load what you need, keep sessions fast
 
 ---
 
-## Getting Started
+## Quick Start (5 minutes)
 
-### Quick Bootstrap (One-liner)
-
-Run this in your project directory, then tell your AI agent to set up LoopFlow:
+### 1. Install
 
 ```bash
-curl -sO https://raw.githubusercontent.com/JorchRL/loop-flow/main/LOOP-FLOW-SETUP.md
+npm install -g loopflow
 ```
 
-Then tell your agent:
-> "Set up LoopFlow using LOOP-FLOW-SETUP.md"
-
-The agent handles everything — creating files, installing skills, explaining the workflow, and cleaning up.
-
-### Manual Setup
-
-Alternatively, copy [LOOP-FLOW-SETUP.md](./LOOP-FLOW-SETUP.md) to your project manually.
-
-### Updating
-
-Once installed, run `/loop-update` to fetch the latest version from GitHub.
-
-### MCP Server (Coming Soon)
+### 2. Initialize in your project
 
 ```bash
-npx loop-flow init
+cd your-project
+loopflow init
 ```
+
+This launches the **setup wizard** which:
+1. Creates `.loop-flow/` with SQLite database and `WORKFLOW.md`
+2. Detects installed AI tools (Claude Code, OpenCode, Cursor)
+3. Configures MCP server registration for selected tools
+
+```
+◆  LoopFlow Setup v1.0.0
+│
+◇  Select AI tools to configure:
+│  ◼ Claude Code (detected)
+│  ◼ OpenCode (detected)
+│  ◻ Cursor
+│
+◇  Configuring Claude Code...
+│  ✔ Added to ~/.claude.json
+│
+└  Setup complete!
+```
+
+To skip the wizard: `loopflow init --no-mcp`
+
+To reconfigure tools later: `loopflow setup`
+
+### 4. Start a session
+
+Tell your AI assistant:
+> "loopstart"
+
+The agent calls `loop_orient` and gets full context: workflow rules, tasks, insights, and suggested actions from previous sessions.
+
+---
+
+## MCP Tools Reference
+
+| Tool | Purpose |
+|------|---------|
+| `loop_orient` | Start session, get full context |
+| `loop_remember` | Capture an insight quickly |
+| `loop_scan` | Search insights and tasks |
+| `loop_expand` | Get full details for specific IDs |
+| `loop_connect` | Find related insights |
+| `loop_probe` | Ask structured questions |
+| `loop_handoff` | End session gracefully |
+| `loop_task_create` | Create a new task |
+| `loop_task_update` | Update task status/priority |
+| `loop_task_list` | List tasks with filters |
+| `loop_insight_update` | Update insight tags/links |
+| `loop_update_summary` | Update repo context |
+| `loop_export` | Export to JSON files |
+| `loop_import` | Import from JSON files |
+
+---
+
+## Workflow
+
+```
+Session Start (loop_orient)
+    |
+    v
+Pick a task (loop_task_update -> IN_PROGRESS)
+    |
+    v
+Work (capture insights with loop_remember)
+    |
+    v
+Complete task (loop_task_update -> DONE)
+    |
+    v
+Session End (loop_handoff)
+```
+
+Each session is focused on **one task**. Insights and progress persist in SQLite. The next session picks up where you left off.
 
 ---
 
@@ -54,23 +113,21 @@ npx loop-flow init
 
 | Document | Purpose |
 |----------|---------|
-| [LOOP-FLOW-SETUP.md](./LOOP-FLOW-SETUP.md) | Setup/update file (copy to your project) |
 | [docs/DESIGN.md](./docs/DESIGN.md) | Technical architecture and MCP API design |
 | [docs/UX-REQUIREMENTS.md](./docs/UX-REQUIREMENTS.md) | UX decisions and conversation modes |
-| [docs/DISTRIBUTED-DISCOVERY.md](./docs/DISTRIBUTED-DISCOVERY.md) | Team knowledge extraction via AI interviewers |
+| [.loop-flow/WORKFLOW.md](./.loop-flow/WORKFLOW.md) | Full methodology rules (after init) |
 
 ---
 
 ## Roadmap
 
-- [x] File-based workflow
-- [x] Distributed discovery pattern (AGENTS.md as interviewer)
-- [ ] MCP server with `loop.start` / `loop.end`
-- [ ] Task and learning management tools
-- [ ] Multi-repo support
-- [ ] Local dashboard UI
-- [ ] Team sync
-- [ ] Automated discovery synthesis
+- [x] MCP server with cognitive tools
+- [x] SQLite-backed task and insight management
+- [x] Session lifecycle (orient/handoff)
+- [x] CLI with `loopflow init` and `loopflow ui`
+- [x] Local dashboard UI (React + Vite + Tailwind)
+- [ ] Multi-repo insights (global ~/.loopflow/)
+- [ ] Team sync protocol
 
 ---
 
@@ -81,8 +138,6 @@ npx loop-flow init
 **The goal is growth, not just output.** Shipping code is good. Becoming a better engineer is better.
 
 **Knowledge should compound.** Write things down. Reflect. Build expertise over time.
-
-**Thinking is a fundamental human capacity.** Don't outsource it. Use AI as a tool, not a crutch.
 
 ---
 

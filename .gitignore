@@ -33,4 +33,5 @@ coverage/
 *.log
 npm-debug.log*
 
-./reference-repo
+# Reference repos for analysis (large, not needed in git)
+reference-repo/

@@ -2,7 +2,7 @@
 
 > The single file for bootstrapping or updating LoopFlow in any repository.
 
-**Version:** 0.8.0 (2026-01-20)
+**Version:** 0.9.0 (2026-01-22)
 
 **Usage:** Copy this file to your project root, then tell your AI agent:
 > "Please set up LoopFlow using LOOP-FLOW-SETUP.md"
@@ -91,24 +91,7 @@ Add this line to `.gitignore` (create if needed):
 .loop-flow/
 ```
 
-### Step B9: Install Skills (Optional but Recommended)
-
-Create skills for session management. These work in Claude Code, OpenCode, and tools supporting the Agent Skills standard.
-
-**For Claude Code** (`.claude/skills/`):
-```bash
-mkdir -p .claude/skills/loop-start .claude/skills/loop-end .claude/skills/loop-bail
-```
-
-**For OpenCode** (`.opencode/skills/` and `.opencode/commands/`):
-```bash
-mkdir -p .opencode/skills/loop-start .opencode/skills/loop-end .opencode/skills/loop-bail
-mkdir -p .opencode/commands
-```
-
-Create `SKILL.md` files using the **SKILL TEMPLATES** section below.
-
-### Step B10: Delete this setup file and give tutorial
+### Step B9: Delete this setup file and give tutorial
 
 ```bash
 rm LOOP-FLOW-SETUP.md
@@ -123,7 +106,7 @@ After scaffolding, explain the key concepts using the **USER TUTORIAL** section 
 ### Step U1: Confirm update
 
 Tell the user:
-> "Loop-Flow detected (version X or unknown). I'll update to v0.8.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
+> "Loop-Flow detected (version X or unknown). I'll update to v0.9.0. Your project state (backlog, progress, insights) will NOT be modified. Only the workflow rules in `.loop-flow/WORKFLOW.md` will be replaced. Proceed?"
 
 Wait for confirmation.
 
@@ -152,7 +135,7 @@ Process insights are core to LoopFlow's methodology — they define *how* to wor
 4. Adjust IDs to not conflict with existing ones (e.g., if user has INS-050, new insights start at INS-051)
 
 Tell the user:
-> "Imported N new process insights from LoopFlow v0.8.0. These are methodology updates that help you work more effectively."
+> "Imported N new process insights from LoopFlow v0.9.0. These are methodology updates that help you work more effectively."
 
 ### Step U5: Delete this setup file
 
@@ -178,7 +161,7 @@ Add this block to the **end** of the existing root `AGENTS.md`:
 
 This project uses the LoopFlow workflow for AI-assisted development sessions.
 
-**At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
+**At the start of every session**, call the `loop_orient` MCP tool to get situational awareness (current task, hot insights, suggested next steps).
 
 To temporarily disable LoopFlow, comment out or delete the line above.
 ```
@@ -198,7 +181,7 @@ If creating a new root `AGENTS.md`, use this minimal template:
 
 This project uses the LoopFlow workflow for AI-assisted development sessions.
 
-**At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
+**At the start of every session**, call the `loop_orient` MCP tool to get situational awareness (current task, hot insights, suggested next steps).
 
 To temporarily disable LoopFlow, comment out or delete the line above.
 ```
@@ -210,7 +193,7 @@ To temporarily disable LoopFlow, comment out or delete the line above.
 ```json
 {
   "schema_version": "0.1.0",
-  "loop_flow_version": "0.8.0",
+  "loop_flow_version": "0.9.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
   "insights": [],
   "link_types": {
@@ -231,7 +214,7 @@ Create or replace `.loop-flow/WORKFLOW.md` with this content:
 ````markdown
 # LoopFlow Workflow Rules
 
-**LoopFlow Version:** 0.8.0
+**LoopFlow Version:** 0.9.0
 
 This file defines how AI agents should work in this repository using the LoopFlow methodology.
 
@@ -605,16 +588,6 @@ When importing, assign new IDs that don't conflict with existing insights.
   },
   {
     "id": "LF-PROC-010",
-    "content": "Skills are reusable agent capabilities that encode specific knowledge about how to perform a task. Two types: Core Skills (ship with LoopFlow, e.g., /version, /session-start) and User-Defined Skills (repo-specific, e.g., /deploy). Skills bridge generic agent capability and project-specific knowledge.",
-    "type": "process",
-    "status": "discussed",
-    "tags": ["loop-flow-core", "skills", "extensibility"],
-    "links": [],
-    "created": "2026-01-20",
-    "source": "Loop-Flow v0.5.0"
-  },
-  {
-    "id": "LF-PROC-011",
     "content": "LoopFlow based learning is effective because: (1) Chat with AI is engaging for ADHD brains — immediate feedback loop, (2) Text-based interaction forces writing, which forces thinking (ref: Zinsser's 'Writing to Learn'). LoopFlow could be a platform for interactive courses, not just development workflow.",
     "type": "process",
     "status": "discussed",
@@ -624,7 +597,7 @@ When importing, assign new IDs that don't conflict with existing insights.
     "source": "Loop-Flow v0.5.0"
   },
   {
-    "id": "LF-PROC-012",
+    "id": "LF-PROC-011",
     "content": "Distributed Discovery: Use AI agents as parallel interviewers to extract tacit knowledge from teams. Embed a MINILOOP.md file (a lightweight, single-file LoopFlow installation) in a feature branch. Team members interact with the AI interviewer asynchronously, commit their session results, and the lead synthesizes findings. Advantages: no scheduling, less social pressure to 'know the answer', consistent protocol, captures verbatim quotes, scales across team.",
     "type": "process",
     "status": "discussed",
@@ -634,7 +607,7 @@ When importing, assign new IDs that don't conflict with existing insights.
     "source": "Loop-Flow v0.6.0"
   },
   {
-    "id": "LF-PROC-013",
+    "id": "LF-PROC-012",
     "content": "Risk-focused code review: The value of AI-assisted PR review is risk identification, not style nitpicking. Categorize findings by deployment risk: CRITICAL (must fix before merge — breaks production, data loss, security), MEDIUM (suboptimal but functional, fix later OK), LOW (code style, nice-to-haves). Focus on: What could break in production? What's missing? What assumptions might be wrong?",
     "type": "process",
     "status": "discussed",
@@ -642,254 +615,9 @@ When importing, assign new IDs that don't conflict with existing insights.
     "links": [],
     "created": "2026-01-20",
     "source": "Loop-Flow v0.6.0"
-  },
-  {
-    "id": "LF-PROC-014",
-    "content": "Skills provide reliable commands for starting and ending sessions. /loop-start reads .loop-flow/ state directly (no glob failures). /loop-end handles both graceful handoffs (updates backlog, progress, insights) and context emergencies (creates RESUME.md for seamless pickup). Skills follow the Agent Skills standard and work in Claude Code and OpenCode.",
-    "type": "process",
-    "status": "discussed",
-    "tags": ["loop-flow-core", "skills", "session-management", "reliability"],
-    "links": ["LF-PROC-010"],
-    "created": "2026-01-20",
-    "source": "Loop-Flow v0.7.0"
   }
 ]
 ```
-
----
-
-## SKILL TEMPLATES
-
-Skills provide reliable commands for starting and ending sessions. They work with Claude Code, OpenCode, and tools supporting the Agent Skills standard.
-
-### loop-start Skill
-
-Create `<skills-dir>/loop-start/SKILL.md`:
-
-````markdown
----
-name: loop-start
-description: Start a LoopFlow session. Reads workflow rules, backlog, progress, and insights to understand current state and propose a task.
----
-
-# Start LoopFlow Session
-
-You are starting a LoopFlow development session. Follow these steps exactly:
-
-## Step 0: Check for Resume File
-
-First, check if `.loop-flow/RESUME.md` exists. If it does:
-1. Read it — this is context from an emergency bail
-2. Show the user: "Resuming from previous session: [brief context]"
-3. Continue with the task/state described in RESUME.md
-4. Delete RESUME.md after the user confirms they're ready to continue
-
-If no RESUME.md exists, proceed normally:
-
-## Step 1: Read Core Files (Required)
-
-Use the Read tool to read these files. Do NOT use Glob or search tools — read directly:
-
-1. `.loop-flow/WORKFLOW.md` — The workflow rules (read this first)
-2. `.loop-flow/plan/backlog.json` — The task pool
-3. `.loop-flow/plan/progress.txt` — Recent session history
-4. `.loop-flow/plan/insights.json` — Knowledge graph (skim for relevant insights)
-
-## Step 2: Understand Current State
-
-After reading, identify:
-- What was the last session about?
-- What tasks are IN_PROGRESS, TODO, or BLOCKED?
-- Any unprocessed insights that need attention?
-
-## Step 3: Propose Next Steps
-
-Present a concise summary to the user:
-
-```
-## Current State
-- Last session: [brief summary]
-- Active task: [if any IN_PROGRESS]
-
-## Suggested Tasks (pick one)
-1. [Task ID] [Title] - [why now]
-2. [Task ID] [Title] - [why now]
-3. [Or ask for direction]
-```
-
-Remember: The backlog is a **menu, not a queue**. Suggest based on value, dependencies, and context.
-
-## Important
-
-- Do NOT commit or push without explicit permission
-- One task per session
-- If a task seems too large, propose breaking it down first
-````
-
-### loop-end Skill
-
-Create `<skills-dir>/loop-end/SKILL.md`:
-
-````markdown
----
-name: loop-end
-description: End a LoopFlow session gracefully. Updates backlog, progress, and insights. For emergencies, use /loop-bail instead.
----
-
-# End LoopFlow Session
-
-**Save state first, then summarize.** If you need to exit FAST, use `/loop-bail` instead.
-
-## Step 1: Save State
-
-You MUST update these files right now, before any summary or discussion:
-
-### 1a. Update `.loop-flow/plan/backlog.json`
-- Read the current file first
-- Update task status (DONE, IN_PROGRESS, BLOCKED, etc.)
-- Update `last_updated` date to today
-- Update `notes` field with current state summary
-- Add any new tasks that emerged during the session
-
-### 1b. Append to `.loop-flow/plan/progress.txt`
-- Read the current file to get the next session number
-- Append this format:
-
-```markdown
-## YYYY-MM-DD | Session N
-Task: [TASK-ID] [Title] (or "Ad-hoc: [description]" if no formal task)
-Outcome: COMPLETE | PARTIAL | BLOCKED (reason)
-Tests: [path if applicable] (N passing)
-Manual QA: REQUIRED | NOT_REQUIRED
-
-### Summary
-[2-3 sentences on what was accomplished]
-
-### Learnings (if any)
-- [Edge case, domain knowledge, or pattern discovered]
-
----
-```
-
-### 1c. Update `.loop-flow/plan/insights.json` (if new insights emerged)
-- Add new insights with proper IDs (increment from last INS-XXX)
-- Mark status as `unprocessed` for quick captures
-- Include source task and session info
-
-## Step 2: Verify Saves Completed
-
-**CHECKPOINT — Confirm you actually wrote to these files:**
-- [ ] backlog.json updated
-- [ ] progress.txt appended
-- [ ] insights.json updated (if applicable)
-
-If you haven't done ALL of these, STOP and do them now.
-
-## Step 3: Confirm with User
-
-Show what was updated:
-```
-## Session Saved
-- backlog.json: [what changed]
-- progress.txt: Session N added
-- insights.json: [INS-XXX added / no new insights]
-```
-
-Remind them: **Agent does NOT commit — developer handles git.**
-
-Options:
-- `git add . && git commit -m "..."` — if they want to commit
-- Start new session with `/loop-start`
-
----
-
-## Skip Condition
-
-If the user calls /loop-end but no meaningful work was done this session (e.g., just started and immediately ending, or calling end-loop twice), acknowledge this and skip the updates:
-
-"No session state to save — no work was done since the last save."
-````
-
-### loop-bail Skill
-
-Create `<skills-dir>/loop-bail/SKILL.md`:
-
-````markdown
----
-name: loop-bail
-description: Emergency exit from a LoopFlow session. Creates RESUME.md for quick pickup. Use when context is running out and you need to exit FAST.
----
-
-# Emergency Session Bail
-
-**This is an emergency exit. Do ONE thing: create RESUME.md. No file updates, no questions.**
-
-## Step 1: Create `.loop-flow/RESUME.md`
-
-Create this file immediately:
-
-```markdown
-# Session Resume - [Date]
-
-## Context
-Task: [TASK-ID or "Ad-hoc: description"]
-Status: INTERRUPTED (emergency bail)
-
-## Where We Left Off
-[Quick capture of current state - what was being worked on]
-
-## Files in Progress
-- [List any files being actively edited]
-
-## Next Steps
-1. [Immediate next action when resuming]
-2. [Follow-up actions if known]
-
-## Key Context
-- [Any critical decisions or state that shouldn't be lost]
-- [Anything the next session needs to know]
-
----
-*Created by /loop-bail. Delete after resuming.*
-*For full session save, use /loop-end instead.*
-```
-
-## Step 2: Confirm
-
-Brief confirmation only:
-
-```
-RESUME.md created. Session state captured.
-
-To continue later:
-1. Read .loop-flow/RESUME.md
-2. Run /loop-start
-3. Delete RESUME.md after picking up
-
-Note: backlog.json and progress.txt were NOT updated.
-Run /loop-end in your next session for a proper save.
-```
-
-## That's It
-
-Do not:
-- Update backlog.json
-- Append to progress.txt
-- Update insights.json
-- Ask follow-up questions
-- Provide a detailed summary
-
-Speed is the priority. Get out fast.
-````
-
-### Skill Locations by Tool
-
-| Tool | Location |
-|------|----------|
-| Claude Code | `.claude/skills/<name>/SKILL.md` |
-| OpenCode | `.opencode/skills/<name>/SKILL.md` |
-| Global (Claude Code) | `~/.claude/skills/<name>/SKILL.md` |
-| Global (OpenCode) | `~/.config/opencode/skills/<name>/SKILL.md` |
 
 ---
 
@@ -962,24 +690,22 @@ Every session should leave you knowing something you didn't know before — abou
 
 ### Quick Commands
 
-If you installed the skills (recommended):
-- **Start a session**: `/loop-start`
-- **End a session (graceful)**: `/loop-end`
-- **End a session (emergency)**: `/loop-bail` — when you need to exit FAST
+LoopFlow provides MCP tools that the agent calls automatically:
+- **Start a session**: Agent calls `loop_orient` to get situational awareness
+- **Capture an insight**: Agent calls `loop_remember` to save insights
+- **Find related knowledge**: Agent calls `loop_connect` to search the knowledge graph
+- **End a session**: Agent calls `loop_handoff` to save state
 
-Without skills:
-- **Start a session**: "Let's start a session" or "Read the backlog and suggest a task"
-- **End a session**: "Let's wrap up" or "Update the backlog and log this session"
-
-Other commands:
-- **Add a task**: "Add a new task: [description]"
-- **Capture an insight**: "Note: [insight]" or "Capture insight: [insight]"
+You can also say things like:
+- "Let's start a session" or "What should we work on?"
+- "Note: [insight]" or "Capture insight: [insight]"
+- "Let's wrap up" or "End the session"
 
 ### Disabling LoopFlow
 
 To temporarily disable:
 1. Open your root `AGENTS.md`
-2. Comment out or delete the line: `**At the start of every session**, read .loop-flow/WORKFLOW.md...`
+2. Comment out or delete the line: `**At the start of every session**, call the \`loop_orient\` MCP tool...`
 
 To re-enable, restore that line.
 
@@ -999,31 +725,34 @@ After setup, your project has:
 
 ## VERSION HISTORY
 
+### v0.9.0 (2026-01-22)
+
+**MCP Tools Replace Skills**
+
+- **Removed skills**: Skills (`.claude/skills/`, `.opencode/skills/`, `.opencode/commands/`) are now obsolete
+- **MCP tools are the interface**: `loop_orient`, `loop_remember`, `loop_connect`, `loop_probe`, `loop_handoff` provide all session management
+- **SQLite is source of truth**: Writes go directly to SQLite database, JSON files are for export/import
+- **Updated AGENTS.md instruction**: Now tells agents to call `loop_orient` instead of reading files manually
+- **Removed skill templates from this file**: No longer needed
+
+**Rationale**: MCP tools provide a reliable, standardized interface that works across all AI coding tools. Skills were a workaround for unreliable file reading; MCP tools solve this properly.
+
+---
+
 ### v0.8.0 (2026-01-20)
 
-**Separate Emergency Bail Command**
+**Separate Emergency Bail Command** (Superseded by v0.9.0 MCP tools)
 
-- Added `/loop-bail` skill: Emergency exit that only creates RESUME.md (fast, no questions)
-- Separated emergency handling from `/loop-end` for clarity of intent
-- `/loop-end` is now purely for graceful handoffs (updates all files)
-- `/loop-start` now checks for RESUME.md and offers to resume from a bail
-- Three commands: `/loop-start` (begin), `/loop-end` (graceful), `/loop-bail` (emergency)
-
-**Rationale**: Users need an explicit way to signal "I need to exit NOW" vs "let's wrap up properly". Emergency bail should be fast with no questions asked.
+- Added `/loop-bail` skill (now replaced by `loop_handoff` with emergency mode)
+- Three commands pattern replaced by MCP tools
 
 ---
 
 ### v0.7.0 (2026-01-20)
 
-**Skills System**
+**Skills System** (Superseded by v0.9.0 MCP tools)
 
-- Added `/loop-start` skill: Reliably reads .loop-flow/ state and proposes tasks (no glob failures)
-- Added `/loop-end` skill: Two modes — graceful handoff OR context emergency with RESUME.md
-- Skills follow Agent Skills standard (works in Claude Code + OpenCode)
-- Skill templates included in this file (see SKILL TEMPLATES section)
-- Skills live in `.claude/skills/` or `.opencode/skills/` (user's choice)
-
-**1 new process insight**: LF-PROC-014
+- Skills replaced by MCP tools in v0.9.0
 
 ---
 

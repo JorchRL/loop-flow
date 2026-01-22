@@ -1,7 +1,130 @@
 {
   "schema_version": "0.1.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
+  "exported_at": "2026-01-22T10:43:53.121Z",
+  "source": "loopflow-sqlite",
   "insights": [
+    {
+      "id": "INS-071",
+      "content": "Chicken-and-egg problem when developing LoopFlow's MCP server: Can't use new MCP tools to update tasks because the running server is the old version. Solutions: (1) Manual SQL for this session only, then use tools going forward, (2) Restart session to get new server, (3) Add a hot-reload mechanism. For now, accept that developing the MCP server itself requires session restarts to test new tools.",
+      "type": "technical",
+      "status": "unprocessed",
+      "source": {
+        "task": "ad-hoc",
+        "session": "2026-01-22"
+      },
+      "tags": [
+        "loop-flow-core",
+        "development",
+        "mcp",
+        "gotcha"
+      ],
+      "created": "2026-01-22T08:48:53.156Z"
+    },
+    {
+      "id": "INS-070",
+      "content": "Agent should actively identify friction points (things that slow down or require workarounds) and proactively propose solutions. Similarly, observe user pain points and suggest fixes. Don't wait for problems to accumulate - surface them as they occur. Example: repeatedly hitting FTS trigger errors when updating tasks via raw SQL → should have proposed adding task management MCP tools after the first occurrence, not worked around it repeatedly.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "ad-hoc",
+        "session": "2026-01-22"
+      },
+      "tags": [
+        "loop-flow-core",
+        "agent-behavior",
+        "proactive",
+        "friction",
+        "ux"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Proactive Friction Identification' section",
+      "created": "2026-01-22T08:47:07.087Z"
+    },
+    {
+      "id": "INS-069",
+      "content": "Artifacts (roadmaps, design docs, decision records) could be stored in the database alongside insights and tasks. This would enable: (1) versioning of artifacts, (2) linking artifacts to insights/tasks, (3) search across all knowledge types, (4) export/sync as first-class entities. Current workaround: store as .md files in .loop-flow/ folder.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "ad-hoc",
+        "session": "2026-01-22"
+      },
+      "tags": [
+        "loop-flow-core",
+        "artifacts",
+        "future-feature",
+        "knowledge-management"
+      ],
+      "created": "2026-01-22T08:25:15.167Z"
+    },
+    {
+      "id": "INS-068",
+      "content": "Self-debugging pattern for MCP server development: After making changes, write tests that call the MCP tools directly and verify expectations. Example workflow: (1) Delete the SQLite DB to start fresh, (2) Call loop_orient and verify migration counts, (3) Call loop_remember and verify insight appears in DB, (4) Call loop_handoff and verify suggested_actions saved to repo_context, (5) Call loop_orient again and verify suggested_actions appears in response. Compare actual vs expected at each step. This catches issues like \"old server still running\" or \"code path not exercised\".",
+      "type": "process",
+      "status": "unprocessed",
+      "source": {
+        "task": "ad-hoc",
+        "session": "2026-01-22"
+      },
+      "tags": [
+        "loop-flow-core",
+        "testing",
+        "debugging",
+        "mcp",
+        "critical"
+      ],
+      "created": "2026-01-22T07:47:29.314Z"
+    },
+    {
+      "id": "INS-067",
+      "content": "loop_handoff doesn't create a session record in the sessions table - it only saves suggested_actions to repo_context and exports JSON files. Session logging (recording what was done) should either: (1) be added to loop_handoff, or (2) be a separate loop_log_session tool, or (3) rely on manual progress.txt updates. Current gap: sessions table only gets populated from progress.txt import, not from active session endings.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "ad-hoc",
+        "session": "2026-01-22"
+      },
+      "tags": [
+        "loop-flow-core",
+        "gap",
+        "sessions",
+        "handoff"
+      ],
+      "created": "2026-01-22T07:45:02.054Z"
+    },
+    {
+      "id": "INS-066",
+      "content": "loop_orient can be called multiple times in a session - it's not strictly \"once at start\". Calling it again reinitializes the session state. This is useful for: (1) refreshing context mid-session, (2) re-enabling tools after loop_handoff closed the session, (3) picking up database changes made by other processes. The naming suggests \"session start\" but it's really \"get context and initialize\".",
+      "type": "technical",
+      "status": "unprocessed",
+      "source": {
+        "task": "ad-hoc",
+        "session": "2026-01-22"
+      },
+      "tags": [
+        "mcp",
+        "loop-flow-core",
+        "api-design"
+      ],
+      "created": "2026-01-22T07:44:56.264Z"
+    },
+    {
+      "id": "INS-065",
+      "content": "MCP server code changes require rebuild AND server restart to take effect. The MCP server registered with Claude Code runs compiled code from dist/. When you modify src/ and rebuild, the changes won't take effect until: (1) npm run build completes, AND (2) the MCP server process is restarted (or Claude Code is restarted). This is especially tricky when developing the MCP server itself - you're using the old version to test the new version.",
+      "type": "technical",
+      "status": "unprocessed",
+      "source": {
+        "task": "ad-hoc",
+        "session": "2026-01-22"
+      },
+      "tags": [
+        "mcp",
+        "development",
+        "gotcha",
+        "loop-flow-core"
+      ],
+      "created": "2026-01-22T07:44:51.036Z"
+    },
     {
       "id": "INS-001",
       "content": "Learnings have a hierarchy of leverage: process > domain > architecture > edge_case > technical. Higher-leverage learnings compound more over time.",
@@ -11,9 +134,13 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1"
       },
-      "tags": ["meta", "knowledge-management"],
+      "tags": [
+        "meta",
+        "knowledge-management"
+      ],
       "links": [],
-      "created": "2026-01-17"
+      "notes": "Captured in WORKFLOW.md 'Leverage Hierarchy' section",
+      "created": "2026-01-22T07:39:38.227Z"
     },
     {
       "id": "INS-002",
@@ -24,9 +151,15 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1"
       },
-      "tags": ["vision", "philosophy"],
-      "links": ["INS-001"],
-      "created": "2026-01-17"
+      "tags": [
+        "vision",
+        "philosophy"
+      ],
+      "links": [
+        "INS-001"
+      ],
+      "notes": "Captured in WORKFLOW.md intro",
+      "created": "2026-01-22T07:39:38.226Z"
     },
     {
       "id": "INS-003",
@@ -37,9 +170,14 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1"
       },
-      "tags": ["knowledge-management", "zettelkasten"],
-      "links": ["INS-001"],
-      "created": "2026-01-17"
+      "tags": [
+        "knowledge-management",
+        "zettelkasten"
+      ],
+      "links": [
+        "INS-001"
+      ],
+      "created": "2026-01-22T07:39:38.224Z"
     },
     {
       "id": "INS-004",
@@ -50,9 +188,16 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1"
       },
-      "tags": ["workflow", "context-management"],
-      "links": ["INS-001", "INS-003"],
-      "created": "2026-01-17"
+      "tags": [
+        "workflow",
+        "context-management"
+      ],
+      "links": [
+        "INS-001",
+        "INS-003"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Quick capture' guidance",
+      "created": "2026-01-22T07:39:38.223Z"
     },
     {
       "id": "INS-005",
@@ -63,10 +208,17 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1"
       },
-      "tags": ["scaling", "knowledge-management", "future"],
-      "links": ["INS-001", "INS-003"],
-      "created": "2026-01-17",
-      "notes": "Deferred for deeper exploration when we hit the scaling problem."
+      "tags": [
+        "scaling",
+        "knowledge-management",
+        "future"
+      ],
+      "links": [
+        "INS-001",
+        "INS-003"
+      ],
+      "notes": "Deferred for deeper exploration when we hit the scaling problem.",
+      "created": "2026-01-22T07:39:38.223Z"
     },
     {
       "id": "INS-006",
@@ -77,9 +229,13 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1"
       },
-      "tags": ["workflow", "task-management"],
+      "tags": [
+        "workflow",
+        "task-management"
+      ],
       "links": [],
-      "created": "2026-01-17"
+      "notes": "Captured in WORKFLOW.md - 'backlog is a menu, not a queue'",
+      "created": "2026-01-22T07:39:38.223Z"
     },
     {
       "id": "INS-007",
@@ -90,9 +246,15 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1"
       },
-      "tags": ["workflow", "context-management"],
-      "links": ["INS-004"],
-      "created": "2026-01-17"
+      "tags": [
+        "workflow",
+        "context-management"
+      ],
+      "links": [
+        "INS-004"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Session Boundaries' section",
+      "created": "2026-01-22T07:39:38.222Z"
     },
     {
       "id": "INS-008",
@@ -103,9 +265,14 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1b"
       },
-      "tags": ["ux", "cold-start"],
-      "links": ["INS-002"],
-      "created": "2026-01-17"
+      "tags": [
+        "ux",
+        "cold-start"
+      ],
+      "links": [
+        "INS-002"
+      ],
+      "created": "2026-01-22T07:39:38.222Z"
     },
     {
       "id": "INS-009",
@@ -116,9 +283,16 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1b"
       },
-      "tags": ["ux", "session-end", "trust"],
-      "links": ["INS-007"],
-      "created": "2026-01-17"
+      "tags": [
+        "ux",
+        "session-end",
+        "trust"
+      ],
+      "links": [
+        "INS-007"
+      ],
+      "notes": "Captured in WORKFLOW.md - implicit in autosave/handoff behavior",
+      "created": "2026-01-22T07:39:38.220Z"
     },
     {
       "id": "INS-010",
@@ -129,9 +303,16 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1b"
       },
-      "tags": ["ux", "modes", "conversation"],
-      "links": ["INS-004"],
-      "created": "2026-01-17"
+      "tags": [
+        "ux",
+        "modes",
+        "conversation"
+      ],
+      "links": [
+        "INS-004"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Conversation Modes' section",
+      "created": "2026-01-22T07:39:38.219Z"
     },
     {
       "id": "INS-011",
@@ -142,9 +323,17 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1b"
       },
-      "tags": ["ux", "modes", "discovery"],
-      "links": ["INS-010", "INS-004"],
-      "created": "2026-01-17"
+      "tags": [
+        "ux",
+        "modes",
+        "discovery"
+      ],
+      "links": [
+        "INS-010",
+        "INS-004"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Conversation Modes' section",
+      "created": "2026-01-22T07:39:38.219Z"
     },
     {
       "id": "INS-012",
@@ -155,9 +344,17 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1b"
       },
-      "tags": ["ux", "interaction", "context-efficiency"],
-      "links": ["INS-007", "INS-011"],
-      "created": "2026-01-17"
+      "tags": [
+        "ux",
+        "interaction",
+        "context-efficiency"
+      ],
+      "links": [
+        "INS-007",
+        "INS-011"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Mode Guidelines'",
+      "created": "2026-01-22T07:39:38.219Z"
     },
     {
       "id": "INS-013",
@@ -168,9 +365,17 @@
         "task": "LF-001.5",
         "session": "2026-01-17-S1b"
       },
-      "tags": ["ux", "modes", "context-management"],
-      "links": ["INS-010", "INS-007"],
-      "created": "2026-01-17"
+      "tags": [
+        "ux",
+        "modes",
+        "context-management"
+      ],
+      "links": [
+        "INS-010",
+        "INS-007"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Mode Guidelines'",
+      "created": "2026-01-22T07:39:38.219Z"
     },
     {
       "id": "INS-014",
@@ -181,9 +386,16 @@
         "task": "LF-001.6",
         "session": "2026-01-17-S2"
       },
-      "tags": ["bootstrap", "context-rot", "knowledge-transfer"],
-      "links": ["INS-007", "INS-005"],
-      "created": "2026-01-17"
+      "tags": [
+        "bootstrap",
+        "context-rot",
+        "knowledge-transfer"
+      ],
+      "links": [
+        "INS-007",
+        "INS-005"
+      ],
+      "created": "2026-01-22T07:39:38.218Z"
     },
     {
       "id": "INS-015",
@@ -194,10 +406,18 @@
         "task": "LF-001.6",
         "session": "2026-01-17-S2"
       },
-      "tags": ["philosophy", "learning", "growth", "cognition", "anti-vibe-coding"],
-      "links": ["INS-002"],
-      "created": "2026-01-17",
-      "notes": "From Jorge's cognitive science background. AI should be a tool that makes us better thinkers, not a crutch that atrophies our thinking."
+      "tags": [
+        "philosophy",
+        "learning",
+        "growth",
+        "cognition",
+        "anti-vibe-coding"
+      ],
+      "links": [
+        "INS-002"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Foster Learning, Not Dependency' section",
+      "created": "2026-01-22T07:39:38.218Z"
     },
     {
       "id": "INS-016",
@@ -208,10 +428,18 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["teaching", "learning", "ai-agent-patterns", "loop-flow-domain"],
-      "links": ["INS-015", "INS-011"],
-      "created": "2026-01-18",
-      "notes": "Discovered while teaching MCP concepts. Connects to the broader Loop-Flow philosophy of fostering growth (INS-015) and the Discovery mode pattern of guided exploration (INS-011)."
+      "tags": [
+        "teaching",
+        "learning",
+        "ai-agent-patterns",
+        "loop-flow-domain"
+      ],
+      "links": [
+        "INS-015",
+        "INS-011"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Foster Learning' and 'Learn mode' guidance",
+      "created": "2026-01-22T07:39:38.218Z"
     },
     {
       "id": "INS-017",
@@ -222,9 +450,16 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["architecture", "local-first", "design-decision"],
-      "links": ["INS-015", "INS-002"],
-      "created": "2026-01-18"
+      "tags": [
+        "architecture",
+        "local-first",
+        "design-decision"
+      ],
+      "links": [
+        "INS-015",
+        "INS-002"
+      ],
+      "created": "2026-01-22T07:39:38.217Z"
     },
     {
       "id": "INS-018",
@@ -235,10 +470,18 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["architecture", "roadmap", "phases", "dogfooding"],
-      "links": ["INS-017", "INS-002"],
-      "created": "2026-01-18",
-      "notes": "Phase 0 is key: Loop-Flow uses its own file-based workflow to build itself. True dogfooding."
+      "tags": [
+        "architecture",
+        "roadmap",
+        "phases",
+        "dogfooding"
+      ],
+      "links": [
+        "INS-017",
+        "INS-002"
+      ],
+      "notes": "Phase 0 is key: Loop-Flow uses its own file-based workflow to build itself. True dogfooding.",
+      "created": "2026-01-22T07:39:38.217Z"
     },
     {
       "id": "INS-019",
@@ -249,10 +492,19 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["ai-agent-patterns", "insight-capture", "proactive", "theory-building"],
-      "links": ["INS-015", "INS-016", "INS-004"],
-      "created": "2026-01-18",
-      "notes": "Meta-insight: this insight itself was surfaced by the user noticing the agent wasn't doing this proactively enough. The agent should have noticed the pattern emerging (INS-016 + INS-015) and proposed this synthesis."
+      "tags": [
+        "ai-agent-patterns",
+        "insight-capture",
+        "proactive",
+        "theory-building"
+      ],
+      "links": [
+        "INS-015",
+        "INS-016",
+        "INS-004"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Proactive Capture' section",
+      "created": "2026-01-22T07:39:38.217Z"
     },
     {
       "id": "INS-020",
@@ -263,9 +515,17 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["insight-capture", "knowledge-management", "review", "synthesis"],
-      "links": ["INS-003", "INS-005"],
-      "created": "2026-01-18"
+      "tags": [
+        "insight-capture",
+        "knowledge-management",
+        "review",
+        "synthesis"
+      ],
+      "links": [
+        "INS-003",
+        "INS-005"
+      ],
+      "created": "2026-01-22T07:39:38.216Z"
     },
     {
       "id": "INS-021",
@@ -276,9 +536,18 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["learning", "discovery", "context-efficiency", "llm-txt", "future-feature"],
-      "links": ["INS-016", "INS-019"],
-      "created": "2026-01-18"
+      "tags": [
+        "learning",
+        "discovery",
+        "context-efficiency",
+        "llm-txt",
+        "future-feature"
+      ],
+      "links": [
+        "INS-016",
+        "INS-019"
+      ],
+      "created": "2026-01-22T07:39:38.216Z"
     },
     {
       "id": "INS-022",
@@ -289,9 +558,18 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["mcp", "architecture", "tools", "resources", "context-management"],
-      "links": ["INS-017", "INS-007"],
-      "created": "2026-01-18"
+      "tags": [
+        "mcp",
+        "architecture",
+        "tools",
+        "resources",
+        "context-management"
+      ],
+      "links": [
+        "INS-017",
+        "INS-007"
+      ],
+      "created": "2026-01-22T07:39:38.216Z"
     },
     {
       "id": "INS-023",
@@ -302,10 +580,21 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["architecture", "context-management", "domain-knowledge", "lazy-loading", "subagent"],
-      "links": ["INS-021", "INS-022", "INS-007", "INS-005"],
-      "created": "2026-01-18",
-      "notes": "Inspired by llms.txt pattern. Connects to context scaling (INS-005) and the MCP Resources primitive (INS-022). The subagent-as-curator idea is powerful — separates 'what exists' from 'what's relevant now'."
+      "tags": [
+        "architecture",
+        "context-management",
+        "domain-knowledge",
+        "lazy-loading",
+        "subagent"
+      ],
+      "links": [
+        "INS-021",
+        "INS-022",
+        "INS-007",
+        "INS-005"
+      ],
+      "notes": "Inspired by llms.txt pattern. Connects to context scaling (INS-005) and the MCP Resources primitive (INS-022). The subagent-as-curator idea is powerful — separates 'what exists' from 'what's relevant now'.",
+      "created": "2026-01-22T07:39:38.215Z"
     },
     {
       "id": "INS-024",
@@ -316,9 +605,19 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["architecture", "context-management", "embeddings", "curation", "two-tier"],
-      "links": ["INS-023", "INS-022", "INS-005"],
-      "created": "2026-01-18"
+      "tags": [
+        "architecture",
+        "context-management",
+        "embeddings",
+        "curation",
+        "two-tier"
+      ],
+      "links": [
+        "INS-023",
+        "INS-022",
+        "INS-005"
+      ],
+      "created": "2026-01-22T07:39:38.215Z"
     },
     {
       "id": "INS-025",
@@ -329,10 +628,22 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["process", "learning", "discovery", "co-creation", "dialogue", "loop-flow-philosophy"],
-      "links": ["INS-019", "INS-016", "INS-015", "INS-011"],
-      "created": "2026-01-18",
-      "notes": "High-leverage process insight. This is what makes Loop-Flow different from a passive note-taking system. The agent is an active thinking partner."
+      "tags": [
+        "process",
+        "learning",
+        "discovery",
+        "co-creation",
+        "dialogue",
+        "loop-flow-philosophy"
+      ],
+      "links": [
+        "INS-019",
+        "INS-016",
+        "INS-015",
+        "INS-011"
+      ],
+      "notes": "Captured in WORKFLOW.md Learn mode description",
+      "created": "2026-01-22T07:39:38.215Z"
     },
     {
       "id": "INS-026",
@@ -343,9 +654,19 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["process", "modes", "tasks", "loop-flow-philosophy"],
-      "links": ["INS-010", "INS-011", "INS-025"],
-      "created": "2026-01-18"
+      "tags": [
+        "process",
+        "modes",
+        "tasks",
+        "loop-flow-philosophy"
+      ],
+      "links": [
+        "INS-010",
+        "INS-011",
+        "INS-025"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Conversation Modes' intro",
+      "created": "2026-01-22T07:39:38.214Z"
     },
     {
       "id": "INS-027",
@@ -356,9 +677,20 @@
         "task": "LF-001",
         "session": "2026-01-18-S3"
       },
-      "tags": ["process", "modes", "learning", "loop-flow-philosophy"],
-      "links": ["INS-025", "INS-026", "INS-011", "INS-016"],
-      "created": "2026-01-18"
+      "tags": [
+        "process",
+        "modes",
+        "learning",
+        "loop-flow-philosophy"
+      ],
+      "links": [
+        "INS-025",
+        "INS-026",
+        "INS-011",
+        "INS-016"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Learn' mode description",
+      "created": "2026-01-22T07:39:38.214Z"
     },
     {
       "id": "INS-028",
@@ -369,9 +701,16 @@
         "task": "LF-020",
         "session": "2026-01-18-S4"
       },
-      "tags": ["loop-flow-core", "distribution", "versioning", "process"],
-      "links": ["INS-014"],
-      "created": "2026-01-18"
+      "tags": [
+        "loop-flow-core",
+        "distribution",
+        "versioning",
+        "process"
+      ],
+      "links": [
+        "INS-014"
+      ],
+      "created": "2026-01-22T07:39:38.214Z"
     },
     {
       "id": "INS-029",
@@ -382,10 +721,18 @@
         "task": "LF-021",
         "session": "2026-01-18-S5"
       },
-      "tags": ["skills", "architecture", "extensibility", "loop-flow-core"],
-      "links": ["INS-028", "INS-002"],
-      "created": "2026-01-18",
-      "notes": "Discovered while doing version bump for LF-021. The repetitive multi-file update pattern suggested a skill. Skills are like 'macros with knowledge' — they know what to do AND where things are."
+      "tags": [
+        "skills",
+        "architecture",
+        "extensibility",
+        "loop-flow-core"
+      ],
+      "links": [
+        "INS-028",
+        "INS-002"
+      ],
+      "notes": "Discovered while doing version bump for LF-021. The repetitive multi-file update pattern suggested a skill. Skills are like 'macros with knowledge' — they know what to do AND where things are.",
+      "created": "2026-01-22T07:39:38.214Z"
     },
     {
       "id": "INS-030",
@@ -396,9 +743,17 @@
         "task": "LF-021",
         "session": "2026-01-18-S5"
       },
-      "tags": ["versioning", "skills", "process", "loop-flow-core"],
-      "links": ["INS-029", "INS-028"],
-      "created": "2026-01-18"
+      "tags": [
+        "versioning",
+        "skills",
+        "process",
+        "loop-flow-core"
+      ],
+      "links": [
+        "INS-029",
+        "INS-028"
+      ],
+      "created": "2026-01-22T07:39:38.213Z"
     },
     {
       "id": "INS-031",
@@ -410,9 +765,13 @@
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-001"
       },
-      "tags": ["loop-flow-core", "insight-capture", "cross-project"],
+      "tags": [
+        "loop-flow-core",
+        "insight-capture",
+        "cross-project"
+      ],
       "links": [],
-      "created": "2026-01-20"
+      "created": "2026-01-22T07:39:38.213Z"
     },
     {
       "id": "INS-032",
@@ -424,10 +783,18 @@
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-002"
       },
-      "tags": ["loop-flow-core", "skills", "ux", "reliability"],
-      "links": ["INS-029", "INS-030"],
-      "created": "2026-01-20",
-      "notes": "Concrete use case for skills: /start-session skill that 'just works'."
+      "tags": [
+        "loop-flow-core",
+        "skills",
+        "ux",
+        "reliability"
+      ],
+      "links": [
+        "INS-029",
+        "INS-030"
+      ],
+      "notes": "Concrete use case for skills: /start-session skill that 'just works'.",
+      "created": "2026-01-22T07:39:38.213Z"
     },
     {
       "id": "INS-033",
@@ -439,9 +806,18 @@
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-003"
       },
-      "tags": ["loop-flow-core", "learning", "courses", "adhd", "writing-to-learn"],
-      "links": ["INS-015", "INS-025"],
-      "created": "2026-01-20"
+      "tags": [
+        "loop-flow-core",
+        "learning",
+        "courses",
+        "adhd",
+        "writing-to-learn"
+      ],
+      "links": [
+        "INS-015",
+        "INS-025"
+      ],
+      "created": "2026-01-22T07:39:38.212Z"
     },
     {
       "id": "INS-034",
@@ -453,40 +829,65 @@
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-004"
       },
-      "tags": ["testing", "verification-functions", "pure-functions", "vibecoding"],
+      "tags": [
+        "testing",
+        "verification-functions",
+        "pure-functions",
+        "vibecoding"
+      ],
       "links": [],
-      "created": "2026-01-20",
-      "notes": "Concrete testing pattern that should inform Loop-Flow's testing philosophy. Also a spec-driven-development pattern."
+      "notes": "Concrete testing pattern that should inform Loop-Flow's testing philosophy. Also a spec-driven-development pattern.",
+      "created": "2026-01-22T07:39:38.212Z"
     },
     {
       "id": "INS-035",
       "content": "Spec-driven development: Tests encode the specification. The spec is the source of truth, not the implementation. AI can 'vibecode' the implementation because the spec (tests + verification functions) catches violations. This inverts the traditional 'code then test' flow and makes AI-assisted development safer.",
       "type": "process",
-      "status": "unprocessed",
+      "status": "discussed",
       "source": {
         "task": "LF-023",
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-005"
       },
-      "tags": ["testing", "spec-driven", "tdd", "ai-assisted", "loop-flow-core"],
-      "links": ["INS-034", "INS-015"],
-      "created": "2026-01-20",
-      "notes": "Connects to Loop-Flow's 'developer has the reins' principle. Human writes spec, AI implements. Spec is the control mechanism."
+      "tags": [
+        "testing",
+        "spec-driven",
+        "tdd",
+        "ai-assisted",
+        "loop-flow-core"
+      ],
+      "links": [
+        "INS-034",
+        "INS-015"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Spec-Driven Development' section",
+      "created": "2026-01-22T07:39:38.212Z"
     },
     {
       "id": "INS-036",
       "content": "The human's job in AI-assisted development is to write specs that capture what actually matters. The implementation is a consequence of the spec. Expertise lies in knowing what to specify — this is the hard part that AI cannot do.",
       "type": "process",
-      "status": "unprocessed",
+      "status": "discussed",
       "source": {
         "task": "LF-023",
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-006"
       },
-      "tags": ["testing", "spec-driven", "ai-assisted", "expertise", "philosophy", "loop-flow-core"],
-      "links": ["INS-035", "INS-034", "INS-015"],
-      "created": "2026-01-20",
-      "notes": "Defines the human role in Loop-Flow: spec author, not implementer."
+      "tags": [
+        "testing",
+        "spec-driven",
+        "ai-assisted",
+        "expertise",
+        "philosophy",
+        "loop-flow-core"
+      ],
+      "links": [
+        "INS-035",
+        "INS-034",
+        "INS-015"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Spec-Driven Development' section",
+      "created": "2026-01-22T07:39:38.211Z"
     },
     {
       "id": "INS-037",
@@ -498,10 +899,17 @@
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-007"
       },
-      "tags": ["testing", "property-based-testing", "verification-functions", "patterns"],
-      "links": ["INS-034"],
-      "created": "2026-01-20",
-      "notes": "Informs when to use property-based vs example-based testing."
+      "tags": [
+        "testing",
+        "property-based-testing",
+        "verification-functions",
+        "patterns"
+      ],
+      "links": [
+        "INS-034"
+      ],
+      "notes": "Informs when to use property-based vs example-based testing.",
+      "created": "2026-01-22T07:39:38.211Z"
     },
     {
       "id": "INS-038",
@@ -513,10 +921,18 @@
         "session": "imported from learn-tdd-go",
         "original_id": "EXPORT-008"
       },
-      "tags": ["testing", "verification-functions", "production", "debugging", "reuse"],
-      "links": ["INS-034"],
-      "created": "2026-01-20",
-      "notes": "Testing code isn't throwaway — it can be production code."
+      "tags": [
+        "testing",
+        "verification-functions",
+        "production",
+        "debugging",
+        "reuse"
+      ],
+      "links": [
+        "INS-034"
+      ],
+      "notes": "Testing code isn't throwaway — it can be production code.",
+      "created": "2026-01-22T07:39:38.211Z"
     },
     {
       "id": "INS-039",
@@ -527,10 +943,19 @@
         "task": "version-bump-0.6.0",
         "session": "2026-01-20-S7"
       },
-      "tags": ["loop-flow-core", "distributed-discovery", "miniloop", "team-knowledge", "interviews"],
-      "links": ["INS-019", "INS-025"],
-      "created": "2026-01-20",
-      "notes": "Documented in docs/DISTRIBUTED-DISCOVERY.md. MINILOOP is a 'probe' file — temporary, single-file Loop-Flow for feature branches."
+      "tags": [
+        "loop-flow-core",
+        "distributed-discovery",
+        "miniloop",
+        "team-knowledge",
+        "interviews"
+      ],
+      "links": [
+        "INS-019",
+        "INS-025"
+      ],
+      "notes": "Documented in docs/DISTRIBUTED-DISCOVERY.md. MINILOOP is a 'probe' file — temporary, single-file Loop-Flow for feature branches.",
+      "created": "2026-01-22T07:39:38.210Z"
     },
     {
       "id": "INS-040",
@@ -541,10 +966,15 @@
         "task": "version-bump-0.6.0",
         "session": "2026-01-20-S7"
       },
-      "tags": ["loop-flow-core", "code-review", "pr-review", "risk-assessment"],
+      "tags": [
+        "loop-flow-core",
+        "code-review",
+        "pr-review",
+        "risk-assessment"
+      ],
       "links": [],
-      "created": "2026-01-20",
-      "notes": "Documented in docs/PR-REVIEW-WORKFLOW.md. Practical workflow for AI-assisted PR reviews."
+      "notes": "Captured in WORKFLOW.md 'Code Review Protocol' section",
+      "created": "2026-01-22T07:39:38.210Z"
     },
     {
       "id": "INS-041",
@@ -555,10 +985,18 @@
         "task": "skills-implementation",
         "session": "2026-01-20-S7"
       },
-      "tags": ["loop-flow-core", "skills", "session-management", "reliability"],
-      "links": ["INS-029", "INS-032"],
-      "created": "2026-01-20",
-      "notes": "Skills created in .claude/skills/ and .opencode/skills/. Templates in LOOP-FLOW-SETUP.md."
+      "tags": [
+        "loop-flow-core",
+        "skills",
+        "session-management",
+        "reliability"
+      ],
+      "links": [
+        "INS-029",
+        "INS-032"
+      ],
+      "notes": "Skills created in .claude/skills/ and .opencode/skills/. Templates in LOOP-FLOW-SETUP.md.",
+      "created": "2026-01-22T07:39:38.210Z"
     },
     {
       "id": "INS-042",
@@ -569,10 +1007,19 @@
         "task": "ad-hoc-skills-audit",
         "session": "2026-01-20-S9"
       },
-      "tags": ["skills", "commands", "opencode", "claude-code", "compatibility"],
-      "links": ["INS-041", "INS-029"],
-      "created": "2026-01-20",
-      "notes": "Discovered by reading both tools' docs. OpenCode commands use .opencode/commands/*.md with frontmatter (description field). Claude Code commands merged into skills system."
+      "tags": [
+        "skills",
+        "commands",
+        "opencode",
+        "claude-code",
+        "compatibility"
+      ],
+      "links": [
+        "INS-041",
+        "INS-029"
+      ],
+      "notes": "Discovered by reading both tools' docs. OpenCode commands use .opencode/commands/*.md with frontmatter (description field). Claude Code commands merged into skills system.",
+      "created": "2026-01-22T07:39:38.210Z"
     },
     {
       "id": "INS-043",
@@ -583,10 +1030,18 @@
         "task": "ad-hoc-end-loop-improvement",
         "session": "2026-01-20-S10"
       },
-      "tags": ["loop-flow-core", "skills", "reliability", "emergency-handoff"],
-      "links": ["INS-041", "INS-009"],
-      "created": "2026-01-20",
-      "notes": "Triggered by agent forgetting to save in Session 9. The SAVE-FIRST pattern prevents this."
+      "tags": [
+        "loop-flow-core",
+        "skills",
+        "reliability",
+        "emergency-handoff"
+      ],
+      "links": [
+        "INS-041",
+        "INS-009"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Save-First in Handoffs' section",
+      "created": "2026-01-22T07:39:38.209Z"
     },
     {
       "id": "INS-044",
@@ -597,10 +1052,19 @@
         "task": "LF-022",
         "session": "2026-01-20-S11"
       },
-      "tags": ["loop-flow-core", "skills", "architecture", "framework-skills"],
-      "links": ["INS-029", "INS-041", "INS-042"],
-      "created": "2026-01-20",
-      "notes": "Distinguishes skills that come from frameworks (Loop-Flow, etc.) from project-specific user skills. Enables future tooling to differentiate them."
+      "tags": [
+        "loop-flow-core",
+        "skills",
+        "architecture",
+        "framework-skills"
+      ],
+      "links": [
+        "INS-029",
+        "INS-041",
+        "INS-042"
+      ],
+      "notes": "Distinguishes skills that come from frameworks (Loop-Flow, etc.) from project-specific user skills. Enables future tooling to differentiate them.",
+      "created": "2026-01-22T07:39:38.209Z"
     },
     {
       "id": "INS-045",
@@ -611,10 +1075,20 @@
         "task": "LF-001",
         "session": "2026-01-21-S15"
       },
-      "tags": ["loop-flow-core", "mcp", "architecture", "cognitive-tools", "api-design"],
-      "links": ["INS-022", "INS-008", "INS-043"],
-      "created": "2026-01-21",
-      "notes": "Core insight from Session 15. Traditional APIs are CRUD (create/read/update/delete). Cognitive APIs are scaffolding for how agents think. This reframes what an MCP server should provide."
+      "tags": [
+        "loop-flow-core",
+        "mcp",
+        "architecture",
+        "cognitive-tools",
+        "api-design"
+      ],
+      "links": [
+        "INS-022",
+        "INS-008",
+        "INS-043"
+      ],
+      "notes": "Core insight from Session 15. Traditional APIs are CRUD (create/read/update/delete). Cognitive APIs are scaffolding for how agents think. This reframes what an MCP server should provide.",
+      "created": "2026-01-22T07:39:38.209Z"
     },
     {
       "id": "INS-046",
@@ -625,10 +1099,19 @@
         "task": "LF-001",
         "session": "2026-01-21-S15"
       },
-      "tags": ["loop-flow-core", "process", "learning", "vibecoding"],
-      "links": ["INS-015", "INS-025", "INS-027"],
-      "created": "2026-01-21",
-      "notes": "Inverts the traditional learning flow. Session 15 validated this: we built a working MCP server first, THEN explored it. Understanding emerged from having something real to examine."
+      "tags": [
+        "loop-flow-core",
+        "process",
+        "learning",
+        "vibecoding"
+      ],
+      "links": [
+        "INS-015",
+        "INS-025",
+        "INS-027"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Vibecode-then-Explore' section",
+      "created": "2026-01-22T07:39:38.208Z"
     },
     {
       "id": "INS-047",
@@ -639,10 +1122,18 @@
         "task": "LF-001",
         "session": "2026-01-21-S15"
       },
-      "tags": ["loop-flow-core", "mcp", "architecture", "simplification"],
-      "links": ["INS-017", "INS-018"],
-      "created": "2026-01-21",
-      "notes": "Key simplification discovered in Session 15. Original plan required SQLite before MCP tools could work. New approach: MCP reads files directly, SQLite is a future enhancement for multi-repo queries."
+      "tags": [
+        "loop-flow-core",
+        "mcp",
+        "architecture",
+        "simplification"
+      ],
+      "links": [
+        "INS-017",
+        "INS-018"
+      ],
+      "notes": "Key simplification discovered in Session 15. Original plan required SQLite before MCP tools could work. New approach: MCP reads files directly, SQLite is a future enhancement for multi-repo queries.",
+      "created": "2026-01-22T07:39:38.208Z"
     },
     {
       "id": "INS-048",
@@ -653,16 +1144,375 @@
         "task": "LF-001",
         "session": "2026-01-21-S15"
       },
-      "tags": ["mcp", "claude-code", "opencode", "compatibility"],
-      "links": ["INS-042"],
-      "created": "2026-01-21",
-      "notes": "Practical finding from Session 15. One MCP server implementation serves both tools. Config locations differ but the server code is shared."
+      "tags": [
+        "mcp",
+        "claude-code",
+        "opencode",
+        "compatibility"
+      ],
+      "links": [
+        "INS-042"
+      ],
+      "notes": "Practical finding from Session 15. One MCP server implementation serves both tools. Config locations differ but the server code is shared.",
+      "created": "2026-01-22T07:39:38.208Z"
+    },
+    {
+      "id": "INS-049",
+      "content": "claude-mem represents a different philosophy than LoopFlow: automatic capture vs intentional capture. claude-mem hooks into lifecycle events (PostToolUse, afterFileEdit, afterShellExecution) to capture EVERYTHING automatically, then uses AI to compress into summaries. LoopFlow relies on deliberate insight capture. Both have value: auto-capture ensures completeness, manual capture ensures meaning.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "claude-mem-analysis",
+        "session": "2026-01-21-S16"
+      },
+      "tags": [
+        "claude-mem",
+        "architecture",
+        "capture-philosophy",
+        "comparison"
+      ],
+      "links": [
+        "INS-004",
+        "INS-015"
+      ],
+      "notes": "Key philosophical difference discovered. claude-mem = 'remember everything, compress later'. LoopFlow = 'capture what matters, preserve theory'. The synthesis: dual capture - auto for completeness, manual for meaning.",
+      "created": "2026-01-22T07:39:38.207Z"
+    },
+    {
+      "id": "INS-050",
+      "content": "Progressive disclosure is a token-efficiency pattern: never load full details upfront. claude-mem's 3-layer workflow: (1) search → compact index ~50-100 tokens/result, (2) timeline → chronological context, (3) get_observations → full details ~500-1000 tokens/result. Agent filters at each layer, achieving ~10x token savings. LoopFlow should adopt this pattern as knowledge accumulates.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "claude-mem-analysis",
+        "session": "2026-01-21-S16"
+      },
+      "tags": [
+        "claude-mem",
+        "progressive-disclosure",
+        "token-efficiency",
+        "search"
+      ],
+      "links": [
+        "INS-024",
+        "INS-007"
+      ],
+      "notes": "Critical for scaling. Current LoopFlow dumps full context. As insights accumulate, this becomes expensive. Progressive disclosure: show index first, let agent decide what to expand.",
+      "created": "2026-01-22T07:39:38.207Z"
+    },
+    {
+      "id": "INS-051",
+      "content": "The distinction between observations and insights: Observations are raw events (tool calls, file edits, commands) - automatically captured, high volume, factual. Insights are synthesized knowledge (patterns, decisions, learnings) - manually captured, curated, meaningful. Observations answer 'what happened'. Insights answer 'why it matters'. Both are valuable; they serve different purposes.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "claude-mem-analysis",
+        "session": "2026-01-21-S16"
+      },
+      "tags": [
+        "claude-mem",
+        "observations",
+        "insights",
+        "dual-capture",
+        "loop-flow-core"
+      ],
+      "links": [
+        "INS-049",
+        "INS-001"
+      ],
+      "notes": "This is the synthesis of claude-mem's approach and LoopFlow's philosophy. claude-mem calls them 'observations'. LoopFlow calls them 'insights'. They're complementary: observations are raw material, insights are refined knowledge.",
+      "created": "2026-01-22T07:39:38.207Z"
+    },
+    {
+      "id": "INS-052",
+      "content": "Worker service architecture separates concerns: MCP server (lightweight, agent-facing, synchronous) vs Worker (heavy, async processing, web UI). claude-mem uses Bun worker on port 37777 for: AI summarization, embedding generation, queue processing, web viewer. This split enables async operations that would block the MCP server. Consider for LoopFlow if we add summarization or web UI.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "claude-mem-analysis",
+        "session": "2026-01-21-S16"
+      },
+      "tags": [
+        "claude-mem",
+        "architecture",
+        "worker-service",
+        "async"
+      ],
+      "links": [
+        "INS-047"
+      ],
+      "notes": "LoopFlow MCP currently reads files synchronously. Works fine for now. Worker becomes valuable when we add: AI summarization, embeddings, web dashboard. Premature optimization if we don't need those features.",
+      "created": "2026-01-22T07:39:38.206Z"
+    },
+    {
+      "id": "INS-053",
+      "content": "Timeline context complements associative search. loop_connect finds related insights by concept (associative). Timeline shows what was happening around a specific event (temporal). Use case: 'What was I working on when I made this decision?' helps reconstruct the reasoning narrative. Timeline + association = full context picture.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "claude-mem-analysis",
+        "session": "2026-01-21-S16"
+      },
+      "tags": [
+        "claude-mem",
+        "timeline",
+        "temporal-context",
+        "search"
+      ],
+      "links": [
+        "INS-050"
+      ],
+      "notes": "Two dimensions of context: conceptual (what relates to this?) and temporal (what was happening when?). LoopFlow has the former via loop_connect. Timeline would add the latter.",
+      "created": "2026-01-22T07:39:38.206Z"
+    },
+    {
+      "id": "INS-054",
+      "content": "Vibe-design: Start with a comprehensive best-effort design, then iterate. Like vibecode-then-explore but for architecture. Don't over-analyze upfront — draft the full design quickly, then poke holes. The draft becomes a vehicle for discovering what's wrong. This inverts traditional 'think deeply first' and instead uses the artifact to surface thinking.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "process",
+        "design",
+        "vibecoding"
+      ],
+      "links": [
+        "INS-046"
+      ],
+      "notes": "Captured in WORKFLOW.md 'Vibe-Design' section",
+      "created": "2026-01-22T07:39:38.206Z"
+    },
+    {
+      "id": "INS-055",
+      "content": "Layered architecture for testability: MCP handlers → Services → Business Rules → Repositories → Storage. Business Rules are pure functions with no I/O — all domain logic lives here and is trivially testable. Services orchestrate and handle I/O. This seam pattern keeps the core logic isolated from infrastructure concerns.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "architecture",
+        "testing",
+        "pure-functions"
+      ],
+      "links": [
+        "INS-034",
+        "INS-035"
+      ],
+      "notes": "Key architectural decision for progressive disclosure implementation. Scoring, summarization, filtering, migration transforms are all pure functions. Services compose them with I/O.",
+      "created": "2026-01-22T07:39:38.205Z"
+    },
+    {
+      "id": "INS-056",
+      "content": "SQLite as source of truth with JSON views: Store data in SQLite for efficient queries, generate JSON files for human readability and git diffs. The JSON files become read-only views — still useful for inspection, but the database is authoritative. Best of both worlds.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "architecture",
+        "sqlite",
+        "json"
+      ],
+      "links": [
+        "INS-047"
+      ],
+      "notes": "Enables: efficient FTS5 search, proper indexes, atomic writes, schema migrations. Preserves: human-readable files, git-friendly diffs, backward compatibility with existing workflows.",
+      "created": "2026-01-22T07:39:38.205Z"
+    },
+    {
+      "id": "INS-057",
+      "content": "Hybrid AI strategy: Heuristics as fast default, local LLM (Ollama) as optional enhancement, cloud AI as future possibility. The MCP server can detect if Ollama is running and use it opportunistically. This gives zero-cost operation by default with smart upgrades when available.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "architecture",
+        "ai",
+        "ollama"
+      ],
+      "links": [
+        "INS-024"
+      ],
+      "notes": "For summarization: heuristics (first sentence, truncation) are instant and free. Ollama with phi3 is local and cheap. Cloud AI is powerful but costly. Layer them: try heuristic, enhance with Ollama if available.",
+      "created": "2026-01-22T07:39:38.204Z"
+    },
+    {
+      "id": "INS-058",
+      "content": "DSPy as programmatic prompt engineering: Instead of hand-crafting prompts, define typed signatures and let DSPy optimize them from examples. Aligns with 'developer has the reins' — you're engineering prompts, not vibing them. Challenge: DSPy is Python, LoopFlow is TypeScript. Options: subprocess, HTTP service, or port the concepts.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "dspy",
+        "prompt-engineering",
+        "ai",
+        "future"
+      ],
+      "links": [
+        "INS-015",
+        "INS-035"
+      ],
+      "notes": "High potential fit for LoopFlow. Signatures for: SummarizeInsight, ScoreRelevance, GenerateQuestions. Requires spike (LF-069) to evaluate integration patterns.",
+      "created": "2026-01-22T07:39:38.204Z"
+    },
+    {
+      "id": "INS-059",
+      "content": "Persona-based AI architecture: Instead of traditional CRUD-style MCP tools, design cognitive tools as 'personas' the main agent can consult. Examples: Curator (keeper of insights, knows what's been learned), TaskMaster (workflow management, prioritization), Scholar (research + technical knowledge, builds knowledge bases), Contrarian (devil's advocate, finds flaws in reasoning), Council (orchestrates voting/consensus among personas). The main 'Codriver' agent reasons about which persona to consult for different needs.",
+      "type": "architecture",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "personas",
+        "multi-agent",
+        "architecture",
+        "future"
+      ],
+      "links": [
+        "INS-045",
+        "INS-060"
+      ],
+      "notes": "Shifts from 'tools as functions' to 'tools as collaborators'. Each persona encapsulates domain knowledge + judgment, not just data access. The Contrarian is particularly interesting — a built-in adversarial reviewer.",
+      "created": "2026-01-22T07:39:38.204Z"
+    },
+    {
+      "id": "INS-060",
+      "content": "The Digital Clockwork Muse (Saunders & Gero, 2001): Computational model of creativity using multiple novelty-seeking agents in a social context. Key ideas: (1) Agents assess 'interestingness' of artifacts, (2) Agents communicate interesting discoveries to others, (3) Agents reward each other for finding interesting things. Creativity emerges from social dynamics between specialized agents, not from a single general agent. Searching for different degrees of novelty affects both artifacts produced and social organization.",
+      "type": "domain",
+      "status": "unprocessed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18",
+        "external": "Saunders & Gero (2001) - The Digital Clockwork Muse: A Computational Model of Aesthetic Evolution"
+      },
+      "tags": [
+        "creativity",
+        "multi-agent",
+        "novelty",
+        "research",
+        "digital-clockwork-muse"
+      ],
+      "links": [
+        "INS-059"
+      ],
+      "notes": "Academic foundation for persona-based architecture. The reward system and communication of discoveries maps well to LoopFlow's insight sharing. The 'interestingness' assessment maps to relevance scoring.",
+      "created": "2026-01-22T07:39:38.203Z"
+    },
+    {
+      "id": "INS-061",
+      "content": "Fluid API paradigm: Instead of designing fixed APIs, design for creative reasoning by the main agent. The API becomes semantic — personas the agent can consult — rather than procedural. The agent reasons 'maybe the Curator can answer this' or 'let me ask the Contrarian'. This shifts from 'call the right function' to 'have a conversation with the right collaborator'. The API surface is smaller but the capability space is larger because the agent can creatively combine persona consultations.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "paradigm-shift",
+        "fluid-api",
+        "creative-reasoning",
+        "personas"
+      ],
+      "links": [
+        "INS-059",
+        "INS-060",
+        "INS-062"
+      ],
+      "notes": "KEY INSIGHT: Traditional APIs constrain; semantic APIs enable. The main agent's creativity becomes the API's extensibility mechanism.",
+      "created": "2026-01-22T07:39:38.203Z"
+    },
+    {
+      "id": "INS-062",
+      "content": "Use-case driven development with ad-hoc API: Development flows from discovered use cases, not pre-planned features. Use cases can be defined ad-hoc in markdown or plain description, then potentially crystallize into process insights. The loop: (1) User discovers a need, (2) Describes it in natural language, (3) Main agent reasons about how personas could address it, (4) If valuable, the pattern becomes a captured insight, (5) Insight informs future persona behavior. This is 'programming in English' that feeds back into the system's knowledge.",
+      "type": "process",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "paradigm-shift",
+        "use-case-driven",
+        "programming-in-english",
+        "feedback-loop"
+      ],
+      "links": [
+        "INS-061",
+        "INS-035",
+        "INS-036"
+      ],
+      "notes": "BREAKTHROUGH: The API is not fixed — it evolves through use. Ad-hoc use cases become process insights which become system capabilities. This closes the loop between 'using LoopFlow' and 'developing LoopFlow'.",
+      "created": "2026-01-22T07:39:38.202Z"
+    },
+    {
+      "id": "INS-063",
+      "content": "LoopFlow as self-improving system: The feedback loop from use-case discovery → ad-hoc description → insight capture → persona enhancement means LoopFlow improves itself through use. Each novel use case that gets captured as an insight expands the system's capability space. The developer isn't just using the tool — they're teaching it. This aligns with 'developer has the reins' but adds: developer also has the steering wheel for the tool's evolution.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "paradigm-shift",
+        "self-improving",
+        "feedback-loop",
+        "meta"
+      ],
+      "links": [
+        "INS-062",
+        "INS-061",
+        "INS-002",
+        "INS-015"
+      ],
+      "notes": "META-INSIGHT: LoopFlow becomes a theory-building system that builds theories about itself. The Naur framing (INS-002) applies recursively — LoopFlow preserves theory about how to preserve theory.",
+      "created": "2026-01-22T07:39:38.202Z"
+    },
+    {
+      "id": "INS-064",
+      "content": "The creative agent as API extensibility: In traditional systems, extensibility comes from plugin architectures or configuration. In the persona paradigm, extensibility comes from the main agent's creative reasoning about how to use personas. New capabilities emerge not from code changes but from novel combinations of persona consultations. The system's capability space is bounded only by the agent's creativity in using it.",
+      "type": "architecture",
+      "status": "discussed",
+      "source": {
+        "task": "LF-049",
+        "session": "2026-01-21-S18"
+      },
+      "tags": [
+        "loop-flow-core",
+        "paradigm-shift",
+        "extensibility",
+        "creative-reasoning",
+        "emergence"
+      ],
+      "links": [
+        "INS-061",
+        "INS-060"
+      ],
+      "notes": "This inverts the traditional relationship: instead of the API defining what's possible, the agent's creativity defines what's possible. The API provides building blocks; the agent provides the architecture.",
+      "created": "2026-01-22T07:39:38.201Z"
     }
-  ],
-  "link_types": {
-    "builds_on": "This insight extends or deepens another",
-    "contradicts": "This insight challenges or refines another",
-    "exemplifies": "This is a concrete example of an abstract insight",
-    "synthesizes": "This insight was created by combining others"
-  }
+  ]
 }

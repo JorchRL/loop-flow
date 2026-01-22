@@ -3,87 +3,73 @@
  * Loop-Flow CLI Entry Point
  *
  * Commands:
- * - init: Initialize loop-flow for current repo
- * - status: Show current session status
- * - tasks: List and manage tasks
- * - export: Export to human-readable formats
- * - migrate: Migrate from file-based workflow
+ * - init: Initialize loop-flow for current repo (with setup wizard)
+ * - setup: Run setup wizard to configure AI tools
+ * - ui: Start web UI dashboard
  * - mcp: Start MCP server
+ * 
+ * Note: Task management, export, and migration are handled via MCP tools
+ * (loop_task_list, loop_export, loop_import) for use within AI sessions.
  */
 
 import { Command } from "commander";
+import * as path from "path";
 import { VERSION } from "../index.js";
+import { initLoopFlow, formatInitResult } from "./init.js";
+import { runSetupWizard } from "./wizard.js";
 
 const program = new Command();
 
 program
-  .name("loop-flow")
+  .name("loopflow")
   .description("MCP server for AI-assisted development workflows")
   .version(VERSION);
 
 // Init command
 program
   .command("init")
-  .description("Initialize loop-flow for the current repository")
-  .option("-t, --template <template>", "Template to use", "generic")
-  .option("--no-agents-md", "Skip creating AGENTS.md")
+  .description("Initialize LoopFlow for the current repository")
+  .option("-p, --path <path>", "Target directory (defaults to current)")
+  .option("--no-agents-md", "Skip creating/updating AGENTS.md")
+  .option("--no-mcp", "Skip MCP tool configuration wizard")
+  .option("-f, --force", "Reinitialize even if already set up")
   .action(async (options) => {
-    console.log("Initializing loop-flow...");
-    console.log("Template:", options.template);
-    console.log("Create AGENTS.md:", options.agentsMd);
-    // TODO: Implement init logic
-    console.log("\n[Not yet implemented - see LF-004]");
+    // First, initialize the repo
+    const result = await initLoopFlow({
+      path: options.path,
+      noAgentsMd: !options.agentsMd,
+      force: options.force,
+      noMcp: !options.mcp,
+    });
+    
+    if (!result.success) {
+      console.log(formatInitResult(result));
+      process.exit(1);
+    }
+    
+    // Show what was created
+    console.log(formatInitResult(result));
+    console.log("");
+    
+    // Run wizard unless --no-mcp
+    if (options.mcp !== false) {
+      const wizardResult = await runSetupWizard({
+        repoPath: options.path || process.cwd(),
+      });
+      process.exit(wizardResult.success ? 0 : 1);
+    } else {
+      console.log("Skipping MCP configuration. Run 'loopflow setup' later to configure AI tools.");
+      process.exit(0);
+    }
   });
 
-// Status command
+// Setup command (standalone wizard)
 program
-  .command("status")
-  .description("Show current session status")
+  .command("setup")
+  .description("Configure AI tools (Claude Code, OpenCode, Cursor) to use LoopFlow")
   .action(async () => {
-    console.log("Loop-Flow Status");
-    console.log("================");
-    // TODO: Implement status logic
-    console.log("\n[Not yet implemented - see LF-004]");
-  });
-
-// Tasks command
-program
-  .command("tasks")
-  .description("List tasks")
-  .option("-s, --status <status>", "Filter by status")
-  .option("-p, --priority <priority>", "Filter by priority")
-  .action(async (options) => {
-    console.log("Tasks");
-    console.log("=====");
-    if (options.status) console.log("Status filter:", options.status);
-    if (options.priority) console.log("Priority filter:", options.priority);
-    // TODO: Implement tasks logic
-    console.log("\n[Not yet implemented - see LF-007]");
-  });
-
-// Export command
-program
-  .command("export <type>")
-  .description("Export backlog or progress")
-  .option("-f, --format <format>", "Output format (json, markdown)", "markdown")
-  .action(async (type, options) => {
-    console.log(`Exporting ${type} as ${options.format}...`);
-    // TODO: Implement export logic
-    console.log("\n[Not yet implemented - see LF-010]");
-  });
-
-// Migrate command
-program
-  .command("migrate")
-  .description("Migrate from file-based workflow")
-  .requiredOption("-b, --backlog <path>", "Path to backlog.json")
-  .requiredOption("-p, --progress <path>", "Path to progress.txt")
-  .action(async (options) => {
-    console.log("Migrating from file-based workflow...");
-    console.log("Backlog:", options.backlog);
-    console.log("Progress:", options.progress);
-    // TODO: Implement migrate logic
-    console.log("\n[Not yet implemented - see LF-009]");
+    const result = await runSetupWizard({});
+    process.exit(result.success ? 0 : 1);
   });
 
 // MCP server command
@@ -94,6 +80,59 @@ program
   .action(async () => {
     // Import and run the MCP server
     await import("../mcp/server.js");
+  });
+
+// UI command
+program
+  .command("ui")
+  .description("Start web UI dashboard")
+  .option("-p, --port <port>", "Port to run on", "3000")
+  .option("--no-open", "Don't auto-open browser")
+  .option("--path <path>", "Repository path (defaults to current directory)")
+  .action(async (options) => {
+    const port = parseInt(options.port, 10);
+    const repoPath = options.path ? path.resolve(options.path) : process.cwd();
+    
+    // Check if .loop-flow exists
+    const loopFlowDir = path.join(repoPath, ".loop-flow");
+    const fs = await import("fs");
+    if (!fs.existsSync(loopFlowDir)) {
+      console.error("Error: No .loop-flow directory found.");
+      console.error("Run 'loopflow init' first to initialize LoopFlow.");
+      process.exit(1);
+    }
+    
+    // Determine static directory (built UI files)
+    // In development, UI is served by Vite dev server
+    // In production, UI is built and served from dist/ui
+    const staticDir = path.join(import.meta.dirname, "..", "ui");
+    const hasBuiltUI = fs.existsSync(path.join(staticDir, "index.html"));
+    
+    console.log("Starting LoopFlow UI...");
+    console.log(`Repository: ${repoPath}`);
+    console.log(`Port: ${port}`);
+    
+    if (!hasBuiltUI) {
+      console.log("\nNote: No built UI found. Run the following to build:");
+      console.log("  cd src/ui && npm install && npm run build");
+      console.log("\nStarting API server only (use Vite dev server for UI)...\n");
+    }
+    
+    // Start the server
+    const { startServer } = await import("../api/server.js");
+    await startServer({
+      port,
+      repoPath,
+      staticDir: hasBuiltUI ? staticDir : undefined,
+    });
+    
+    // Auto-open browser
+    if (options.open) {
+      const open = (await import("open")).default;
+      const url = `http://localhost:${port}`;
+      console.log(`\nOpening ${url} in browser...`);
+      await open(url);
+    }
   });
 
 program.parse();

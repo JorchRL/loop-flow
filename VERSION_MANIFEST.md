@@ -2,8 +2,8 @@
 
 > Single source of truth for LoopFlow versioning.
 
-**Current Version:** 0.8.0  
-**Last Updated:** 2026-01-20
+**Current Version:** 0.9.0  
+**Last Updated:** 2026-01-22
 
 ---
 
@@ -44,27 +44,31 @@ All should show the current version (except `schema_version` which is separate).
 
 ## Changelog
 
+### 0.9.0 (2026-01-22)
+
+**MCP Tools Replace Skills**
+
+- **Removed skills**: Skills (`.claude/skills/`, `.opencode/skills/`, `.opencode/commands/`) are now obsolete
+- **MCP tools are the interface**: `loop_orient`, `loop_remember`, `loop_connect`, `loop_probe`, `loop_handoff`
+- **SQLite is source of truth**: Writes go directly to SQLite, JSON files are for export/import
+- **Updated AGENTS.md instruction**: Agents call `loop_orient` instead of reading files manually
+- **Removed skill templates**: LOOP-FLOW-SETUP.md no longer contains skill templates
+
+---
+
 ### 0.8.0 (2026-01-20)
 
-**Separate Emergency Bail Command**
+**Separate Emergency Bail Command** (Superseded by v0.9.0 MCP tools)
 
-- Added `/loop-bail` skill: Emergency exit that only creates RESUME.md (fast, no questions)
-- Separated emergency handling from `/loop-end` for clarity
-- `/loop-end` is now purely for graceful handoffs
-- `/loop-start` now checks for RESUME.md and offers to resume from a bail
-- Three commands: `/loop-start` (begin), `/loop-end` (graceful), `/loop-bail` (emergency)
+- Skills replaced by MCP tools
 
 ---
 
 ### 0.7.0 (2026-01-20)
 
-**Skills System (loop-start, loop-end)**
+**Skills System** (Superseded by v0.9.0 MCP tools)
 
-- Added `/loop-start` skill: Reliably reads .loop-flow/ state and proposes tasks
-- Added `/loop-end` skill: Graceful handoff OR context emergency with RESUME.md
-- Skills follow Agent Skills standard (works in Claude Code + OpenCode)
-- Skill templates included in LOOP-FLOW-SETUP.md
-- Skills live in `.claude/skills/` or `.opencode/skills/` (user's choice)
+- Skills replaced by MCP tools
 
 ---
 

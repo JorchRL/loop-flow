@@ -1,39 +1,64 @@
 {
-  "name": "loop-flow",
-  "version": "0.1.0",
+  "name": "loopflow",
+  "version": "1.0.0",
   "description": "MCP server for structured AI-assisted development workflows",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "loop-flow": "dist/cli/index.js"
+    "loopflow": "dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JorchRL/loop-flow.git"
+  },
+  "homepage": "https://github.com/JorchRL/loop-flow#readme",
+  "bugs": {
+    "url": "https://github.com/JorchRL/loop-flow/issues"
   },
   "scripts": {
     "build": "tsc",
+    "build:ui": "cd src/ui && npm run build && mkdir -p ../../dist/ui && cp -r dist/* ../../dist/ui/",
+    "build:all": "npm run build && npm run build:ui",
     "dev": "tsc --watch",
+    "dev:ui": "cd src/ui && npm run dev",
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
-    "start:mcp": "node dist/mcp/server.js"
+    "start:mcp": "node dist/mcp/server.js",
+    "start:ui": "node dist/cli/index.js ui",
+    "prepublishOnly": "npm run build && npm run test:run"
   },
   "keywords": [
     "mcp",
     "ai",
     "workflow",
     "claude",
+    "cursor",
+    "opencode",
     "development",
-    "productivity"
+    "productivity",
+    "model-context-protocol"
   ],
-  "author": "",
+  "author": "Jorge Romero",
   "license": "MIT",
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "@hono/node-server": "^1.19.9",
     "@modelcontextprotocol/sdk": "^1.25.3",
     "better-sqlite3": "^11.0.0",
     "commander": "^12.0.0",
+    "hono": "^4.11.5",
+    "open": "^11.0.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {
