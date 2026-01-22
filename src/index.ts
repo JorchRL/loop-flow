@@ -6,7 +6,10 @@
  * MCP server entry point is at src/mcp/server.ts
  */
 
-export * from "./types.js";
+import { createRequire } from "module";
 
-// Version info
-export const VERSION = "0.1.0";
+// Read version from package.json (single source of truth)
+const require = createRequire(import.meta.url);
+const pkg = require("../package.json");
+
+export const VERSION: string = pkg.version;

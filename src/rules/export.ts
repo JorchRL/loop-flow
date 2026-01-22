@@ -8,6 +8,7 @@
 import type { InsightRecord } from "../db/repositories/insights.js";
 import type { TaskRecord } from "../db/repositories/tasks.js";
 import { recordToJsonInsight, recordToJsonTask } from "./migration.js";
+import { VERSION } from "../index.js";
 
 // =============================================================================
 // Export Types
@@ -63,7 +64,7 @@ export interface ExportedBacklogFile {
  */
 export function generateInsightsJson(
   records: InsightRecord[],
-  schemaVersion: string = "0.1.0"
+  schemaVersion: string = VERSION
 ): ExportedInsightsFile {
   return {
     schema_version: schemaVersion,

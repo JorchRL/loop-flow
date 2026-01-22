@@ -1,5 +1,5 @@
 /**
- * LoopFlow MCP Server v0.7.0 - CRUD Edition
+ * LoopFlow MCP Server
  * 
  * Cognitive tools for AI-assisted development:
  * - loop_orient: Full situational awareness (workflow, insights, sessions, repo context)
@@ -11,22 +11,13 @@
  * - loop_handoff: Session transitions (graceful or emergency)
  * - loop_export: Generate JSON files from SQLite for git/humans
  * - loop_import: Import JSON/progress files into SQLite
+ * - loop_ui: Start web UI dashboard and open in browser
  * 
- * CRUD tools (NEW in v0.7.0):
+ * CRUD tools:
  * - loop_task_create: Create new tasks
  * - loop_task_update: Update task status, priority, etc.
  * - loop_task_list: List tasks with filters
  * - loop_insight_update: Update insight status, tags, links
- * 
- * v0.6.0:
- * - loop_handoff now creates session record in sessions table (LF-080 fix)
- * - Session ID auto-generated with date and sequential number
- * 
- * v0.5.0:
- * - Sessions table (parsed from progress.txt)
- * - Repo context (agent-maintained summary + suggested actions)
- * - Paginated insights with is_complete flag
- * - loop_update_summary tool for agent to update repo context
  * 
  * Architecture: SQLite is source of truth. JSON files are import/export format.
  */
@@ -39,6 +30,7 @@ import * as path from "path";
 import { initializeDatabase, importFromJson, importProgress, type LoopFlowDatabase } from "../db/database.js";
 import { summarizeInsight } from "../rules/summarization.js";
 import { generateInsightsJson, generateBacklogJson } from "../rules/export.js";
+import { VERSION } from "../index.js";
 
 // Constants for pagination
 const INSIGHTS_PAGE_SIZE = 50; // Max insights to return in orient before suggesting loop_expand
@@ -84,7 +76,7 @@ function getDatabase(repoPath: string): LoopFlowDatabase {
 
 const server = new McpServer({
   name: "loopflow",
-  version: "0.6.0",
+  version: VERSION,
 });
 
 // =============================================================================
@@ -110,9 +102,9 @@ server.tool(
             error: "No .loop-flow directory found",
             searched_path: targetPath,
             setup_instructions: {
-              step_1: "Install LoopFlow CLI globally: npm install -g loop-flow",
+              step_1: "Install LoopFlow CLI globally: npm install -g loopflow",
               step_2: "Initialize in your repo: loopflow init",
-              alternative: "Or run: npx loop-flow init",
+              alternative: "Or run: npx loopflow init",
             },
             what_init_does: [
               "Creates .loop-flow/ directory structure",
@@ -245,7 +237,6 @@ server.tool(
       quick_stats: {
         total_insights: totalInsights,
         insights_by_type: {
-          process: database.insights.count({ types: ["process"] }),
           domain: database.insights.count({ types: ["domain"] }),
           architecture: database.insights.count({ types: ["architecture"] }),
           edge_case: database.insights.count({ types: ["edge_case"] }),
@@ -350,7 +341,7 @@ server.tool(
   {
     query: z.string().describe("Search query (supports multiple words)"),
     scope: z.enum(["all", "insights", "tasks"]).optional().describe("What to search (default: all)"),
-    types: z.array(z.string()).optional().describe("Filter insight types (process, domain, architecture, edge_case, technical)"),
+    types: z.array(z.string()).optional().describe("Filter insight types (domain, architecture, edge_case, technical)"),
     statuses: z.array(z.string()).optional().describe("Filter by status"),
     limit: z.number().optional().describe("Max results (default: 20, max: 50)"),
   },
@@ -577,8 +568,8 @@ server.tool(
   "Capture an insight with zero friction. Don't derail - just snapshot and keep going. Returns the insight ID.",
   {
     content: z.string().describe("The insight to capture"),
-    type: z.enum(["process", "domain", "architecture", "edge_case", "technical"]).optional()
-      .describe("Type of insight (defaults to technical)"),
+    type: z.enum(["domain", "architecture", "edge_case", "technical"]).optional()
+      .describe("Type of insight (defaults to technical). Domain=business/problem space, Architecture=design decisions, Edge_case=gotchas, Technical=patterns/tricks"),
     tags: z.array(z.string()).optional().describe("Optional tags"),
   },
   async ({ content, type = "technical", tags = [] }) => {
@@ -856,6 +847,7 @@ server.tool(
       exported_files: [] as string[],
       suggested_actions_saved: !!next_session_should,
       session_record_created: true,
+      ui_server_stopped: false,
     };
 
     // Export files (default: true for graceful, false for emergency)
@@ -907,6 +899,17 @@ ${completed?.map(c => `- ${c}`).join("\n") || "Nothing recorded"}
 `;
       fs.writeFileSync(resumePath, resumeContent);
       handoff.resume_file = resumePath;
+    }
+
+    // Stop managed UI server if running
+    try {
+      const { stopManagedServer, isManagedServerRunning } = await import("../api/server.js");
+      if (isManagedServerRunning()) {
+        stopManagedServer();
+        handoff.ui_server_stopped = true;
+      }
+    } catch {
+      // Server module may not be loaded, that's fine
     }
 
     // Close database connection
@@ -1362,6 +1365,92 @@ server.tool(
 );
 
 // =============================================================================
+// TOOL: loop_ui
+// "Open the dashboard" - start web UI server and open browser
+// =============================================================================
+
+server.tool(
+  "loop_ui",
+  "Start the LoopFlow web UI dashboard and open it in the browser. Shows tasks, insights, and sessions visually. Server auto-stops on loop_handoff or after 30 min timeout.",
+  {
+    port: z.number().optional().describe("Port to run on (default: 3000)"),
+    no_open: z.boolean().optional().describe("Don't auto-open browser (default: false)"),
+  },
+  async ({ port = 3000, no_open = false }) => {
+    if (!currentSession) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            error: "No active session. Call loop_orient first.",
+          }, null, 2),
+        }],
+      };
+    }
+
+    try {
+      // Import the server module
+      const { startManagedServer, isManagedServerRunning } = await import("../api/server.js");
+      
+      // Determine static directory
+      const staticDir = path.join(import.meta.dirname, "..", "ui");
+      const hasBuiltUI = fs.existsSync(path.join(staticDir, "index.html"));
+      
+      const wasAlreadyRunning = isManagedServerRunning();
+      
+      // Start the managed server (singleton, auto-shutdown enabled)
+      const managed = startManagedServer({
+        port,
+        repoPath: currentSession.repoPath,
+        staticDir: hasBuiltUI ? staticDir : undefined,
+        managed: true,
+      });
+      
+      // Auto-open browser (only if not already running)
+      if (!no_open && !wasAlreadyRunning) {
+        const open = (await import("open")).default;
+        await open(managed.url);
+      }
+
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            success: true,
+            url: managed.url,
+            browser_opened: !no_open && !wasAlreadyRunning,
+            reused_existing: wasAlreadyRunning,
+            has_ui: hasBuiltUI,
+            message: wasAlreadyRunning
+              ? `UI already running at ${managed.url} (timeout reset)`
+              : hasBuiltUI 
+                ? `Web UI running at ${managed.url}` 
+                : `API server running at ${managed.url} (UI not built - run 'npm run build:ui' to enable)`,
+            lifecycle: "Auto-stops on loop_handoff or after 30 min inactivity",
+            features: [
+              "Dashboard - stats, recent sessions at a glance",
+              "Backlog - kanban board view of tasks",
+              "Insights - browse and search knowledge graph",
+              "Sessions - timeline of work history",
+            ],
+          }, null, 2),
+        }],
+      };
+    } catch (error) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            error: "Failed to start UI server",
+            details: error instanceof Error ? error.message : String(error),
+          }, null, 2),
+        }],
+      };
+    }
+  }
+);
+
+// =============================================================================
 // Resources: Serve LoopFlow methodology
 // =============================================================================
 
@@ -1401,71 +1490,8 @@ server.resource(
   }
 );
 
-server.resource(
-  "loopflow://insights/process",
-  "Process insights (loop-flow-core methodology learnings)",
-  async (uri) => {
-    const repoPath = currentSession?.repoPath || findLoopFlowRoot(process.cwd());
-    if (!repoPath) {
-      return {
-        contents: [{
-          uri: uri.href,
-          mimeType: "text/plain",
-          text: "No LoopFlow repo found.",
-        }],
-      };
-    }
-
-    // Use database if available
-    if (currentSession) {
-      const processInsights = currentSession.database.insights.findAll(
-        { types: ["process"] },
-        { limit: 50 }
-      );
-      
-      // Return summaries only
-      const summaries = processInsights.map(i => ({
-        id: i.id,
-        summary: i.summary || i.content.substring(0, 100) + "...",
-        type: i.type,
-      }));
-
-      return {
-        contents: [{
-          uri: uri.href,
-          mimeType: "application/json",
-          text: JSON.stringify(summaries, null, 2),
-        }],
-      };
-    }
-
-    // Fallback to file
-    const insightsPath = path.join(repoPath, ".loop-flow", "insights.json");
-    if (!fs.existsSync(insightsPath)) {
-      return {
-        contents: [{
-          uri: uri.href,
-          mimeType: "text/plain",
-          text: "insights.json not found.",
-        }],
-      };
-    }
-
-    const data = JSON.parse(fs.readFileSync(insightsPath, "utf-8"));
-    const processInsights = data.insights
-      ?.filter((i: { type: string; tags?: string[] }) => 
-        i.type === "process" || i.tags?.includes("loop-flow-core")
-      ) || [];
-
-    return {
-      contents: [{
-        uri: uri.href,
-        mimeType: "application/json",
-        text: JSON.stringify(processInsights, null, 2),
-      }],
-    };
-  }
-);
+// Note: Process insights resource removed. Methodology now lives in WORKFLOW.md.
+// Use loopflow://workflow resource instead.
 
 // =============================================================================
 // Start Server
@@ -1474,7 +1500,7 @@ server.resource(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("LoopFlow MCP Server v0.7.0 (CRUD Edition) running on stdio");
+  console.error(`LoopFlow MCP Server v${VERSION} running on stdio`);
 }
 
 main().catch(console.error);

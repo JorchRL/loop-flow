@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
   "description": "Structured learnings (zettelkasten). Links form a knowledge graph.",
-  "exported_at": "2026-01-22T08:49:35.300Z",
+  "exported_at": "2026-01-22T10:43:53.121Z",
   "source": "loopflow-sqlite",
   "insights": [
     {
@@ -25,7 +25,7 @@
       "id": "INS-070",
       "content": "Agent should actively identify friction points (things that slow down or require workarounds) and proactively propose solutions. Similarly, observe user pain points and suggest fixes. Don't wait for problems to accumulate - surface them as they occur. Example: repeatedly hitting FTS trigger errors when updating tasks via raw SQL → should have proposed adding task management MCP tools after the first occurrence, not worked around it repeatedly.",
       "type": "process",
-      "status": "unprocessed",
+      "status": "discussed",
       "source": {
         "task": "ad-hoc",
         "session": "2026-01-22"
@@ -37,6 +37,7 @@
         "friction",
         "ux"
       ],
+      "notes": "Captured in WORKFLOW.md 'Proactive Friction Identification' section",
       "created": "2026-01-22T08:47:07.087Z"
     },
     {
@@ -138,6 +139,7 @@
         "knowledge-management"
       ],
       "links": [],
+      "notes": "Captured in WORKFLOW.md 'Leverage Hierarchy' section",
       "created": "2026-01-22T07:39:38.227Z"
     },
     {
@@ -156,6 +158,7 @@
       "links": [
         "INS-001"
       ],
+      "notes": "Captured in WORKFLOW.md intro",
       "created": "2026-01-22T07:39:38.226Z"
     },
     {
@@ -193,6 +196,7 @@
         "INS-001",
         "INS-003"
       ],
+      "notes": "Captured in WORKFLOW.md 'Quick capture' guidance",
       "created": "2026-01-22T07:39:38.223Z"
     },
     {
@@ -230,6 +234,7 @@
         "task-management"
       ],
       "links": [],
+      "notes": "Captured in WORKFLOW.md - 'backlog is a menu, not a queue'",
       "created": "2026-01-22T07:39:38.223Z"
     },
     {
@@ -248,6 +253,7 @@
       "links": [
         "INS-004"
       ],
+      "notes": "Captured in WORKFLOW.md 'Session Boundaries' section",
       "created": "2026-01-22T07:39:38.222Z"
     },
     {
@@ -285,6 +291,7 @@
       "links": [
         "INS-007"
       ],
+      "notes": "Captured in WORKFLOW.md - implicit in autosave/handoff behavior",
       "created": "2026-01-22T07:39:38.220Z"
     },
     {
@@ -304,6 +311,7 @@
       "links": [
         "INS-004"
       ],
+      "notes": "Captured in WORKFLOW.md 'Conversation Modes' section",
       "created": "2026-01-22T07:39:38.219Z"
     },
     {
@@ -324,6 +332,7 @@
         "INS-010",
         "INS-004"
       ],
+      "notes": "Captured in WORKFLOW.md 'Conversation Modes' section",
       "created": "2026-01-22T07:39:38.219Z"
     },
     {
@@ -344,6 +353,7 @@
         "INS-007",
         "INS-011"
       ],
+      "notes": "Captured in WORKFLOW.md 'Mode Guidelines'",
       "created": "2026-01-22T07:39:38.219Z"
     },
     {
@@ -364,6 +374,7 @@
         "INS-010",
         "INS-007"
       ],
+      "notes": "Captured in WORKFLOW.md 'Mode Guidelines'",
       "created": "2026-01-22T07:39:38.219Z"
     },
     {
@@ -405,7 +416,7 @@
       "links": [
         "INS-002"
       ],
-      "notes": "From Jorge's cognitive science background. AI should be a tool that makes us better thinkers, not a crutch that atrophies our thinking.",
+      "notes": "Captured in WORKFLOW.md 'Foster Learning, Not Dependency' section",
       "created": "2026-01-22T07:39:38.218Z"
     },
     {
@@ -427,7 +438,7 @@
         "INS-015",
         "INS-011"
       ],
-      "notes": "Discovered while teaching MCP concepts. Connects to the broader Loop-Flow philosophy of fostering growth (INS-015) and the Discovery mode pattern of guided exploration (INS-011).",
+      "notes": "Captured in WORKFLOW.md 'Foster Learning' and 'Learn mode' guidance",
       "created": "2026-01-22T07:39:38.218Z"
     },
     {
@@ -492,7 +503,7 @@
         "INS-016",
         "INS-004"
       ],
-      "notes": "Meta-insight: this insight itself was surfaced by the user noticing the agent wasn't doing this proactively enough. The agent should have noticed the pattern emerging (INS-016 + INS-015) and proposed this synthesis.",
+      "notes": "Captured in WORKFLOW.md 'Proactive Capture' section",
       "created": "2026-01-22T07:39:38.217Z"
     },
     {
@@ -631,7 +642,7 @@
         "INS-015",
         "INS-011"
       ],
-      "notes": "High-leverage process insight. This is what makes Loop-Flow different from a passive note-taking system. The agent is an active thinking partner.",
+      "notes": "Captured in WORKFLOW.md Learn mode description",
       "created": "2026-01-22T07:39:38.215Z"
     },
     {
@@ -654,6 +665,7 @@
         "INS-011",
         "INS-025"
       ],
+      "notes": "Captured in WORKFLOW.md 'Conversation Modes' intro",
       "created": "2026-01-22T07:39:38.214Z"
     },
     {
@@ -677,6 +689,7 @@
         "INS-011",
         "INS-016"
       ],
+      "notes": "Captured in WORKFLOW.md 'Learn' mode description",
       "created": "2026-01-22T07:39:38.214Z"
     },
     {
@@ -830,7 +843,7 @@
       "id": "INS-035",
       "content": "Spec-driven development: Tests encode the specification. The spec is the source of truth, not the implementation. AI can 'vibecode' the implementation because the spec (tests + verification functions) catches violations. This inverts the traditional 'code then test' flow and makes AI-assisted development safer.",
       "type": "process",
-      "status": "unprocessed",
+      "status": "discussed",
       "source": {
         "task": "LF-023",
         "session": "imported from learn-tdd-go",
@@ -847,14 +860,14 @@
         "INS-034",
         "INS-015"
       ],
-      "notes": "Connects to Loop-Flow's 'developer has the reins' principle. Human writes spec, AI implements. Spec is the control mechanism.",
+      "notes": "Captured in WORKFLOW.md 'Spec-Driven Development' section",
       "created": "2026-01-22T07:39:38.212Z"
     },
     {
       "id": "INS-036",
       "content": "The human's job in AI-assisted development is to write specs that capture what actually matters. The implementation is a consequence of the spec. Expertise lies in knowing what to specify — this is the hard part that AI cannot do.",
       "type": "process",
-      "status": "unprocessed",
+      "status": "discussed",
       "source": {
         "task": "LF-023",
         "session": "imported from learn-tdd-go",
@@ -873,7 +886,7 @@
         "INS-034",
         "INS-015"
       ],
-      "notes": "Defines the human role in Loop-Flow: spec author, not implementer.",
+      "notes": "Captured in WORKFLOW.md 'Spec-Driven Development' section",
       "created": "2026-01-22T07:39:38.211Z"
     },
     {
@@ -960,7 +973,7 @@
         "risk-assessment"
       ],
       "links": [],
-      "notes": "Documented in docs/PR-REVIEW-WORKFLOW.md. Practical workflow for AI-assisted PR reviews.",
+      "notes": "Captured in WORKFLOW.md 'Code Review Protocol' section",
       "created": "2026-01-22T07:39:38.210Z"
     },
     {
@@ -1027,7 +1040,7 @@
         "INS-041",
         "INS-009"
       ],
-      "notes": "Triggered by agent forgetting to save in Session 9. The SAVE-FIRST pattern prevents this.",
+      "notes": "Captured in WORKFLOW.md 'Save-First in Handoffs' section",
       "created": "2026-01-22T07:39:38.209Z"
     },
     {
@@ -1097,7 +1110,7 @@
         "INS-025",
         "INS-027"
       ],
-      "notes": "Inverts the traditional learning flow. Session 15 validated this: we built a working MCP server first, THEN explored it. Understanding emerged from having something real to examine.",
+      "notes": "Captured in WORKFLOW.md 'Vibecode-then-Explore' section",
       "created": "2026-01-22T07:39:38.208Z"
     },
     {
@@ -1270,7 +1283,7 @@
       "links": [
         "INS-046"
       ],
-      "notes": "Applied in Session 18 for progressive disclosure design. Produced comprehensive spec in one pass, then refined via Q&A. The spec itself surfaced questions about SQLite, Ollama, DSPy.",
+      "notes": "Captured in WORKFLOW.md 'Vibe-Design' section",
       "created": "2026-01-22T07:39:38.206Z"
     },
     {

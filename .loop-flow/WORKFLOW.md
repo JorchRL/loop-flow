@@ -256,4 +256,89 @@ End a session when:
 
 ---
 
+## Conversation Modes
+
+Conversation has fluid modes. The agent reads the vibe and adapts — no rigid state machine. Modes blend naturally.
+
+| Mode | Purpose | Characteristics |
+|------|---------|-----------------|
+| **Work** | Execute the task | Minimal meta-commentary, preserve context budget |
+| **Discovery** | Extract requirements | Rapid Q&A, breadth-first, interactive pickers over prose |
+| **Discuss** | Deep-dive on insight | Socratic dialogue, depth-first, one topic at a time |
+| **Learn** | Acquire knowledge | Grounding topic we orbit around, diverge when sparked, gently return |
+| **Review** | Audit existing work | Risk-focused, systematic |
+
+### Mode Guidelines
+
+- **Don't announce mode switches** in Work mode — just adapt
+- **Do name mode shifts** in Discovery/Discuss/Learn — helps orient conversation
+- **Use interactive pickers** (TUI questions) for choices instead of prose — one line of context, then picker
+- **In Learn mode**: provide probing questions alongside explanations to guide active reading
+
+---
+
+## Development Approaches
+
+### Vibecode-then-Explore
+
+Instead of Learn → Design → Implement, try: **Vibecode → Explore → Understand**.
+
+Build something concrete first (even if messy), then use it as a vehicle for learning. Abstract knowledge doesn't stick until you have something tangible to poke at. The working artifact becomes a teaching tool.
+
+### Vibe-Design
+
+For architecture: draft the full design quickly as a best-effort pass, then iterate. Don't over-analyze upfront — the draft itself surfaces what needs deeper thought.
+
+### Spec-Driven Development
+
+Tests encode the specification. The spec is the source of truth, not the implementation.
+
+- Human writes specs that capture what actually matters
+- AI implements against the spec
+- Spec (tests + verification functions) catches violations
+- This inverts "code then test" and makes AI-assisted development safer
+
+The human's job is knowing *what to specify* — this is the hard part AI cannot do.
+
+---
+
+## Code Review Protocol
+
+Risk-focused code review prioritizes deployment risk over style nitpicking.
+
+| Risk Level | Description | Action |
+|------------|-------------|--------|
+| **CRITICAL** | Breaks production, data loss, security | Must fix before merge |
+| **MEDIUM** | Suboptimal but functional | Fix later OK |
+| **LOW** | Code style, nice-to-haves | Optional |
+
+Focus on: What could break in production? What's missing? What assumptions might be wrong?
+
+---
+
+## Agent Behavior Principles
+
+### Proactive Friction Identification
+
+Actively identify friction points (things that slow down or require workarounds) and propose solutions. Don't wait for problems to accumulate — surface them as they occur.
+
+### Save-First in Handoffs
+
+Emergency handoffs happen. When ending a session:
+1. **Save state FIRST** — user might be hitting context limits
+2. File writes before any summary or confirmation dialogue
+3. Include explicit checkpoint to verify saves happened
+
+### Foster Learning, Not Dependency
+
+AI should help developers become better engineers:
+- Explain *why*, not just *what*
+- Provide probing questions when teaching concepts
+- The goal is insight, not just answers
+- This contrasts with "vibe coding" where AI does the thinking
+
+AI is powerful but dangerous to our capacity for deep thought. LoopFlow uses AI to amplify human thinking, not replace it.
+
+---
+
 *"One task, one session, one handoff. Tests pass. Context stays fresh."*

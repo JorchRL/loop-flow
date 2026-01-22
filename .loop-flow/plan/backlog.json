@@ -2,14 +2,72 @@
   "project": "loop-flow",
   "last_updated": "2026-01-22",
   "notes": "",
-  "exported_at": "2026-01-22T08:49:35.303Z",
+  "exported_at": "2026-01-22T10:43:53.122Z",
   "source": "loopflow-sqlite",
   "tasks": [
+    {
+      "id": "LF-109",
+      "title": "[REVIEW] Audit LoopFlow repo insights for WORKFLOW.md candidates",
+      "description": "Review all insights in this repo's database and decide which should be moved to the WORKFLOW.md template that ships with LoopFlow. Process insights are being deprecated - methodology belongs in WORKFLOW.md, project-specific learnings stay as insights (domain, architecture, edge_case, technical only).",
+      "status": "IN_PROGRESS",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Review all 71 insights in current DB",
+        "Identify which are methodology (move to WORKFLOW.md template)",
+        "Identify which are LoopFlow-project-specific (keep as insights, retype if needed)",
+        "Update WORKFLOW.md template in src/cli/init.ts",
+        "Remove or retype process insights in this repo's DB"
+      ]
+    },
+    {
+      "id": "LF-108",
+      "title": "[IMPL] Web UI dashboard",
+      "description": "Local web dashboard using Hono. Runs alongside MCP server in same process, shares DB connection. Serves API endpoints and static frontend on localhost:3000.",
+      "status": "DONE",
+      "priority": "high",
+      "depends_on": [],
+      "acceptance_criteria": [
+        "GET /api/tasks - list tasks with filters",
+        "GET /api/insights - list insights",
+        "GET /api/sessions - session history",
+        "Static frontend served at /",
+        "Runs on localhost:3000",
+        "Shares DB with MCP tools"
+      ],
+      "notes": "Implemented full Web UI with React + Vite + Tailwind. Features: Dashboard (stats, recent sessions), Backlog (kanban board), Insights (browse/search), Sessions (timeline). CLI: `loopflow ui` with auto-open browser. Hono HTTP API at /api/* serves tasks, insights, sessions, stats."
+    },
+    {
+      "id": "LF-107",
+      "title": "[DESIGN] Global ~/.loopflow/ architecture",
+      "description": "Move from per-repo .loop-flow/ to global ~/.loopflow/ (or platform equivalent). Single DB tracks all projects. Benefits: cross-project insights, one config, survives repo deletion. Needs: project registration, path resolution, platform-specific home dir.",
+      "status": "TODO",
+      "priority": "high",
+      "acceptance_criteria": [
+        "Design doc for global vs per-repo tradeoffs",
+        "Schema for multi-project DB",
+        "Migration path from per-repo to global",
+        "Platform paths: ~/.loopflow (unix), %APPDATA%/loopflow (windows)"
+      ],
+      "notes": "Blocker for v1.0 release. Related to LF-087-092 (external DB series)."
+    },
+    {
+      "id": "LF-106",
+      "title": "[DESIGN] WORKFLOW.md storage - file vs database",
+      "description": "Discuss whether WORKFLOW.md should remain a file or be stored in the database. Considerations: (1) File is editable by humans, (2) File is readable by agents without MCP, (3) Database would centralize all config, (4) File is currently gitignored with *.db but WORKFLOW.md itself is not.",
+      "status": "TODO",
+      "priority": "medium",
+      "acceptance_criteria": [
+        "Decision made on storage approach",
+        "If DB: migration plan defined",
+        "If file: gitignore behavior clarified"
+      ],
+      "notes": "Pinned from session discussion. User is on the fence about this."
+    },
     {
       "id": "LF-081",
       "title": "[IMPL] MCP server integration tests",
       "description": "Create integration tests that call MCP tools and verify database state. Self-debugging pattern: delete DB, call tools, verify expectations. Should catch issues like 'old server running' or 'code path not exercised'.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "high",
       "acceptance_criteria": [
         "Test: loop_orient creates DB and migrates from JSON/progress",
@@ -18,7 +76,7 @@
         "Test: loop_update_summary updates repo_context",
         "Tests can run against the MCP server programmatically"
       ],
-      "notes": "Self-debugging pattern for MCP development. See INS-068."
+      "notes": "Created comprehensive integration tests in src/mcp/__tests__/tools.test.ts. 29 tests covering: DB initialization, loop_remember (insight insertion), loop_handoff (suggested_actions + session records), loop_update_summary, all CRUD tools (task_create, task_update, task_list, insight_update), full session lifecycle workflow, and edge cases."
     },
     {
       "id": "LF-080",
@@ -1717,7 +1775,7 @@
       "id": "LF-083",
       "title": "[DOCS] Cursor MCP configuration",
       "description": "Document how to configure Cursor to use LoopFlow MCP server. Include mcp.json format, path configuration, and troubleshooting.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "high",
       "depends_on": [],
       "acceptance_criteria": [
@@ -1726,13 +1784,13 @@
         "Troubleshooting section",
         "Verified working on Cursor"
       ],
-      "notes": "v1.0 milestone - enables jr dev adoption"
+      "notes": "Created docs/CURSOR-SETUP.md with: prerequisites, project-level and global config options, verification steps, usage guide, troubleshooting section (5 common issues), and advanced configuration."
     },
     {
       "id": "LF-084",
       "title": "[DOCS] README.md quickstart",
       "description": "Create README with: what is LoopFlow, why use it, 5-minute quickstart, tool reference. Target audience: developers new to LoopFlow.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "high",
       "depends_on": [],
       "acceptance_criteria": [
@@ -1741,13 +1799,13 @@
         "Tool reference table",
         "Links to detailed docs"
       ],
-      "notes": "v1.0 milestone"
+      "notes": "Rewrote README.md with: updated tagline (MCP server), 5-minute quick start (install, init, configure, start), MCP tools reference table (14 tools), workflow diagram, updated roadmap with completed items, and philosophy section."
     },
     {
       "id": "LF-085",
       "title": "[IMPL] Fresh repo handling",
       "description": "Ensure MCP server handles fresh repos (no .loop-flow/) gracefully. Should guide user to run loopflow init or auto-initialize.",
-      "status": "TODO",
+      "status": "DONE",
       "priority": "high",
       "depends_on": [
         "LF-082"
@@ -1757,7 +1815,7 @@
         "Suggests loopflow init command",
         "Optional: auto-init with confirmation"
       ],
-      "notes": "v1.0 milestone"
+      "notes": "Improved loop_orient error message for fresh repos. Now includes: searched path, step-by-step setup instructions (npm install, loopflow init), what init does, and hint to call loop_orient again after init."
     },
     {
       "id": "LF-086",

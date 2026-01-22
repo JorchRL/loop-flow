@@ -24,7 +24,7 @@ The core idea: **one task, one session, one handoff** — with the human firmly 
 ### 1. Install
 
 ```bash
-npm install -g loop-flow
+npm install -g loopflow
 ```
 
 ### 2. Initialize in your project
@@ -34,38 +34,28 @@ cd your-project
 loopflow init
 ```
 
-This creates `.loop-flow/` with:
-- SQLite database for tasks and insights
-- `WORKFLOW.md` with methodology rules
-- Hook in `AGENTS.md` for AI assistants
+This launches the **setup wizard** which:
+1. Creates `.loop-flow/` with SQLite database and `WORKFLOW.md`
+2. Detects installed AI tools (Claude Code, OpenCode, Cursor)
+3. Configures MCP server registration for selected tools
 
-### 3. Configure your AI tool
-
-**Claude Code** — Add to `~/.claude/claude_code_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "loopflow": {
-      "command": "loopflow",
-      "args": ["mcp"]
-    }
-  }
-}
+```
+◆  LoopFlow Setup v1.0.0
+│
+◇  Select AI tools to configure:
+│  ◼ Claude Code (detected)
+│  ◼ OpenCode (detected)
+│  ◻ Cursor
+│
+◇  Configuring Claude Code...
+│  ✔ Added to ~/.claude.json
+│
+└  Setup complete!
 ```
 
-**Cursor** — Add to `.cursor/mcp.json` in your project:
+To skip the wizard: `loopflow init --no-mcp`
 
-```json
-{
-  "mcpServers": {
-    "loopflow": {
-      "command": "loopflow",
-      "args": ["mcp"]
-    }
-  }
-}
-```
+To reconfigure tools later: `loopflow setup`
 
 ### 4. Start a session
 
@@ -134,9 +124,9 @@ Each session is focused on **one task**. Insights and progress persist in SQLite
 - [x] MCP server with cognitive tools
 - [x] SQLite-backed task and insight management
 - [x] Session lifecycle (orient/handoff)
-- [x] CLI with `loopflow init`
-- [ ] Multi-repo insights (external DB)
-- [ ] Local dashboard UI
+- [x] CLI with `loopflow init` and `loopflow ui`
+- [x] Local dashboard UI (React + Vite + Tailwind)
+- [ ] Multi-repo insights (global ~/.loopflow/)
 - [ ] Team sync protocol
 
 ---

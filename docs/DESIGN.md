@@ -541,29 +541,22 @@ Example: 10 edge-case insights about API behavior → 1 architectural insight ab
 
 Loop-Flow is **local-first**. Local SQLite is the source of truth. Team/cloud features layer on top via sync, not the other way around. This preserves developer autonomy, enables offline work, and aligns with "developer has the reins."
 
-### Phase 0: File-Based Bootstrap (Current)
+### Phase 0: File-Based Bootstrap (Complete)
 
 **Goal:** Use the file-based workflow to build Loop-Flow itself. True dogfooding.
-
-```
-┌─────────────┐                    ┌─────────────────────────┐
-│ Claude Code │ ───reads/writes──► │ .loop-flow/plan/        │
-│             │                    │ (backlog.json, etc.)    │
-└─────────────┘                    └─────────────────────────┘
-```
 
 - [x] Project bootstrap and documentation
 - [x] Domain model analysis
 - [x] UX requirements discovery
-- [ ] Research MCP protocol (LF-001) ← **Current**
-- [ ] Set up TypeScript project
-- [ ] Implement SQLite schema
-- [ ] Basic CLI (init, status)
-- [ ] Migration tool from file-based workflow
+- [x] Research MCP protocol
+- [x] Set up TypeScript project
+- [x] Implement SQLite schema
+- [x] Basic CLI (init)
+- [x] Migration tool (loop_import)
 
-**Exit criteria:** Loop-Flow can manage its own development (replace file-based workflow).
+**Status:** Complete. LoopFlow now manages its own development.
 
-### Phase 1: Local MCP + SQLite (MVP)
+### Phase 1: Local MCP + SQLite (Complete)
 
 **Goal:** Working MCP server that Claude Code can use. Local-only.
 
@@ -574,15 +567,16 @@ Loop-Flow is **local-first**. Local SQLite is the source of truth. Team/cloud fe
 └─────────────┘                 └─────────────────────────┘
 ```
 
-- [ ] MCP server skeleton (stdio transport)
-- [ ] loop.start / loop.end
-- [ ] task.* tools (add, update, list, get)
-- [ ] learning.* tools (add, search, related, capture)
-- [ ] Register with Claude Code
+- [x] MCP server (stdio transport)
+- [x] loop_orient / loop_handoff (session lifecycle)
+- [x] loop_task_* tools (create, update, list)
+- [x] loop_remember / loop_scan / loop_expand / loop_connect (insights)
+- [x] loop_export / loop_import (JSON sync)
+- [x] Register with Claude Code
 
-**Exit criteria:** Can run a full development session using MCP tools instead of file reads.
+**Status:** Complete. Full MCP-based development workflow operational.
 
-### Phase 2: Local Web Dashboard
+### Phase 2: Local Web Dashboard (Complete)
 
 **Goal:** Human-browsable interface at localhost. MCP server grows an HTTP API.
 
@@ -598,13 +592,13 @@ Loop-Flow is **local-first**. Local SQLite is the source of truth. Team/cloud fe
 └─────────────────────────────┘
 ```
 
-- [ ] HTTP API layer (REST or tRPC)
-- [ ] Web UI (React + Vite or similar)
-- [ ] Browse tasks, learnings, sessions
-- [ ] Export/import functionality
-- [ ] Templates system
+- [x] HTTP API layer (Hono REST)
+- [x] Web UI (React + Vite + Tailwind)
+- [x] Browse tasks, insights, sessions
+- [x] CLI command: `loopflow ui`
+- [x] MCP tool: `loop_ui` (auto-starts server)
 
-**Exit criteria:** Developer can browse and manage Loop-Flow data without CLI.
+**Status:** Complete. Dashboard available via CLI or MCP tool.
 
 ### Phase 3: Team/SaaS (Optional Future)
 
