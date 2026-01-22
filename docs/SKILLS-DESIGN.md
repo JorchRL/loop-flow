@@ -1,7 +1,7 @@
 # Skills System Design
 
-**Version:** 0.8.0  
-**Status:** Design Complete  
+**Version:** 0.9.0  
+**Status:** SUPERSEDED - Skills replaced by MCP tools in v0.9.0  
 **Task:** LF-022
 
 ---

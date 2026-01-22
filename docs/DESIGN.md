@@ -638,6 +638,6 @@ Loop-Flow is **local-first**. Local SQLite is the source of truth. Team/cloud fe
 
 ---
 
-*Document version: 0.8.0*
-*Last updated: 2026-01-20*
+*Document version: 0.9.0*
+*Last updated: 2026-01-22*
 *Session: LF-001 MCP Protocol Research*

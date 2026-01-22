@@ -12,7 +12,7 @@
 
 This project uses the LoopFlow workflow for AI-assisted development sessions.
 
-**At the start of every session**, read `.loop-flow/WORKFLOW.md` for workflow instructions.
+**At the start of every session**, call the `loop_orient` MCP tool to get situational awareness (current task, hot insights, suggested next steps).
 
 To temporarily disable LoopFlow, comment out or delete the line above.
 
