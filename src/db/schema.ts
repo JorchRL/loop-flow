@@ -7,7 +7,7 @@
 
 import Database from "better-sqlite3";
 
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 /**
  * SQL statements to create the database schema
@@ -148,6 +148,31 @@ CREATE INDEX IF NOT EXISTS idx_sessions_date ON sessions(date);
 CREATE INDEX IF NOT EXISTS idx_sessions_task ON sessions(task_id);
 `;
 
+/**
+ * Schema V3 - Add feedback_specs table for pain point capture
+ */
+const SCHEMA_V3 = `
+-- Feedback specs: captures pain points, feature ideas, bugs for self-improvement
+CREATE TABLE IF NOT EXISTS feedback_specs (
+  id TEXT PRIMARY KEY,              -- "FB-001" format
+  type TEXT NOT NULL,               -- pain_point|feature_idea|bug
+  title TEXT NOT NULL,              -- Short title
+  description TEXT NOT NULL,        -- Detailed description
+  context_summary TEXT,             -- Sanitized context (no PII)
+  severity TEXT DEFAULT 'medium',   -- low|medium|high|critical
+  status TEXT DEFAULT 'queued',     -- queued|shared|dismissed
+  consent_given_at TEXT NOT NULL,   -- When user consented to capture
+  shared_at TEXT,                   -- When shared (if shared)
+  github_issue_url TEXT,            -- URL if shared as GitHub issue
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+-- Index for feedback queries
+CREATE INDEX IF NOT EXISTS idx_feedback_specs_status ON feedback_specs(status);
+CREATE INDEX IF NOT EXISTS idx_feedback_specs_type ON feedback_specs(type);
+`;
+
 export interface MigrationResult {
   fromVersion: number;
   toVersion: number;
@@ -194,6 +219,13 @@ export function migrateToLatest(db: Database.Database): MigrationResult {
       db.prepare(
         "INSERT OR REPLACE INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)"
       ).run(2, new Date().toISOString(), "Add sessions and repo_context tables");
+    }
+
+    if (fromVersion < 3) {
+      db.exec(SCHEMA_V3);
+      db.prepare(
+        "INSERT OR REPLACE INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)"
+      ).run(3, new Date().toISOString(), "Add feedback_specs table for pain point capture");
     }
 
     return {

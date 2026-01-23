@@ -7,6 +7,7 @@
  * - setup: Run setup wizard to configure AI tools
  * - ui: Start web UI dashboard
  * - mcp: Start MCP server
+ * - share-feedback: Review and share queued feedback as GitHub issues
  * 
  * Note: Task management, export, and migration are handled via MCP tools
  * (loop_task_list, loop_export, loop_import) for use within AI sessions.
@@ -17,6 +18,7 @@ import * as path from "path";
 import { VERSION } from "../index.js";
 import { initLoopFlow, formatInitResult } from "./init.js";
 import { runSetupWizard } from "./wizard.js";
+import { shareFeedback } from "./share-feedback.js";
 
 const program = new Command();
 
@@ -67,8 +69,9 @@ program
 program
   .command("setup")
   .description("Configure AI tools (Claude Code, OpenCode, Cursor) to use LoopFlow")
-  .action(async () => {
-    const result = await runSetupWizard({});
+  .option("--dev", "Dev mode: configure MCP to use local build instead of npx")
+  .action(async (options) => {
+    const result = await runSetupWizard({ devMode: options.dev });
     process.exit(result.success ? 0 : 1);
   });
 
@@ -80,6 +83,34 @@ program
   .action(async () => {
     // Import and run the MCP server
     await import("../mcp/server.js");
+  });
+
+// Share feedback command
+program
+  .command("share-feedback")
+  .description("Review and share queued feedback as GitHub issues, or export to file")
+  .option("--path <path>", "Repository path (defaults to current directory)")
+  .option("--dry-run", "Preview what would be shared without creating issues")
+  .option("--export <file>", "Export to markdown file instead of creating GitHub issues")
+  .action(async (options) => {
+    const repoPath = options.path ? path.resolve(options.path) : process.cwd();
+    
+    // Check if .loop-flow exists
+    const loopFlowDir = path.join(repoPath, ".loop-flow");
+    const fs = await import("fs");
+    if (!fs.existsSync(loopFlowDir)) {
+      console.error("Error: No .loop-flow directory found.");
+      console.error("Run 'loopflow init' first to initialize LoopFlow.");
+      process.exit(1);
+    }
+    
+    const result = await shareFeedback({
+      repoPath,
+      dryRun: options.dryRun,
+      export: options.export,
+    });
+    
+    process.exit(result.success ? 0 : 1);
   });
 
 // UI command

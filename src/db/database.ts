@@ -13,6 +13,7 @@ import { createInsightsRepository, type InsightsRepository } from "./repositorie
 import { createTasksRepository, type TasksRepository } from "./repositories/tasks.js";
 import { createSessionsRepository, type SessionsRepository } from "./repositories/sessions.js";
 import { createRepoContextRepository, type RepoContextRepository } from "./repositories/repo-context.js";
+import { createFeedbackSpecsRepository, type FeedbackSpecsRepository } from "./repositories/feedback-specs.js";
 import { 
   transformInsightsFile, 
   transformBacklogFile,
@@ -27,6 +28,7 @@ export interface LoopFlowDatabase {
   tasks: TasksRepository;
   sessions: SessionsRepository;
   repoContext: RepoContextRepository;
+  feedbackSpecs: FeedbackSpecsRepository;
   close: () => void;
 }
 
@@ -163,6 +165,7 @@ export function initializeDatabase(repoPath: string): LoopFlowDatabase {
   const tasks = createTasksRepository(db);
   const sessions = createSessionsRepository(db);
   const repoContext = createRepoContextRepository(db);
+  const feedbackSpecs = createFeedbackSpecsRepository(db);
 
   // Auto-migrate from JSON if database is empty and JSON files exist
   if (!hasDatabaseData(db) && hasJsonFiles(repoPath)) {
@@ -192,6 +195,7 @@ export function initializeDatabase(repoPath: string): LoopFlowDatabase {
     tasks,
     sessions,
     repoContext,
+    feedbackSpecs,
     close: () => db.close(),
   };
 }

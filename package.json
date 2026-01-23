@@ -1,6 +1,6 @@
 {
   "name": "loopflow",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "MCP server for structured AI-assisted development workflows",
   "type": "module",
   "main": "dist/index.js",
@@ -26,7 +26,7 @@
     "build:all": "npm run build && npm run build:ui",
     "dev": "tsc --watch",
     "dev:ui": "cd src/ui && npm run dev",
-    "test": "vitest",
+    "test": "vitest run",
     "test:run": "vitest run",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",

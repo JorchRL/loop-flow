@@ -12,12 +12,14 @@
  * - loop_export: Generate JSON files from SQLite for git/humans
  * - loop_import: Import JSON/progress files into SQLite
  * - loop_ui: Start web UI dashboard and open in browser
+ * - loop_painpoint: Capture friction/pain points for self-improvement
  * 
  * CRUD tools:
  * - loop_task_create: Create new tasks
  * - loop_task_update: Update task status, priority, etc.
  * - loop_task_list: List tasks with filters
  * - loop_insight_update: Update insight status, tags, links
+ * - loop_feedback_list: List queued feedback specs
  * 
  * Architecture: SQLite is source of truth. JSON files are import/export format.
  */
@@ -30,6 +32,7 @@ import * as path from "path";
 import { initializeDatabase, importFromJson, importProgress, type LoopFlowDatabase } from "../db/database.js";
 import { summarizeInsight } from "../rules/summarization.js";
 import { generateInsightsJson, generateBacklogJson } from "../rules/export.js";
+import { prepareFeedbackContext } from "../rules/sanitization.js";
 import { VERSION } from "../index.js";
 
 // Constants for pagination
@@ -747,7 +750,7 @@ server.tool(
 
 server.tool(
   "loop_handoff",
-  "End session gracefully or emergency bail. Saves state for next session to pick up seamlessly.",
+  "End session gracefully or emergency bail. Saves state for next session to pick up seamlessly. Idempotent - can be called multiple times to update the session record.",
   {
     mode: z.enum(["graceful", "emergency"]).describe("Graceful = normal end, Emergency = context dying"),
     completed: z.array(z.string()).optional().describe("What was completed this session"),
@@ -758,35 +761,83 @@ server.tool(
     export_files: z.boolean().optional().describe("Export JSON files for git commit (default: true for graceful, false for emergency)"),
   },
   async ({ mode, completed, in_progress, blocked_on, next_session_should, hot_context, export_files }) => {
+    // Idempotent: if no active session, try to find repo and update last session
+    let isIdempotentCall = false;
+    let database: LoopFlowDatabase;
+    let repoPath: string;
+    let repoName: string;
+    let sessionStartedAt: string;
+    let insightsCaptured: number;
+    let currentTask: string | null;
+
     if (!currentSession) {
-      return {
-        content: [{
-          type: "text" as const,
-          text: JSON.stringify({
-            error: "No active session. Nothing to hand off.",
-          }, null, 2),
-        }],
-      };
+      // Try to find .loop-flow in cwd
+      const foundRoot = findLoopFlowRoot(process.cwd());
+      if (!foundRoot) {
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              error: "No active session and no .loop-flow directory found. Call loop_orient first.",
+            }, null, 2),
+          }],
+        };
+      }
+      
+      // Re-initialize database for idempotent update
+      database = initializeDatabase(foundRoot);
+      repoPath = foundRoot;
+      repoName = path.basename(foundRoot);
+      sessionStartedAt = new Date().toISOString();
+      insightsCaptured = 0;
+      currentTask = null;
+      isIdempotentCall = true;
+    } else {
+      database = currentSession.database;
+      repoPath = currentSession.repoPath;
+      repoName = currentSession.repoName;
+      sessionStartedAt = currentSession.startedAt;
+      insightsCaptured = currentSession.insightsCaptured;
+      currentTask = currentSession.currentTask;
     }
 
     const today = new Date().toISOString().split("T")[0];
     
-    // Calculate next session number for today
-    const lastSession = currentSession.database.sessions.getLastSessionId();
-    let sessionNumber = 1;
-    if (lastSession) {
-      const match = lastSession.match(/^(\d{4}-\d{2}-\d{2})-S(\d+)$/);
-      if (match && match[1] === today) {
-        sessionNumber = parseInt(match[2], 10) + 1;
-      } else if (match && match[1] < today) {
-        sessionNumber = 1; // New day, start at 1
+    // For idempotent calls, update the last session instead of creating new
+    let sessionId: string;
+    let sessionNumber: number;
+    
+    if (isIdempotentCall) {
+      // Get the most recent session and update it
+      const lastSessionId = database.sessions.getLastSessionId();
+      if (lastSessionId && lastSessionId.startsWith(today)) {
+        // Update today's last session
+        sessionId = lastSessionId;
+        const match = lastSessionId.match(/^(\d{4}-\d{2}-\d{2})-S(\d+)$/);
+        sessionNumber = match ? parseInt(match[2], 10) : 1;
+      } else {
+        // No session today, create new one
+        sessionNumber = 1;
+        sessionId = `${today}-S${sessionNumber}`;
       }
+    } else {
+      // Calculate next session number for today (normal flow)
+      const lastSession = database.sessions.getLastSessionId();
+      sessionNumber = 1;
+      if (lastSession) {
+        const match = lastSession.match(/^(\d{4}-\d{2}-\d{2})-S(\d+)$/);
+        if (match && match[1] === today) {
+          sessionNumber = parseInt(match[2], 10) + 1;
+        } else if (match && match[1] < today) {
+          sessionNumber = 1; // New day, start at 1
+        }
+      }
+      sessionId = `${today}-S${sessionNumber}`;
     }
-    const sessionId = `${today}-S${sessionNumber}`;
 
     // FIRST: Save suggested_actions for next session (critical state preservation)
     if (next_session_should) {
-      currentSession.database.repoContext.set(
+      database.repoContext.set(
         "suggested_actions",
         next_session_should,
         sessionId
@@ -812,19 +863,19 @@ server.tool(
       summaryParts.push(`Hot context: ${hot_context.join("; ")}`);
     }
     
-    currentSession.database.sessions.upsert({
+    database.sessions.upsert({
       id: sessionId,
       date: today,
       session_number: sessionNumber,
-      task_id: currentSession.currentTask,
+      task_id: currentTask,
       task_type: null, // Could be extracted from task if needed
       task_title: null,
       outcome,
       summary: summaryParts.join("\n") || "No summary provided",
       learnings: null,
       files_changed: null,
-      insights_added: currentSession.insightsCaptured > 0 
-        ? JSON.stringify([`${currentSession.insightsCaptured} insights captured`])
+      insights_added: insightsCaptured > 0 
+        ? JSON.stringify([`${insightsCaptured} insights captured`])
         : null,
     });
 
@@ -832,11 +883,12 @@ server.tool(
       mode,
       session: {
         id: sessionId,
-        repo: currentSession.repoName,
-        task: currentSession.currentTask,
-        duration: `${Math.round((Date.now() - new Date(currentSession.startedAt).getTime()) / 60000)} minutes`,
-        insights_captured: currentSession.insightsCaptured,
+        repo: repoName,
+        task: currentTask,
+        duration: `${Math.round((Date.now() - new Date(sessionStartedAt).getTime()) / 60000)} minutes`,
+        insights_captured: insightsCaptured,
         outcome,
+        updated_existing: isIdempotentCall,
       },
       completed: completed || [],
       in_progress: in_progress || null,
@@ -846,17 +898,18 @@ server.tool(
       resume_file: null as string | null,
       exported_files: [] as string[],
       suggested_actions_saved: !!next_session_should,
-      session_record_created: true,
+      session_record_created: !isIdempotentCall,
+      session_record_updated: isIdempotentCall,
       ui_server_stopped: false,
     };
 
     // Export files (default: true for graceful, false for emergency)
     const shouldExport = export_files ?? (mode === "graceful");
     if (shouldExport) {
-      const loopFlowDir = path.join(currentSession.repoPath, ".loop-flow");
+      const loopFlowDir = path.join(repoPath, ".loop-flow");
 
       // Export insights
-      const allInsights = currentSession.database.insights.findAll({}, { limit: 10000 });
+      const allInsights = database.insights.findAll({}, { limit: 10000 });
       const insightsJson = generateInsightsJson(allInsights);
       fs.writeFileSync(
         path.join(loopFlowDir, "insights.json"),
@@ -865,8 +918,8 @@ server.tool(
       handoff.exported_files.push("insights.json");
 
       // Export backlog
-      const allTasks = currentSession.database.tasks.findAll({}, { limit: 10000 });
-      const backlogJson = generateBacklogJson(allTasks, currentSession.repoName);
+      const allTasks = database.tasks.findAll({}, { limit: 10000 });
+      const backlogJson = generateBacklogJson(allTasks, repoName);
       fs.writeFileSync(
         path.join(loopFlowDir, "backlog.json"),
         JSON.stringify(backlogJson, null, 2)
@@ -876,11 +929,11 @@ server.tool(
 
     if (mode === "emergency") {
       // Write RESUME.md for emergency pickup
-      const resumePath = path.join(currentSession.repoPath, ".loop-flow", "RESUME.md");
+      const resumePath = path.join(repoPath, ".loop-flow", "RESUME.md");
       const resumeContent = `# Emergency Session Resume
 
 **Created**: ${new Date().toISOString()}
-**Task**: ${currentSession.currentTask || "None"}
+**Task**: ${currentTask || "None"}
 
 ## What Was Happening
 ${in_progress || "Unknown"}
@@ -912,18 +965,24 @@ ${completed?.map(c => `- ${c}`).join("\n") || "Nothing recorded"}
       // Server module may not be loaded, that's fine
     }
 
-    // Close database connection
-    currentSession.database.close();
-    currentSession = null;
+    // Close database connection (only if we opened it for idempotent call, or if closing the active session)
+    if (isIdempotentCall) {
+      database.close();
+    } else if (currentSession) {
+      currentSession.database.close();
+      currentSession = null;
+    }
 
     return {
       content: [{
         type: "text" as const,
         text: JSON.stringify({
           handoff,
-          message: mode === "emergency" 
-            ? "Emergency handoff complete. RESUME.md created. Next session will pick up."
-            : "Graceful handoff complete. State preserved. suggested_actions saved for next session.",
+          message: isIdempotentCall
+            ? `Updated session ${sessionId} with new information. State preserved.`
+            : mode === "emergency" 
+              ? "Emergency handoff complete. RESUME.md created. Next session will pick up."
+              : "Graceful handoff complete. State preserved. suggested_actions saved for next session.",
         }, null, 2),
       }],
     };
@@ -1358,6 +1417,137 @@ server.tool(
           },
           changes: Object.keys(changes),
           message: `Insight ${id} updated`,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// =============================================================================
+// TOOL: loop_painpoint
+// "This is frustrating" - capture friction for self-improvement
+// =============================================================================
+
+server.tool(
+  "loop_painpoint",
+  "Capture a pain point, feature idea, or bug for LoopFlow self-improvement. Requires user consent. Context is sanitized to remove PII before storing.",
+  {
+    type: z.enum(["pain_point", "feature_idea", "bug"]).describe("Type of feedback"),
+    title: z.string().describe("Short title describing the issue"),
+    description: z.string().describe("Detailed description of the issue/idea"),
+    context: z.string().optional().describe("Additional context (will be sanitized)"),
+    severity: z.enum(["low", "medium", "high", "critical"]).optional().describe("Severity (default: medium)"),
+  },
+  async ({ type, title, description, context, severity = "medium" }) => {
+    if (!currentSession) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            error: "No active session. Call loop_orient first.",
+          }, null, 2),
+        }],
+      };
+    }
+
+    // Sanitize context if provided
+    let contextSummary: string | null = null;
+    let sanitizationWarnings: string[] = [];
+    if (context) {
+      const result = prepareFeedbackContext(context);
+      contextSummary = result.sanitized;
+      sanitizationWarnings = result.warnings;
+    }
+
+    // Generate ID and create record
+    const id = currentSession.database.feedbackSpecs.getNextId();
+    const now = new Date().toISOString();
+
+    currentSession.database.feedbackSpecs.insert({
+      id,
+      type,
+      title,
+      description,
+      context_summary: contextSummary,
+      severity,
+      status: "queued",
+      consent_given_at: now,
+      shared_at: null,
+      github_issue_url: null,
+    });
+
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          captured: true,
+          id,
+          type,
+          title,
+          severity,
+          context_sanitized: !!contextSummary,
+          sanitization_warnings: sanitizationWarnings.length > 0 ? sanitizationWarnings : undefined,
+          message: `Feedback ${id} captured and queued. Use 'loopflow share-feedback' CLI to review and share.`,
+          next_steps: [
+            "Feedback is queued locally (not shared yet)",
+            "Run 'loopflow share-feedback' to review and share",
+            "Sharing creates a GitHub issue for the LoopFlow maintainers",
+          ],
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// =============================================================================
+// TOOL: loop_feedback_list
+// "What feedback is queued?" - list feedback specs
+// =============================================================================
+
+server.tool(
+  "loop_feedback_list",
+  "List queued feedback specs (pain points, feature ideas, bugs)",
+  {
+    status: z.array(z.enum(["queued", "shared", "dismissed"])).optional().describe("Filter by status (default: queued)"),
+    limit: z.number().optional().describe("Max results (default: 20)"),
+  },
+  async ({ status = ["queued"], limit = 20 }) => {
+    if (!currentSession) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            error: "No active session. Call loop_orient first.",
+          }, null, 2),
+        }],
+      };
+    }
+
+    const specs = currentSession.database.feedbackSpecs.findAll(
+      { statuses: status },
+      { limit }
+    );
+
+    const total = currentSession.database.feedbackSpecs.count({ statuses: status });
+
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          feedback_specs: specs.map(s => ({
+            id: s.id,
+            type: s.type,
+            title: s.title,
+            severity: s.severity,
+            status: s.status,
+            created_at: s.created_at,
+          })),
+          count: specs.length,
+          total,
+          truncated: specs.length < total,
+          hint: total > 0 && status.includes("queued")
+            ? "Run 'loopflow share-feedback' to review and share these with maintainers"
+            : undefined,
         }, null, 2),
       }],
     };

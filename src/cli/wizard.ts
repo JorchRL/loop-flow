@@ -56,10 +56,32 @@ function getToolConfigs(): ToolConfig[] {
 }
 
 // =============================================================================
+// MCP Command Generation
+// =============================================================================
+
+/**
+ * Get the MCP command for the given repo.
+ * In dev mode, use local build (node ./dist/cli/index.js mcp).
+ * Otherwise, use npx loopflow@latest.
+ */
+function getMcpCommand(devMode: boolean): { command: string; args: string[] } {
+  if (devMode) {
+    return {
+      command: "node",
+      args: ["./dist/cli/index.js", "mcp"],
+    };
+  }
+  return {
+    command: "npx",
+    args: ["-y", "loopflow@latest", "mcp"],
+  };
+}
+
+// =============================================================================
 // MCP Configuration Writers
 // =============================================================================
 
-function writeClaudeCodeConfig(filePath: string): { success: boolean; error?: string } {
+function writeClaudeCodeConfig(filePath: string, devMode: boolean): { success: boolean; error?: string } {
   try {
     let config: Record<string, unknown> = {};
     
@@ -68,11 +90,12 @@ function writeClaudeCodeConfig(filePath: string): { success: boolean; error?: st
       config = JSON.parse(content);
     }
     
+    const { command, args } = getMcpCommand(devMode);
     const mcpServers = (config.mcpServers as Record<string, unknown>) || {};
     mcpServers.loopflow = {
       type: "stdio",
-      command: "npx",
-      args: ["-y", "loopflow@latest", "mcp"],
+      command,
+      args,
     };
     config.mcpServers = mcpServers;
     
@@ -83,7 +106,7 @@ function writeClaudeCodeConfig(filePath: string): { success: boolean; error?: st
   }
 }
 
-function writeOpenCodeConfig(filePath: string): { success: boolean; error?: string } {
+function writeOpenCodeConfig(filePath: string, devMode: boolean): { success: boolean; error?: string } {
   try {
     let config: Record<string, unknown> = {
       "$schema": "https://opencode.ai/config.json",
@@ -94,10 +117,11 @@ function writeOpenCodeConfig(filePath: string): { success: boolean; error?: stri
       config = JSON.parse(content);
     }
     
+    const { command, args } = getMcpCommand(devMode);
     const mcp = (config.mcp as Record<string, unknown>) || {};
     mcp.loopflow = {
-      type: "stdio",
-      command: ["npx", "-y", "loopflow@latest", "mcp"],
+      type: "local",
+      command: [command, ...args],
       enabled: true,
     };
     config.mcp = mcp;
@@ -109,7 +133,7 @@ function writeOpenCodeConfig(filePath: string): { success: boolean; error?: stri
   }
 }
 
-function writeCursorConfig(filePath: string): { success: boolean; error?: string } {
+function writeCursorConfig(filePath: string, devMode: boolean): { success: boolean; error?: string } {
   try {
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) {
@@ -123,10 +147,11 @@ function writeCursorConfig(filePath: string): { success: boolean; error?: string
       config = JSON.parse(content);
     }
     
+    const { command, args } = getMcpCommand(devMode);
     const mcpServers = (config.mcpServers as Record<string, unknown>) || {};
     mcpServers.loopflow = {
-      command: "npx",
-      args: ["-y", "loopflow@latest", "mcp"],
+      command,
+      args,
     };
     config.mcpServers = mcpServers;
     
@@ -137,16 +162,16 @@ function writeCursorConfig(filePath: string): { success: boolean; error?: string
   }
 }
 
-function writeTool(tool: ToolConfig, repoPath: string): { success: boolean; error?: string } {
+function writeTool(tool: ToolConfig, repoPath: string, devMode: boolean): { success: boolean; error?: string } {
   const filePath = path.join(repoPath, tool.localPath);
   
   switch (tool.id) {
     case "claude-code":
-      return writeClaudeCodeConfig(filePath);
+      return writeClaudeCodeConfig(filePath, devMode);
     case "opencode":
-      return writeOpenCodeConfig(filePath);
+      return writeOpenCodeConfig(filePath, devMode);
     case "cursor":
-      return writeCursorConfig(filePath);
+      return writeCursorConfig(filePath, devMode);
     default:
       return { success: false, error: `Unknown tool: ${tool.id}` };
   }
@@ -159,8 +184,10 @@ function writeTool(tool: ToolConfig, repoPath: string): { success: boolean; erro
 export async function runSetupWizard(options: {
   repoPath?: string;
   skipToolConfig?: boolean;
+  devMode?: boolean;
 }): Promise<WizardResult> {
   const repoPath = options.repoPath || process.cwd();
+  const devMode = options.devMode || false;
   const result: WizardResult = {
     success: true,
     configured: [],
@@ -169,6 +196,10 @@ export async function runSetupWizard(options: {
   };
 
   p.intro(`LoopFlow Setup v${VERSION}`);
+
+  if (devMode) {
+    p.log.info("Dev mode: MCP will use local build (./dist/cli/index.js)");
+  }
 
   if (options.skipToolConfig) {
     p.log.info("Skipping MCP config (--no-mcp flag)");
@@ -222,7 +253,7 @@ export async function runSetupWizard(options: {
     const tool = tools.find(t => t.id === toolId)!;
     s.start(`Writing ${tool.localPath}...`);
     
-    const writeResult = writeTool(tool, repoPath);
+    const writeResult = writeTool(tool, repoPath, devMode);
     
     if (writeResult.success) {
       s.stop(`Created ${tool.localPath}`);

@@ -14,6 +14,7 @@ import { createInsightsRepository } from "../repositories/insights.js";
 import { createTasksRepository } from "../repositories/tasks.js";
 import { createSessionsRepository } from "../repositories/sessions.js";
 import { createRepoContextRepository } from "../repositories/repo-context.js";
+import { createFeedbackSpecsRepository } from "../repositories/feedback-specs.js";
 
 describe("Database Integration", () => {
   let tempDir: string;
@@ -280,6 +281,133 @@ describe("Database Integration", () => {
       const full = repoContext.getFullContext();
       expect(full.repoSummary).toBeNull();
       expect(full.suggestedActions).toBeNull();
+
+      db.close();
+    });
+  });
+
+  describe("FeedbackSpecsRepository", () => {
+    it("inserts and retrieves feedback spec", () => {
+      const db = openDatabase(dbPath);
+      const feedbackSpecs = createFeedbackSpecsRepository(db);
+
+      feedbackSpecs.insert({
+        id: "FB-001",
+        type: "pain_point",
+        title: "Loop orient takes too long",
+        description: "When there are many insights, loop_orient is slow",
+        context_summary: "Session with 100+ insights",
+        severity: "medium",
+        status: "queued",
+        consent_given_at: new Date().toISOString(),
+        shared_at: null,
+        github_issue_url: null,
+      });
+
+      const retrieved = feedbackSpecs.findById("FB-001");
+      expect(retrieved).not.toBeNull();
+      expect(retrieved!.title).toBe("Loop orient takes too long");
+      expect(retrieved!.type).toBe("pain_point");
+      expect(retrieved!.status).toBe("queued");
+
+      db.close();
+    });
+
+    it("filters by status", () => {
+      const db = openDatabase(dbPath);
+      const feedbackSpecs = createFeedbackSpecsRepository(db);
+
+      feedbackSpecs.insert({
+        id: "FB-001",
+        type: "pain_point",
+        title: "Issue 1",
+        description: "Desc 1",
+        context_summary: null,
+        severity: "medium",
+        status: "queued",
+        consent_given_at: new Date().toISOString(),
+        shared_at: null,
+        github_issue_url: null,
+      });
+
+      feedbackSpecs.insert({
+        id: "FB-002",
+        type: "feature_idea",
+        title: "Issue 2",
+        description: "Desc 2",
+        context_summary: null,
+        severity: "low",
+        status: "shared",
+        consent_given_at: new Date().toISOString(),
+        shared_at: new Date().toISOString(),
+        github_issue_url: "https://github.com/test/repo/issues/1",
+      });
+
+      const queued = feedbackSpecs.findAll({ statuses: ["queued"] });
+      expect(queued.length).toBe(1);
+      expect(queued[0].id).toBe("FB-001");
+
+      const shared = feedbackSpecs.findAll({ statuses: ["shared"] });
+      expect(shared.length).toBe(1);
+      expect(shared[0].id).toBe("FB-002");
+
+      db.close();
+    });
+
+    it("generates next ID correctly", () => {
+      const db = openDatabase(dbPath);
+      const feedbackSpecs = createFeedbackSpecsRepository(db);
+
+      expect(feedbackSpecs.getNextId()).toBe("FB-001");
+
+      feedbackSpecs.insert({
+        id: "FB-001",
+        type: "bug",
+        title: "First bug",
+        description: "Description",
+        context_summary: null,
+        severity: "high",
+        status: "queued",
+        consent_given_at: new Date().toISOString(),
+        shared_at: null,
+        github_issue_url: null,
+      });
+
+      expect(feedbackSpecs.getNextId()).toBe("FB-002");
+
+      db.close();
+    });
+
+    it("updates status and shared info", () => {
+      const db = openDatabase(dbPath);
+      const feedbackSpecs = createFeedbackSpecsRepository(db);
+
+      feedbackSpecs.insert({
+        id: "FB-001",
+        type: "pain_point",
+        title: "Test issue",
+        description: "Description",
+        context_summary: null,
+        severity: "medium",
+        status: "queued",
+        consent_given_at: new Date().toISOString(),
+        shared_at: null,
+        github_issue_url: null,
+      });
+
+      const sharedAt = new Date().toISOString();
+      const issueUrl = "https://github.com/test/repo/issues/42";
+
+      feedbackSpecs.update("FB-001", {
+        status: "shared",
+        shared_at: sharedAt,
+        github_issue_url: issueUrl,
+      });
+
+      const updated = feedbackSpecs.findById("FB-001");
+      expect(updated!.status).toBe("shared");
+      expect(updated!.shared_at).toBe(sharedAt);
+      expect(updated!.github_issue_url).toBe(issueUrl);
 
       db.close();
     });
